@@ -1,23 +1,63 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Dependencias de Node
+/node_modules/
+/.pnp/
+/.pnp.js
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Archivos de lock (si usas yarn berry)
+/.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
 
-# testing
-/coverage
+# Resultado de builds
+/build/
+/dist/
 
-# production
-/build
+# Cachés
+/.cache/
+/.parcel-cache/
+/.next/
+/out/
 
-# misc
-.DS_Store
+# Coverage (pruebas)
+/coverage/
+
+# Entornos y variables de entorno
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+!.env.example
 
+# Logs
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDEs y editores
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Archivos de tipo libre
+*.pem
+*.key
+
+# Reportes de errores automáticos
+/report.[0-9a-fA-F]*.json
+
+# Otros
+.yarn-integrity

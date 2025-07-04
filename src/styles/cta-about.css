@@ -1,0 +1,45 @@
+/* src/styles/cta-about.css */
+
+.cta-about {
+  background-color: var(--blue-primary);
+  color: var(--white-primary);
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.cta-about h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.cta-about p {
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+}
+
+.cta-about .btn-primary {
+  background-color: var(--red-primary);
+  border: none;
+  color: var(--white-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: background var(--transition);
+}
+
+.cta-about .btn-primary:hover {
+  background-color: #8A1E29;
+}
+
+.cta-about .btn-outline {
+  color: var(--white-primary);
+  border: 2px solid var(--white-primary);
+  background: transparent;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: background var(--transition), color var(--transition);
+}
+
+.cta-about .btn-outline:hover {
+  background-color: var(--white-primary);
+  color: var(--blue-primary);
+}
