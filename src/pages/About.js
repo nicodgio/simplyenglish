@@ -1,318 +1,618 @@
-// src/components/About.jsx
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, ProgressBar, Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCheckCircle,
-  faPlayCircle,
-  faGraduationCap,
-  faUsers,
-  faChartLine,
-  faHandshake,
-  faGlobe,
-  faLightbulb,
-  faBookOpen
-} from '@fortawesome/free-solid-svg-icons';
-import '../styles/index.css';
-import '../styles/cta-about.css';
 
 const About = () => {
   const [counters, setCounters] = useState({
     years: 0,
-    courses: 0,
+    students: 0,
     satisfaction: 0,
     companies: 0
   });
 
   useEffect(() => {
     const animate = (key, end, duration) => {
-      let value = 0;
-      const step = 1;
-      const interval = Math.max(Math.floor(duration / end), 10);
+      let current = 0;
+      const increment = end / (duration / 30);
       const timer = setInterval(() => {
-        value += step;
-        setCounters(prev => ({ ...prev, [key]: value }));
-        if (value >= end) clearInterval(timer);
-      }, interval);
+        current += increment;
+        if (current >= end) {
+          current = end;
+          clearInterval(timer);
+        }
+        setCounters(prev => ({ ...prev, [key]: Math.floor(current) }));
+      }, 30);
     };
 
-    setTimeout(() => {
-      animate('years',    3,   1000);
-      animate('courses', 300,   1500);
-      animate('satisfaction', 95, 1200);
-      animate('companies', 5,   1000);
-    }, 500);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animate('years', 3, 1000);
+          animate('students', 300, 1500);
+          animate('satisfaction', 95, 1200);
+          animate('companies', 5, 1000);
+          observer.disconnect();
+        }
+      });
+    });
+
+    const statsSection = document.querySelector('.stats-section');
+    if (statsSection) observer.observe(statsSection);
+
+    return () => observer.disconnect();
   }, []);
 
-  const milestones = [
-    {
-      year: '2021',
-      title: 'El Inicio',
-      desc: 'Fundación en Puerto Vallarta con visión de democratizar el inglés.'
+  const styles = {
+    hero: {
+      background: '#002868',
+      color: 'white',
+      padding: '80px 0',
+      position: 'relative',
+      overflow: 'hidden'
     },
-    {
-      year: '2022',
-      title: 'Expansión Digital',
-      desc: 'Lanzamiento de plataforma 100% online y alianzas clave.'
+    heroPattern: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      width: '50%',
+      height: '100%',
+      background: 'url("data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+      opacity: 0.1
     },
-    {
-      year: '2023',
-      title: 'Certificación CONOCER',
-      desc: 'Acreditación oficial para emitir certificados válidos ante la SEP.'
+    container: {
+      maxWidth: '1200px',
+      margin: '0 auto',
+      padding: '0 15px'
     },
-    {
-      year: '2024',
-      title: 'Mejora Continua',
-      desc: 'Actualización constante de contenidos y metodologías innovadoras.'
+    badge: {
+      background: 'rgba(255, 255, 255, 0.2)',
+      color: 'white',
+      padding: '8px 20px',
+      borderRadius: '25px',
+      display: 'inline-block',
+      marginBottom: '20px',
+      backdropFilter: 'blur(10px)',
+      border: '1px solid rgba(255, 255, 255, 0.3)'
+    },
+    statsCard: {
+      background: 'white',
+      borderRadius: '15px',
+      padding: '40px 30px',
+      textAlign: 'center',
+      boxShadow: '0 10px 30px rgba(0, 40, 104, 0.1)',
+      transition: 'all 0.3s ease',
+      height: '100%',
+      cursor: 'pointer'
+    },
+    statsNumber: {
+      fontSize: '3rem',
+      fontWeight: 'bold',
+      background: 'linear-gradient(135deg, #002868 0%, #BF0A30 100%)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      backgroundClip: 'text',
+      marginBottom: '10px'
+    },
+    missionCard: {
+      background: '#002868',
+      color: 'white',
+      padding: '60px',
+      borderRadius: '20px',
+      position: 'relative',
+      overflow: 'hidden',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center'
+    },
+    visionCard: {
+      background: '#BF0A30',
+      color: 'white',
+      padding: '60px',
+      borderRadius: '20px',
+      position: 'relative',
+      overflow: 'hidden',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center'
+    },
+    methodologyCard: {
+      background: 'white',
+      borderRadius: '15px',
+      padding: '40px',
+      boxShadow: '0 10px 30px rgba(0, 40, 104, 0.08)',
+      marginBottom: '30px',
+      transition: 'all 0.3s ease',
+      border: '1px solid #e9ecef'
+    },
+    valueCard: {
+      background: 'white',
+      borderRadius: '15px',
+      padding: '30px',
+      textAlign: 'center',
+      height: '100%',
+      transition: 'all 0.3s ease',
+      border: '2px solid transparent'
+    },
+    iconCircle: {
+      width: '80px',
+      height: '80px',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      margin: '0 auto 20px',
+      fontSize: '2rem'
+    },
+    timelineItem: {
+      position: 'relative',
+      paddingLeft: '40px',
+      marginBottom: '40px'
+    },
+    timelineDot: {
+      position: 'absolute',
+      left: '0',
+      top: '5px',
+      width: '20px',
+      height: '20px',
+      borderRadius: '50%',
+      background: '#002868',
+      border: '4px solid white',
+      boxShadow: '0 0 0 2px #002868'
+    },
+    timelineLine: {
+      position: 'absolute',
+      left: '9px',
+      top: '25px',
+      bottom: '-40px',
+      width: '2px',
+      background: '#e9ecef'
+    },
+    ctaSection: {
+      background: '#002868',
+      color: 'white',
+      padding: '80px 0',
+      textAlign: 'center'
+    },
+    primaryButton: {
+      background: 'white',
+      color: '#002868',
+      border: 'none',
+      padding: '15px 40px',
+      fontSize: '1.1rem',
+      fontWeight: 'bold',
+      borderRadius: '30px',
+      transition: 'all 0.3s ease',
+      marginRight: '15px',
+      textDecoration: 'none',
+      display: 'inline-block',
+      cursor: 'pointer'
+    },
+    outlineButton: {
+      background: 'transparent',
+      color: 'white',
+      border: '2px solid white',
+      padding: '15px 40px',
+      fontSize: '1.1rem',
+      fontWeight: 'bold',
+      borderRadius: '30px',
+      transition: 'all 0.3s ease',
+      textDecoration: 'none',
+      display: 'inline-block',
+      cursor: 'pointer'
+    },
+    row: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      margin: '0 -15px'
+    },
+    col: {
+      padding: '0 15px',
+      marginBottom: '30px'
+    },
+    sectionPadding: {
+      padding: '80px 0'
+    },
+    bgLight: {
+      background: '#f8f9fa'
+    },
+    textCenter: {
+      textAlign: 'center'
+    },
+    mb5: {
+      marginBottom: '3rem'
+    },
+    mb4: {
+      marginBottom: '1.5rem'
+    },
+    mb3: {
+      marginBottom: '1rem'
+    },
+    card: {
+      background: 'white',
+      borderRadius: '10px',
+      boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
+      padding: '30px',
+      marginBottom: '20px'
     }
-  ];
+  };
+
+  const icons = {
+    star: '⭐',
+    check: '✓',
+    graduation: '🎓',
+    users: '👥',
+    chart: '📈',
+    handshake: '🤝',
+    globe: '🌍',
+    lightbulb: '💡',
+    book: '📚',
+    trophy: '🏆',
+    award: '🏅',
+    certificate: '📜',
+    teacher: '👨‍🏫',
+    comments: '💬',
+    laptop: '💻',
+    rocket: '🚀'
+  };
 
   return (
     <>
-      {/* Hero mejorado (sin cambios de color aquí) */}
-      <section className="about-hero-enhanced">
-        <Container>
-          <Row className="align-items-center min-vh-50">
-            <Col lg={6}>
-              <span className="badge bg-warning text-dark mb-3">Desde 2021</span>
-              <h1 className="display-4 fw-bold mb-4">
-                Transformamos vidas a través del inglés
+      {/* Hero Section */}
+      <section style={styles.hero}>
+        <div style={styles.heroPattern} />
+        <div style={styles.container}>
+          <div style={styles.row}>
+            <div style={{ ...styles.col, flex: '0 0 50%' }}>
+              <div style={{ ...styles.badge, marginBottom: '30px' }}>
+                {icons.star} Desde 2021 - Puerto Vallarta
+              </div>
+              <h1 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1.5rem', color: 'white' }}>
+                Transformamos el futuro<br />
+                a través del inglés
               </h1>
-              <p className="lead mb-4">
-                En Simply English, dominar el inglés es la llave que abre puertas al mundo.
+              <p style={{ fontSize: '1.3rem', opacity: 0.9, marginBottom: '2rem', color: 'white' }}>
+                En Simply English, creemos que dominar el inglés es más que aprender un idioma: 
+                es abrir puertas a oportunidades globales ilimitadas.
               </p>
-              <div className="d-flex gap-4 flex-wrap">
-                <div className="d-flex align-items-center">
-                  <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" size="lg" />
-                  <span>Metodología Probada</span>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ color: '#4CAF50', fontSize: '1.5rem', marginRight: '10px' }}>{icons.check}</span>
+                  <span>Certificación CONOCER</span>
                 </div>
-                <div className="d-flex align-items-center">
-                  <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" size="lg" />
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ color: '#4CAF50', fontSize: '1.5rem', marginRight: '10px' }}>{icons.check}</span>
                   <span>100% Online</span>
                 </div>
-                <div className="d-flex align-items-center">
-                  <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" size="lg" />
-                  <span>Certificación Oficial</span>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ color: '#4CAF50', fontSize: '1.5rem', marginRight: '10px' }}>{icons.check}</span>
+                  <span>Validez SEP</span>
                 </div>
               </div>
-            </Col>
-            <Col lg={6} className="text-center">
-              <div className="position-relative">
-                <img
-                  src="/imgs/about/about.webp"
-                  alt="Simply English Team"
-                  className="img-fluid rounded-4 shadow-lg"
-                />
-                <div className="play-button-overlay">
-                  <FontAwesomeIcon icon={faPlayCircle} size="4x" className="text-white opacity-75" />
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </Container>
+            </div>
+            <div style={{ ...styles.col, flex: '0 0 50%', textAlign: 'center' }}>
+              <img
+                src="/imgs/about/about.webp"
+                alt="Simply English Academy"
+                style={{ 
+                  width: '100%', 
+                  maxWidth: '500px', 
+                  borderRadius: '20px',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+                }}
+              />
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* Stats animados */}
-      <section className="stats-animated py-5">
-        <Container>
-          <Row className="g-4 text-center">
-            <Col xs={6} lg={3}>
-              <div className="stat-card">
-                <h2 className="display-4 fw-bold text-primary">{counters.years}+</h2>
-                <p className="mb-0">Años de experiencia</p>
-              </div>
-            </Col>
-            <Col xs={6} lg={3}>
-              <div className="stat-card">
-                <h2 className="display-4 fw-bold text-success">{counters.courses}+</h2>
-                <p className="mb-0">Estudiantes que han cursado</p>
-              </div>
-            </Col>
-            <Col xs={6} lg={3}>
-              <div className="stat-card">
-                <h2 className="display-4 fw-bold text-warning">{counters.satisfaction}%</h2>
-                <p className="mb-0">Satisfacción</p>
-              </div>
-            </Col>
-            <Col xs={6} lg={3}>
-              <div className="stat-card">
-                <h2 className="display-4 fw-bold text-info">+{counters.companies}</h2>
-                <p className="mb-0">Empresas aliadas</p>
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-
-      {/* Timeline interactivo */}
-      <section className="timeline-section py-5 bg-light">
-        <Container>
-          <h2 className="text-center mb-5">Nuestra trayectoria</h2>
-          <div className="timeline-interactive">
-            {milestones.map((m, i) => (
-              <Row
-                key={i}
-                className={`timeline-row ${i % 2 === 1 ? 'timeline-row-reverse' : ''}`}
-              >
-                <Col md={5} className="timeline-content">
-                  <Card className="border-0 shadow-sm mb-4 timeline-card">
-                    <Card.Body>
-                      <span className="badge bg-primary mb-2">{m.year}</span>
-                      <h4>{m.title}</h4>
-                      <p className="text-muted mb-0">{m.desc}</p>
-                    </Card.Body>
-                  </Card>
-                </Col>
-                <Col md={2} className="timeline-middle text-center">
-                  <div className="timeline-circle">
-                    <FontAwesomeIcon icon={faGraduationCap} />
+      {/* Stats Section */}
+      <section className="stats-section" style={{ ...styles.sectionPadding, marginTop: '-50px' }}>
+        <div style={styles.container}>
+          <div style={{ ...styles.row, justifyContent: 'space-around' }}>
+            {[
+              { number: counters.years, suffix: '+', label: 'Años de experiencia', icon: icons.trophy, color: '#002868' },
+              { number: counters.students, suffix: '+', label: 'Estudiantes graduados', icon: icons.graduation, color: '#BF0A30' },
+              { number: counters.satisfaction, suffix: '%', label: 'Satisfacción', icon: icons.star, color: '#002868' },
+              { number: counters.companies, suffix: '+', label: 'Empresas aliadas', icon: icons.handshake, color: '#BF0A30' }
+            ].map((stat, index) => (
+              <div key={index} style={{ ...styles.col, flex: '0 0 22%' }}>
+                <div 
+                  style={styles.statsCard}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-10px)';
+                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 40, 104, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 40, 104, 0.1)';
+                  }}
+                >
+                  <div style={{ fontSize: '2.5rem', marginBottom: '20px' }}>{stat.icon}</div>
+                  <div style={styles.statsNumber}>
+                    {stat.number}{stat.suffix}
                   </div>
-                </Col>
-                <Col md={5} />
-              </Row>
+                  <p style={{ margin: 0, color: '#6c757d' }}>{stat.label}</p>
+                </div>
+              </div>
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
-      {/* Metodología */}
-      <section className="methodology-section py-5">
-        <Container>
-          <Row className="align-items-center">
-            <Col lg={6} className="mb-4 mb-lg-0">
-              <h2 className="mb-4">El método Simply English</h2>
-              <p className="lead mb-4">
-                Unimos pedagogía tradicional con herramientas digitales para una experiencia única.
-              </p>
-              <div>
-                <div className="feature-item mb-4">
-                  <div className="d-flex align-items-start">
-                    <div className="feature-icon me-3">
-                      <FontAwesomeIcon icon={faBookOpen} size="lg" className="text-primary" />
-                    </div>
-                    <div>
-                      <h5>Aprendizaje adaptativo</h5>
-                      <p className="text-muted">Se ajusta a tu ritmo y estilo.</p>
-                      <ProgressBar now={85} label="85%" variant="primary" className="mb-2" />
-                    </div>
-                  </div>
+      {/* Mission & Vision */}
+      <section style={{ ...styles.sectionPadding, ...styles.bgLight }}>
+        <div style={styles.container}>
+          <div style={styles.row}>
+            <div style={{ ...styles.col, flex: '0 0 50%', display: 'flex' }}>
+              <div style={styles.missionCard}>
+                <div style={{ position: 'absolute', top: '-30px', right: '-30px', fontSize: '150px', opacity: 0.1 }}>
+                  {icons.rocket}
                 </div>
-                <div className="feature-item">
-                  <div className="d-flex align-items-start">
-                    <div className="feature-icon me-3">
-                      <FontAwesomeIcon icon={faUsers} size="lg" className="text-success" />
-                    </div>
-                    <div>
-                      <h5>Práctica conversacional</h5>
-                      <p className="text-muted">Clases enfocadas en hablar desde el día uno.</p>
-                      <ProgressBar now={100} label="100%" variant="success" className="mb-2" />
-                    </div>
-                  </div>
-                </div>
+                <h2 style={{ ...styles.mb4, color: 'white' }}>Nuestra Misión</h2>
+                <p style={{ fontSize: '1.25rem', margin: 0, color: 'white' }}>
+                  Democratizar el acceso al inglés de calidad mediante una educación 
+                  flexible, accesible y certificada, que empodere a nuestros estudiantes 
+                  para alcanzar sus metas académicas y profesionales en un mundo globalizado.
+                </p>
               </div>
-            </Col>
-            <Col lg={6} className="text-center">
-              <img
-                src="/imgs/about/method.webp"
-                alt="Metodología"
-                className="img-fluid rounded-4 shadow"
-              />
-            </Col>
-          </Row>
-        </Container>
+            </div>
+            <div style={{ ...styles.col, flex: '0 0 50%', display: 'flex' }}>
+              <div style={styles.visionCard}>
+                <div style={{ position: 'absolute', top: '-30px', right: '-30px', fontSize: '150px', opacity: 0.1 }}>
+                  {icons.globe}
+                </div>
+                <h2 style={{ ...styles.mb4, color: 'white' }}>Nuestra Visión</h2>
+                <p style={{ fontSize: '1.25rem', margin: 0, color: 'white' }}>
+                  Ser la plataforma líder en educación de inglés online en México, 
+                  reconocida por nuestra excelencia académica, innovación pedagógica 
+                  y el éxito transformador de nuestros estudiantes.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* Valores del equipo */}
-      <section className="team-values-section py-5 bg-primary text-white">
-        <Container>
-          <h2 className="text-center mb-5 text-white">Nuestros valores</h2>
-          <Row className="g-4">
+      {/* Methodology */}
+      <section style={styles.sectionPadding}>
+        <div style={styles.container}>
+          <h2 style={{ ...styles.textCenter, ...styles.mb5 }}>El Método Simply English</h2>
+          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             {[
-              { icon: faChartLine, title: 'Compromiso', desc: 'Tu éxito es nuestra misión' },
-              { icon: faLightbulb, title: 'Innovación', desc: 'Siempre mejorando' },
-              { icon: faHandshake, title: 'Colaboración', desc: 'Crecemos juntos' },
-              { icon: faUsers, title: 'Comunidad', desc: 'Aprendizaje compartido' }
-            ].map((v, i) => (
-              <Col md={6} lg={3} key={i}>
-                <div className="value-card text-center h-100">
-                  <div className="value-icon mb-3">
-                    <FontAwesomeIcon icon={v.icon} size="3x" />
+              {
+                icon: icons.teacher,
+                title: 'Clases 100% en vivo',
+                desc: 'Interacción directa con profesores nativos y certificados que te guían en cada paso.',
+                color: '#002868'
+              },
+              {
+                icon: icons.comments,
+                title: 'Enfoque conversacional',
+                desc: 'Desde el día uno, practicas hablando inglés en situaciones reales y cotidianas.',
+                color: '#BF0A30'
+              },
+              {
+                icon: icons.laptop,
+                title: 'Plataforma interactiva',
+                desc: 'Material digital actualizado, ejercicios dinámicos y recursos multimedia disponibles 24/7.',
+                color: '#002868'
+              },
+              {
+                icon: icons.certificate,
+                title: 'Certificación oficial',
+                desc: 'Al completar el programa, recibes certificación CONOCER con validez SEP.',
+                color: '#BF0A30'
+              }
+            ].map((method, index) => (
+              <div 
+                key={index} 
+                style={styles.methodologyCard}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateX(10px)';
+                  e.currentTarget.style.borderLeft = `4px solid ${method.color}`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateX(0)';
+                  e.currentTarget.style.borderLeft = '1px solid #e9ecef';
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ 
+                    ...styles.iconCircle, 
+                    background: method.color + '15', 
+                    color: method.color,
+                    marginRight: '30px',
+                    margin: '0 30px 0 0'
+                  }}>
+                    <span style={{ fontSize: '2.5rem' }}>{method.icon}</span>
                   </div>
-                  <h4>{v.title}</h4>
-                  <p className="mb-0 opacity-75">{v.desc}</p>
-                </div>
-              </Col>
-            ))}
-          </Row>
-        </Container>
-      </section>
-
-      {/* Profesor destacado */}
-      <section className="teacher-spotlight py-5">
-        <Container>
-          <Row className="align-items-center">
-            <Col lg={5} className="mb-4 mb-lg-0">
-              <div className="teacher-image-wrapper position-relative">
-                <img
-                  src="/imgs/about/teacher.webp"
-                  alt="Profesor Joel Mendoza"
-                  className="img-fluid rounded-4 shadow-lg"
-                />
-                <div className="experience-badge">
-                  <span className="display-6 fw-bold">+</span>
-                  <small>Experiencia destacada</small>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ marginBottom: '10px' }}>{method.title}</h4>
+                    <p style={{ color: '#6c757d', margin: 0 }}>{method.desc}</p>
+                  </div>
                 </div>
               </div>
-            </Col>
-            <Col lg={7}>
-              <span className="badge bg-warning text-dark mb-3">
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline */}
+      <section style={{ ...styles.sectionPadding, ...styles.bgLight }}>
+        <div style={styles.container}>
+          <h2 style={{ ...styles.textCenter, ...styles.mb5 }}>Nuestra Trayectoria</h2>
+          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+            {[
+              { year: '2021', title: 'Fundación', desc: 'Iniciamos en Puerto Vallarta con la misión de democratizar el inglés.' },
+              { year: '2022', title: 'Expansión Digital', desc: 'Lanzamos nuestra plataforma 100% online y establecemos alianzas estratégicas.' },
+              { year: '2023', title: 'Certificación CONOCER', desc: 'Obtenemos la acreditación oficial para emitir certificados con validez SEP.' },
+              { year: '2024', title: 'Innovación Continua', desc: 'Actualizamos metodologías e incorporamos IA para personalizar el aprendizaje.' }
+            ].map((item, index) => (
+              <div key={index} style={styles.timelineItem}>
+                <div style={styles.timelineDot} />
+                {index < 3 && <div style={styles.timelineLine} />}
+                <div style={styles.card}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                    <h5 style={{ margin: 0, color: '#002868' }}>{item.title}</h5>
+                    <span style={{ 
+                      background: '#BF0A30', 
+                      color: 'white',
+                      padding: '5px 15px',
+                      borderRadius: '20px',
+                      fontSize: '0.9rem'
+                    }}>{item.year}</span>
+                  </div>
+                  <p style={{ color: '#6c757d', margin: 0 }}>{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section style={styles.sectionPadding}>
+        <div style={styles.container}>
+          <h2 style={{ ...styles.textCenter, ...styles.mb5 }}>Nuestros Valores</h2>
+          <div style={styles.row}>
+            {[
+              { icon: icons.chart, title: 'Excelencia', desc: 'Calidad educativa superior', color: '#002868' },
+              { icon: icons.lightbulb, title: 'Innovación', desc: 'Metodologías vanguardistas', color: '#BF0A30' },
+              { icon: icons.handshake, title: 'Compromiso', desc: 'Tu éxito es nuestro objetivo', color: '#002868' },
+              { icon: icons.users, title: 'Comunidad', desc: 'Aprendizaje colaborativo', color: '#BF0A30' }
+            ].map((value, index) => (
+              <div key={index} style={{ ...styles.col, flex: '0 0 25%' }}>
+                <div 
+                  style={styles.valueCard}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = value.color;
+                    e.currentTarget.style.transform = 'translateY(-5px)';
+                    e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'transparent';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div style={{ 
+                    ...styles.iconCircle, 
+                    background: value.color + '15', 
+                    color: value.color 
+                  }}>
+                    <span style={{ fontSize: '2.5rem' }}>{value.icon}</span>
+                  </div>
+                  <h5>{value.title}</h5>
+                  <p style={{ color: '#6c757d', margin: 0 }}>{value.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Teacher Spotlight */}
+      <section style={{ ...styles.sectionPadding, ...styles.bgLight }}>
+        <div style={styles.container}>
+          <div style={styles.row}>
+            <div style={{ ...styles.col, flex: '0 0 40%' }}>
+              <img
+                src="/imgs/about/teacher.webp"
+                alt="Profesor Joel Mendoza"
+                style={{ 
+                  width: '100%',
+                  borderRadius: '20px',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
+                }}
+              />
+            </div>
+            <div style={{ ...styles.col, flex: '0 0 60%', paddingLeft: '50px' }}>
+              <span style={{ 
+                background: '#002868', 
+                color: 'white', 
+                padding: '10px 20px', 
+                fontSize: '0.9rem',
+                borderRadius: '20px',
+                display: 'inline-block',
+                marginBottom: '20px'
+              }}>
                 Fundador & Director Académico
               </span>
-              <h2 className="mb-3">Profesor Joel Mendoza</h2>
-              <p className="lead mb-4">
-                "Mi pasión es que descubras en el inglés un puente a oportunidades globales."
+              <h2 style={styles.mb4}>Profesor Joel Mendoza</h2>
+              <p style={{ 
+                fontSize: '1.25rem',
+                color: '#BF0A30', 
+                fontStyle: 'italic',
+                marginBottom: '30px'
+              }}>
+                "Mi pasión es ver cómo el inglés transforma vidas y abre puertas a oportunidades infinitas."
               </p>
-
-              <Row className="g-3 teacher-achievements">
-                <Col xs={6}>
-                  <div className="d-flex align-items-center">
-                    <FontAwesomeIcon icon={faHandshake} className="text-success me-2" />
-                    <span>+5 empresas capacitadas</span>
-                  </div>
-                </Col>
-                <Col xs={6}>
-                  <div className="d-flex align-items-center">
-                    <FontAwesomeIcon icon={faGlobe} className="text-warning me-2" />
-                    <span>Experiencia internacional</span>
-                  </div>
-                </Col>
-                <Col xs={6}>
-                  <div className="d-flex align-items-center">
-                    <FontAwesomeIcon icon={faLightbulb} className="text-info me-2" />
-                    <span>Metodología propia</span>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Container>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                  <span style={{ color: '#002868', fontSize: '1.5rem', marginRight: '15px' }}>{icons.award}</span>
+                  <span>Certificado en metodologías de enseñanza internacional</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                  <span style={{ color: '#BF0A30', fontSize: '1.5rem', marginRight: '15px' }}>{icons.globe}</span>
+                  <span>Experiencia docente en múltiples países</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                  <span style={{ color: '#002868', fontSize: '1.5rem', marginRight: '15px' }}>{icons.handshake}</span>
+                  <span>+5 empresas multinacionales capacitadas</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ color: '#BF0A30', fontSize: '1.5rem', marginRight: '15px' }}>{icons.book}</span>
+                  <span>Creador del método Simply English</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* CTA Final */}
-      <section className="cta-about">
-        <Container>
-          <h2>¿Listo para transformar tu futuro?</h2>
-          <p>
-            Únete a nuestra comunidad: más de <strong>300+</strong> estudiantes han cursado y{' '}
-            <strong>+5</strong> empresas aliadas.
-          </p>
-          <Button href="/registro" className="btn-primary btn-lg me-3">
-            Comenzar Ahora
-          </Button>
-          <Button href="/clases" className="btn-outline btn-lg">
-            Ver Nuestras Clases
-          </Button>
-        </Container>
+      {/* CTA Section */}
+      <section style={styles.ctaSection}>
+        <div style={styles.container}>
+          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: 'white' }}>
+              ¿Listo para transformar tu futuro?
+            </h2>
+            <p style={{ fontSize: '1.5rem', marginBottom: '3rem', opacity: 0.9, color: 'white' }}>
+              Únete a más de <strong>300 estudiantes</strong> que ya han cambiado su vida 
+              y a las <strong>+5 empresas</strong> que confían en nosotros.
+            </p>
+            <div>
+              <a 
+                href="/registro" 
+                style={styles.primaryButton}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#f8f9fa';
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'white';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              >
+                Comenzar Ahora
+              </a>
+              <a 
+                href="/clases" 
+                style={styles.outlineButton}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'white';
+                  e.currentTarget.style.color = '#002868';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = 'white';
+                }}
+              >
+                Ver Nuestras Clases
+              </a>
+            </div>
+          </div>
+        </div>
       </section>
     </>
   );
