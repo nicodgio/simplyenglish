@@ -1,341 +1,648 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Card, Tab, Tabs, Alert, Badge, Button, Accordion } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
-  faCertificate, faCheckCircle, faGraduationCap, faBuilding,
-  faClock, faGlobe, faFileAlt, faTrophy, faUserGraduate,
-  faChartLine, faQuestionCircle, faDownload, faArrowRight
+  faCertificate, faCheckCircle, faGraduationCap, faAward,
+  faClock, faGlobe, faTrophy, faUserGraduate, faBookOpen,
+  faChartLine, faArrowRight, faStar, faShieldAlt, faRocket
 } from '@fortawesome/free-solid-svg-icons';
 
 const Certificaciones = () => {
-  const [activeTab, setActiveTab] = useState('conocer');
+  const [activeLevel, setActiveLevel] = useState(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.target.classList.contains('progress-bar')) {
+          entry.target.style.width = entry.target.getAttribute('data-width');
+        }
+      });
+    });
+
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => observer.observe(bar));
+
+    return () => observer.disconnect();
+  }, []);
 
   const cenni_levels = [
-    { range: '1-4', level: 'A1', name: 'Usuario Básico', color: '#28a745' },
-    { range: '5-7', level: 'A2', name: 'Usuario Básico Alto', color: '#20c997' },
-    { range: '8-10', level: 'B1', name: 'Usuario Independiente', color: '#ffc107' },
-    { range: '11-13', level: 'B2', name: 'Usuario Independiente Avanzado', color: '#fd7e14' },
-    { range: '14-16', level: 'C1', name: 'Usuario Competente', color: '#dc3545' },
-    { range: '17-19', level: 'C2', name: 'Usuario Experto', color: '#6f42c1' },
-    { range: '20', level: 'C2+', name: 'Nivel Experto Superior', color: '#212529', special: true }
+    { id: 'a1', level: 'A1', name: 'Principiante', range: '1-4', desc: 'Comprensión de frases básicas', color: '#002868' },
+    { id: 'a2', level: 'A2', name: 'Elemental', range: '5-7', desc: 'Comunicación en situaciones simples', color: '#002868' },
+    { id: 'b1', level: 'B1', name: 'Intermedio', range: '8-10', desc: 'Desenvolvimiento en viajes y trabajo', color: '#BF0A30' },
+    { id: 'b2', level: 'B2', name: 'Intermedio Alto', range: '11-13', desc: 'Interacción fluida con nativos', color: '#BF0A30' },
+    { id: 'c1', level: 'C1', name: 'Avanzado', range: '14-16', desc: 'Uso flexible en contextos académicos', color: '#002868' },
+    { id: 'c2', level: 'C2', name: 'Maestría', range: '17-20', desc: 'Dominio completo del idioma', color: '#BF0A30', special: true }
   ];
 
-  const processSteps = [
-    { 
-      icon: faUserGraduate, 
-      title: 'Inscripción', 
-      desc: 'Regístrate en nuestro programa y comienza tu viaje',
-      time: 'Inmediato'
+  const styles = {
+    hero: {
+      background: 'linear-gradient(135deg, #002868 0%, #003f91 100%)',
+      color: 'white',
+      padding: '120px 0 80px',
+      position: 'relative',
+      overflow: 'hidden'
     },
-    { 
-      icon: faGraduationCap, 
-      title: 'Preparación', 
-      desc: 'Completa los niveles con nuestros profesores certificados',
-      time: '4-8 meses'
+    heroPattern: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      opacity: 0.05,
+      background: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+      backgroundSize: '60px 60px'
     },
-    { 
-      icon: faFileAlt, 
-      title: 'Evaluación', 
-      desc: 'Presenta tu examen de certificación cuando estés listo',
-      time: '1 día'
+    badge: {
+      background: 'rgba(255, 255, 255, 0.2)',
+      color: 'white',
+      padding: '8px 20px',
+      borderRadius: '25px',
+      display: 'inline-block',
+      marginBottom: '20px',
+      backdropFilter: 'blur(10px)',
+      border: '1px solid rgba(255, 255, 255, 0.3)',
+      fontSize: '0.9rem'
     },
-    { 
-      icon: faCertificate, 
-      title: 'Certificación', 
-      desc: 'Recibe tu certificado oficial con validez nacional',
-      time: '3-4 meses'
+    statCard: {
+      background: 'white',
+      borderRadius: '20px',
+      padding: '40px',
+      textAlign: 'center',
+      boxShadow: '0 10px 40px rgba(0, 40, 104, 0.1)',
+      transition: 'all 0.3s ease',
+      height: '100%',
+      marginTop: '-50px',
+      position: 'relative',
+      zIndex: 10
+    },
+    certificationCard: {
+      background: 'white',
+      borderRadius: '20px',
+      overflow: 'hidden',
+      boxShadow: '0 10px 40px rgba(0, 40, 104, 0.08)',
+      transition: 'all 0.3s ease',
+      height: '100%'
+    },
+    levelCard: {
+      background: 'white',
+      borderRadius: '15px',
+      padding: '30px',
+      textAlign: 'center',
+      transition: 'all 0.3s ease',
+      cursor: 'pointer',
+      border: '2px solid transparent',
+      height: '100%'
+    },
+    processStep: {
+      textAlign: 'center',
+      position: 'relative',
+      padding: '20px'
+    },
+    stepIcon: {
+      width: '80px',
+      height: '80px',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      margin: '0 auto 20px',
+      fontSize: '2rem',
+      transition: 'all 0.3s ease'
+    },
+    primaryButton: {
+      background: '#BF0A30',
+      color: 'white',
+      border: 'none',
+      padding: '15px 40px',
+      fontSize: '1.1rem',
+      fontWeight: 'bold',
+      borderRadius: '30px',
+      transition: 'all 0.3s ease',
+      textDecoration: 'none',
+      display: 'inline-block'
+    },
+    outlineButton: {
+      background: 'transparent',
+      color: '#002868',
+      border: '2px solid #002868',
+      padding: '15px 40px',
+      fontSize: '1.1rem',
+      fontWeight: 'bold',
+      borderRadius: '30px',
+      transition: 'all 0.3s ease',
+      textDecoration: 'none',
+      display: 'inline-block'
+    },
+    sectionPadding: {
+      padding: '80px 0'
+    },
+    bgLight: {
+      background: '#f8f9fa'
+    },
+    highlightBox: {
+      background: 'linear-gradient(135deg, #002868 0%, #003f91 100%)',
+      color: 'white',
+      padding: '30px',
+      borderRadius: '15px',
+      marginBottom: '30px'
     }
-  ];
-
-  const faqs = [
-    {
-      question: '¿Cuál es la diferencia entre CONOCER y CENNI?',
-      answer: 'CONOCER certifica competencias laborales generales en inglés, mientras que CENNI evalúa y certifica niveles específicos de dominio del idioma según el Marco Común Europeo (A1-C2).'
-    },
-    {
-      question: '¿Puedo obtener ambas certificaciones?',
-      answer: 'Sí, puedes obtener ambas. CONOCER está incluida al completar nuestro programa, mientras que CENNI requiere una evaluación adicional.'
-    },
-    {
-      question: '¿Cuánto tiempo tiene validez mi certificado?',
-      answer: 'La certificación CONOCER tiene validez permanente, mientras que CENNI tiene una validez de 5 años.'
-    },
-    {
-      question: '¿Necesito tomar clases para certificarme?',
-      answer: 'Para CONOCER sí necesitas completar nuestro programa. Para CENNI, si ya dominas el inglés, puedes aplicar directamente para la evaluación.'
-    }
-  ];
+  };
 
   return (
     <>
-      {/* Hero Section Mejorado */}
-      <section className="cert-hero-enhanced">
+      {/* Hero Section */}
+      <section style={styles.hero}>
+        <div style={styles.heroPattern} />
         <Container>
-          <Row className="align-items-center min-vh-60">
-            <Col lg={6}>
-              <Badge bg="warning" text="dark" className="mb-3">Certificaciones Oficiales</Badge>
-              <h1 className="display-4 fw-bold mb-4">
-                Valida tu inglés con certificaciones reconocidas por la SEP
+          <Row className="align-items-center">
+            <Col lg={8} className="mx-auto text-center">
+              <div style={styles.badge}>
+                <FontAwesomeIcon icon={faCertificate} className="me-2" />
+                Certificaciones Oficiales SEP
+              </div>
+              <h1 style={{ fontSize: '3.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: 'white' }}>
+                Valida tu dominio del inglés con<br />
+                <span style={{ color: '#FFD700' }}>certificaciones reconocidas</span>
               </h1>
-              <p className="lead mb-4">
-                Obtén certificaciones que abren puertas en el mundo académico y profesional. 
-                Con Simply English, tu esfuerzo se convierte en credenciales oficiales.
+              <p style={{ fontSize: '1.3rem', opacity: 0.9, marginBottom: '2rem', maxWidth: '700px', margin: '0 auto', color: 'white' }}>
+                Obtén credenciales oficiales que respaldan tu conocimiento y abren puertas 
+                en el mundo académico y profesional.
               </p>
-              <div className="cert-features d-flex flex-wrap gap-3">
-                <div className="feature-badge">
-                  <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" />
-                  Validez Nacional
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
+      {/* Comparación de Certificaciones */}
+      <section className="cert-comparison" style={{ marginTop: '-50px', marginBottom: '80px' }}>
+        <Container>
+          <div style={{ 
+            background: 'white',
+            borderRadius: '20px',
+            padding: '60px 40px',
+            boxShadow: '0 20px 60px rgba(0, 40, 104, 0.1)',
+            position: 'relative',
+            zIndex: 10
+          }}>
+            <Row className="align-items-center">
+              <Col lg={5}>
+                <h3 style={{ color: '#002868', fontSize: '2rem', marginBottom: '20px' }}>
+                  ¿Por qué necesitas una certificación oficial?
+                </h3>
+                <p style={{ fontSize: '1.1rem', color: '#495057', marginBottom: '30px' }}>
+                  En el mundo competitivo actual, no basta con hablar inglés. 
+                  Las empresas y universidades requieren comprobantes oficiales 
+                  que validen tu nivel de dominio del idioma.
+                </p>
+                <div style={{ marginBottom: '20px' }}>
+                  <h5 style={{ color: '#BF0A30', marginBottom: '15px' }}>
+                    <FontAwesomeIcon icon={faChartLine} className="me-2" />
+                    Ventajas profesionales:
+                  </h5>
+                  <ul style={{ listStyle: 'none', padding: 0 }}>
+                    <li style={{ marginBottom: '10px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '10px' }} />
+                      Aumenta tu empleabilidad hasta un 40%
+                    </li>
+                    <li style={{ marginBottom: '10px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '10px' }} />
+                      Acceso a mejores salarios y posiciones
+                    </li>
+                    <li>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '10px' }} />
+                      Requisito para programas internacionales
+                    </li>
+                  </ul>
                 </div>
-                <div className="feature-badge">
-                  <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" />
-                  Reconocimiento SEP
+              </Col>
+              <Col lg={7}>
+                <div style={{ position: 'relative' }}>
+                  <h5 style={{ color: '#002868', marginBottom: '25px', textAlign: 'center' }}>
+                    Comparación rápida de certificaciones
+                  </h5>
+                  <Row>
+                    <Col md={6}>
+                      <div style={{ 
+                        border: '2px solid #002868',
+                        borderRadius: '15px',
+                        padding: '25px',
+                        height: '100%',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{ 
+                          background: '#002868',
+                          color: 'white',
+                          padding: '10px',
+                          borderRadius: '10px',
+                          marginBottom: '20px'
+                        }}>
+                          <h5 style={{ margin: 0 }}>CONOCER</h5>
+                        </div>
+                        <div style={{ fontSize: '0.95rem' }}>
+                          <p><strong>Enfoque:</strong> Laboral</p>
+                          <p><strong>Validez:</strong> Permanente</p>
+                          <p><strong>Costo:</strong> Incluido</p>
+                          <p style={{ margin: 0 }}><strong>Ideal:</strong> Trabajo en México</p>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col md={6}>
+                      <div style={{ 
+                        border: '2px solid #BF0A30',
+                        borderRadius: '15px',
+                        padding: '25px',
+                        height: '100%',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{ 
+                          background: '#BF0A30',
+                          color: 'white',
+                          padding: '10px',
+                          borderRadius: '10px',
+                          marginBottom: '20px'
+                        }}>
+                          <h5 style={{ margin: 0 }}>CENNI</h5>
+                        </div>
+                        <div style={{ fontSize: '0.95rem' }}>
+                          <p><strong>Enfoque:</strong> Académico</p>
+                          <p><strong>Validez:</strong> 5 años</p>
+                          <p><strong>Costo:</strong> Adicional</p>
+                          <p style={{ margin: 0 }}><strong>Ideal:</strong> Estudios/Internacional</p>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                  <div style={{ 
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    background: 'white',
+                    padding: '10px',
+                    borderRadius: '50%',
+                    boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+                  }}>
+                    <span style={{ fontSize: '1.5rem' }}>🎯</span>
+                  </div>
                 </div>
-                <div className="feature-badge">
-                  <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" />
-                  Sin costo adicional*
+              </Col>
+            </Row>
+          </div>
+        </Container>
+      </section>
+
+      {/* Certificaciones Section */}
+      <section style={styles.sectionPadding}>
+        <Container>
+          <div className="text-center mb-5">
+            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Nuestras Certificaciones</h2>
+            <p style={{ fontSize: '1.2rem', color: '#6c757d', maxWidth: '700px', margin: '0 auto' }}>
+              Ofrecemos dos tipos de certificación oficial que validan tu dominio del inglés 
+              ante instituciones educativas y empleadores.
+            </p>
+          </div>
+
+          <Row className="g-4">
+            <Col lg={6}>
+              <div 
+                style={styles.certificationCard}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.boxShadow = '0 20px 60px rgba(0, 40, 104, 0.12)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 10px 40px rgba(0, 40, 104, 0.08)';
+                }}
+              >
+                <div style={{ 
+                  background: '#002868', 
+                  color: 'white', 
+                  padding: '40px',
+                  textAlign: 'center'
+                }}>
+                  <FontAwesomeIcon icon={faAward} size="3x" className="mb-3" />
+                  <h3 style={{ fontSize: '2rem', marginBottom: '0', color: 'white' }}>Certificación CONOCER</h3>
+                </div>
+                <div style={{ padding: '40px' }}>
+                  <div style={{ 
+                    background: '#28a745', 
+                    color: 'white',
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    display: 'inline-block',
+                    marginBottom: '20px',
+                    fontSize: '0.9rem'
+                  }}>
+                    <FontAwesomeIcon icon={faStar} className="me-2" />
+                    Incluida en tu programa
+                  </div>
+                  
+                  <p style={{ fontSize: '1.1rem', marginBottom: '30px' }}>
+                    Certificación oficial del Consejo Nacional de Normalización y 
+                    Certificación de Competencias Laborales.
+                  </p>
+
+                  <div style={{ marginBottom: '30px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px', fontSize: '1.2rem' }} />
+                      <span>Validez permanente sin necesidad de renovación</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px', fontSize: '1.2rem' }} />
+                      <span>Reconocimiento oficial de la SEP</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px', fontSize: '1.2rem' }} />
+                      <span>Sin costo adicional al completar el programa</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px', fontSize: '1.2rem' }} />
+                      <span>Acredita competencias laborales en inglés</span>
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <img 
+                      src="/imgs/logos/conocer.webp" 
+                      alt="Logo CONOCER" 
+                      style={{ height: '80px', marginBottom: '20px' }}
+                    />
+                  </div>
+
+                  <Button 
+                    style={styles.primaryButton}
+                    className="w-100"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#9f0825';
+                      e.currentTarget.style.transform = 'scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = '#BF0A30';
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                  >
+                    Más información
+                  </Button>
                 </div>
               </div>
             </Col>
-            <Col lg={6} className="text-center">
-              <div className="cert-visual">
-                <img 
-                  src="/imgs/certificaciones/hero-cert.webp" 
-                  alt="Certificaciones" 
-                  className="img-fluid"
-                />
+
+            <Col lg={6}>
+              <div 
+                style={styles.certificationCard}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.boxShadow = '0 20px 60px rgba(0, 40, 104, 0.12)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 10px 40px rgba(0, 40, 104, 0.08)';
+                }}
+              >
+                <div style={{ 
+                  background: '#BF0A30', 
+                  color: 'white', 
+                  padding: '40px',
+                  textAlign: 'center'
+                }}>
+                  <FontAwesomeIcon icon={faGlobe} size="3x" className="mb-3" />
+                  <h3 style={{ fontSize: '2rem', marginBottom: '0', color: 'white' }}>Certificación CENNI</h3>
+                </div>
+                <div style={{ padding: '40px' }}>
+                  <div style={{ 
+                    background: '#0275d8', 
+                    color: 'white',
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    display: 'inline-block',
+                    marginBottom: '20px',
+                    fontSize: '0.9rem'
+                  }}>
+                    <FontAwesomeIcon icon={faGlobe} className="me-2" />
+                    Evaluación adicional
+                  </div>
+                  
+                  <p style={{ fontSize: '1.1rem', marginBottom: '30px' }}>
+                    Certificación Nacional de Nivel de Idioma con reconocimiento 
+                    internacional basado en el Marco Común Europeo.
+                  </p>
+
+                  <div style={{ marginBottom: '30px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#0275d8', marginRight: '15px', fontSize: '1.2rem' }} />
+                      <span>20 niveles de certificación (A1 - C2)</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#0275d8', marginRight: '15px', fontSize: '1.2rem' }} />
+                      <span>Validez de 5 años renovables</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#0275d8', marginRight: '15px', fontSize: '1.2rem' }} />
+                      <span>Reconocimiento en universidades y empresas</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#0275d8', marginRight: '15px', fontSize: '1.2rem' }} />
+                      <span>Evaluación de las 4 habilidades del idioma</span>
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <img 
+                      src="/imgs/logos/cenni2.png" 
+                      alt="Logo CENNI" 
+                      style={{ height: '80px', marginBottom: '20px' }}
+                    />
+                  </div>
+
+                  <Button 
+                    style={styles.outlineButton}
+                    className="w-100"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#002868';
+                      e.currentTarget.style.color = 'white';
+                      e.currentTarget.style.transform = 'scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = '#002868';
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                  >
+                    Solicitar evaluación
+                  </Button>
+                </div>
               </div>
             </Col>
           </Row>
         </Container>
       </section>
 
-      {/* Tabs de Certificaciones */}
-      <section className="cert-tabs-section py-5">
+      {/* Niveles CENNI */}
+      <section style={{ ...styles.sectionPadding, ...styles.bgLight }}>
         <Container>
-          <h2 className="text-center mb-5">Nuestras Certificaciones</h2>
-          
-          <Tabs
-            activeKey={activeTab}
-            onSelect={(k) => setActiveTab(k)}
-            className="mb-4 cert-tabs"
-            justify
-          >
-            <Tab eventKey="conocer" title={
-              <div className="tab-title">
-                <FontAwesomeIcon icon={faCertificate} className="me-2" />
-                Certificación CONOCER
-              </div>
-            }>
-              <Card className="border-0 shadow-lg cert-main-card">
-                <Row className="g-0">
-                  <Col lg={6}>
-                    <Card.Body className="p-5">
-                      <Badge bg="success" className="mb-3">Incluida en tu programa</Badge>
-                      <h3 className="mb-4">Certificación CONOCER</h3>
-                      <p className="lead mb-4">
-                        El Consejo Nacional de Normalización y Certificación de Competencias 
-                        Laborales certifica oficialmente tu dominio del inglés.
-                      </p>
-                      
-                      <h5 className="mb-3">Beneficios clave:</h5>
-                      <ul className="benefits-list">
-                        <li>
-                          <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" />
-                          Certificado con validez oficial SEP
-                        </li>
-                        <li>
-                          <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" />
-                          Reconocimiento nacional permanente
-                        </li>
-                        <li>
-                          <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" />
-                          Acreditación de competencias laborales
-                        </li>
-                        <li>
-                          <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" />
-                          Sin costo adicional al completar el programa
-                        </li>
-                        <li>
-                          <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" />
-                          Mejora tu perfil profesional
-                        </li>
-                      </ul>
+          <div className="text-center mb-5">
+            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Niveles de Certificación CENNI</h2>
+            <p style={{ fontSize: '1.2rem', color: '#6c757d', maxWidth: '700px', margin: '0 auto' }}>
+              Sistema de 20 niveles basado en el Marco Común Europeo de Referencia para las Lenguas
+            </p>
+          </div>
 
-                      <Alert variant="success" className="mt-4">
-                        <Alert.Heading>
-                          <FontAwesomeIcon icon={faTrophy} className="me-2" />
-                          ¡100% Incluida!
-                        </Alert.Heading>
-                        <p className="mb-0">
-                          Al completar los 8 niveles de Simply English, recibes tu certificación 
-                          CONOCER sin ningún costo adicional. ¡Ya está incluida en tu mensualidad!
-                        </p>
-                      </Alert>
-
-                      <div className="text-center mt-4">
-                        <img 
-                          src="/imgs/logos/conocer2.webp" 
-                          alt="Logo CONOCER" 
-                          style={{ width: '300px', maxWidth: '100%' }}
-                        />
-                      </div>
-                    </Card.Body>
-                  </Col>
-                  <Col lg={6}>
-                    <div className="cert-preview h-100 d-flex align-items-center justify-content-center bg-light">
-                      <img 
-                        src="/imgs/logos/certificado_conocer.webp" 
-                        alt="Certificado CONOCER" 
-                        className="img-fluid p-4"
-                      />
-                    </div>
-                  </Col>
-                </Row>
-              </Card>
-            </Tab>
-
-            <Tab eventKey="cenni" title={
-              <div className="tab-title">
-                <FontAwesomeIcon icon={faGlobe} className="me-2" />
-                Certificación CENNI
-              </div>
-            }>
-              <Card className="border-0 shadow-lg cert-main-card">
-                <Row className="g-0">
-                  <Col lg={6}>
-                    <div className="cert-preview h-100 d-flex align-items-center justify-content-center bg-light">
-                      <img 
-                        src="/imgs/logos/cenni2.png" 
-                        alt="Certificado CENNI" 
-                        className="img-fluid p-4"
-                      />
-                    </div>
-                  </Col>
-                  <Col lg={6}>
-                    <Card.Body className="p-5">
-                      <Badge bg="primary" className="mb-3">Certificación Internacional</Badge>
-                      <h3 className="mb-4">Certificación CENNI</h3>
-                      <p className="lead mb-4">
-                        La Certificación Nacional de Nivel de Idioma acredita tu dominio del 
-                        inglés con reconocimiento nacional e internacional.
-                      </p>
-                      
-                      <h5 className="mb-3">Características principales:</h5>
-                      <ul className="benefits-list">
-                        <li>
-                          <FontAwesomeIcon icon={faCheckCircle} className="text-primary me-2" />
-                          Validez de 5 años renovables
-                        </li>
-                        <li>
-                          <FontAwesomeIcon icon={faCheckCircle} className="text-primary me-2" />
-                          20 niveles de certificación (Marco Común Europeo)
-                        </li>
-                        <li>
-                          <FontAwesomeIcon icon={faCheckCircle} className="text-primary me-2" />
-                          Reconocimiento en universidades y empresas
-                        </li>
-                        <li>
-                          <FontAwesomeIcon icon={faCheckCircle} className="text-primary me-2" />
-                          Evaluación de las 4 habilidades del idioma
-                        </li>
-                        <li>
-                          <FontAwesomeIcon icon={faCheckCircle} className="text-primary me-2" />
-                          Certificación express disponible
-                        </li>
-                      </ul>
-
-                      <Alert variant="info" className="mt-4">
-                        <Alert.Heading>
-                          <FontAwesomeIcon icon={faQuestionCircle} className="me-2" />
-                          ¿Ya dominas el inglés?
-                        </Alert.Heading>
-                        <p className="mb-0">
-                          Si ya hablas inglés y solo necesitas la certificación, ofrecemos 
-                          evaluación directa sin necesidad de tomar el curso completo.
-                        </p>
-                      </Alert>
-
-                      <Button variant="primary" size="lg" className="mt-4 w-100">
-                        Solicitar Evaluación CENNI
-                      </Button>
-                    </Card.Body>
-                  </Col>
-                </Row>
-              </Card>
-            </Tab>
-          </Tabs>
-        </Container>
-      </section>
-
-      {/* Niveles CENNI Interactivo */}
-      <section className="cenni-levels-section py-5 bg-light">
-        <Container>
-          <h2 className="text-center mb-5">Niveles de Certificación CENNI</h2>
-          <p className="text-center lead mb-5">
-            Descubre qué nivel puedes alcanzar según el Marco Común Europeo de Referencia
-          </p>
-          
-          <Row className="g-4">
+          <Row className="g-4 mb-5">
             {cenni_levels.map((level, index) => (
               <Col md={6} lg={4} key={index}>
-                <Card 
-                  className={`level-card h-100 ${level.special ? 'special-level' : ''}`}
-                  style={{ borderTop: `4px solid ${level.color}` }}
+                <div 
+                  style={{
+                    ...styles.levelCard,
+                    borderColor: activeLevel === level.id ? level.color : 'transparent',
+                    transform: activeLevel === level.id ? 'scale(1.05)' : 'scale(1)',
+                    boxShadow: activeLevel === level.id ? '0 15px 40px rgba(0,0,0,0.1)' : '0 5px 20px rgba(0,0,0,0.05)'
+                  }}
+                  onClick={() => setActiveLevel(level.id)}
+                  onMouseEnter={(e) => {
+                    if (activeLevel !== level.id) {
+                      e.currentTarget.style.borderColor = level.color + '50';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (activeLevel !== level.id) {
+                      e.currentTarget.style.borderColor = 'transparent';
+                    }
+                  }}
                 >
-                  <Card.Body className="text-center">
-                    <div className="level-header mb-3">
-                      <Badge 
-                        bg="light" 
-                        text="dark"
-                        style={{ backgroundColor: level.color + '20', color: level.color }}
-                        className="fs-5 px-3 py-2"
-                      >
-                        Niveles {level.range}
-                      </Badge>
+                  {level.special && (
+                    <div style={{ 
+                      position: 'absolute', 
+                      top: '-10px', 
+                      right: '20px',
+                      background: '#FFD700',
+                      color: '#002868',
+                      padding: '5px 15px',
+                      borderRadius: '20px',
+                      fontSize: '0.8rem',
+                      fontWeight: 'bold'
+                    }}>
+                      <FontAwesomeIcon icon={faTrophy} className="me-1" />
+                      Máximo Nivel
                     </div>
-                    <h3 className="level-title" style={{ color: level.color }}>
-                      {level.level}
-                    </h3>
-                    <p className="level-name fw-bold">{level.name}</p>
-                    {level.special && (
-                      <div className="special-badge">
-                        <FontAwesomeIcon icon={faTrophy} className="text-warning me-2" />
-                        Máximo Nivel
-                      </div>
-                    )}
-                  </Card.Body>
-                </Card>
+                  )}
+                  
+                  <div style={{ 
+                    fontSize: '3rem', 
+                    fontWeight: 'bold', 
+                    color: level.color,
+                    marginBottom: '10px'
+                  }}>
+                    {level.level}
+                  </div>
+                  
+                  <h4 style={{ marginBottom: '10px' }}>{level.name}</h4>
+                  
+                  <div style={{ 
+                    background: level.color + '10',
+                    color: level.color,
+                    padding: '5px 15px',
+                    borderRadius: '20px',
+                    fontSize: '0.9rem',
+                    marginBottom: '15px',
+                    display: 'inline-block'
+                  }}>
+                    Niveles {level.range}
+                  </div>
+                  
+                  <p style={{ color: '#6c757d', fontSize: '0.95rem', margin: 0 }}>
+                    {level.desc}
+                  </p>
+                </div>
               </Col>
             ))}
           </Row>
 
-          <div className="text-center mt-5">
-            <Button variant="outline-primary" size="lg">
-              <FontAwesomeIcon icon={faDownload} className="me-2" />
-              Descargar Tabla Completa de Niveles
-            </Button>
+          <div style={styles.highlightBox}>
+            <Row className="align-items-center">
+              <Col md={8}>
+                <h4 style={{ marginBottom: '10px', color: 'white' }}>¿Ya dominas el inglés?</h4>
+                <p style={{ margin: 0, opacity: 0.9, color: 'white' }}>
+                  Si ya tienes conocimientos de inglés, puedes aplicar directamente para la evaluación 
+                  CENNI sin necesidad de tomar el curso completo. Obtén tu certificación en tiempo récord.
+                </p>
+              </Col>
+              <Col md={4} className="text-md-end">
+                <Button 
+                  variant="warning"
+                  size="lg"
+                  style={{ 
+                    fontWeight: 'bold',
+                    padding: '12px 30px'
+                  }}
+                >
+                  <FontAwesomeIcon icon={faRocket} className="me-2" />
+                  Evaluación Express
+                </Button>
+              </Col>
+            </Row>
           </div>
         </Container>
       </section>
 
       {/* Proceso de Certificación */}
-      <section className="process-section py-5">
+      <section style={styles.sectionPadding}>
         <Container>
-          <h2 className="text-center mb-5">Tu Camino hacia la Certificación</h2>
-          
-          <Row className="process-timeline">
-            {processSteps.map((step, index) => (
-              <Col md={6} lg={3} key={index} className="mb-4">
-                <div className="process-step text-center">
-                  <div className="step-number">{index + 1}</div>
-                  <div className="step-icon mb-3">
-                    <FontAwesomeIcon icon={step.icon} size="3x" />
+          <div className="text-center mb-5">
+            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Tu Camino a la Certificación</h2>
+            <p style={{ fontSize: '1.2rem', color: '#6c757d', maxWidth: '700px', margin: '0 auto' }}>
+              Un proceso claro y estructurado que te guía desde el inicio hasta obtener tu certificación oficial
+            </p>
+          </div>
+
+          <Row>
+            {[
+              { 
+                icon: faUserGraduate, 
+                title: 'Inscripción', 
+                desc: 'Regístrate en nuestro programa',
+                color: '#002868'
+              },
+              { 
+                icon: faBookOpen, 
+                title: 'Formación', 
+                desc: 'Completa los niveles requeridos',
+                color: '#BF0A30'
+              },
+              { 
+                icon: faChartLine, 
+                title: 'Evaluación', 
+                desc: 'Presenta tu examen de certificación',
+                color: '#002868'
+              },
+              { 
+                icon: faCertificate, 
+                title: 'Certificación', 
+                desc: 'Recibe tu certificado oficial',
+                color: '#BF0A30'
+              }
+            ].map((step, index) => (
+              <Col md={6} lg={3} key={index}>
+                <div style={styles.processStep}>
+                  <div style={{ 
+                    ...styles.stepIcon,
+                    background: step.color + '15',
+                    color: step.color
+                  }}>
+                    <FontAwesomeIcon icon={step.icon} />
                   </div>
-                  <h4>{step.title}</h4>
-                  <p className="text-muted">{step.desc}</p>
-                  <Badge bg="secondary">{step.time}</Badge>
-                  {index < processSteps.length - 1 && (
-                    <div className="step-connector">
+                  <h5 style={{ marginBottom: '10px' }}>{step.title}</h5>
+                  <p style={{ color: '#6c757d', fontSize: '0.95rem' }}>{step.desc}</p>
+                  
+                  {index < 3 && (
+                    <div style={{ 
+                      position: 'absolute',
+                      top: '50px',
+                      right: '-20px',
+                      color: '#dee2e6',
+                      fontSize: '2rem',
+                      display: 'none'
+                    }} className="d-none d-lg-block">
                       <FontAwesomeIcon icon={faArrowRight} />
                     </div>
                   )}
@@ -346,137 +653,245 @@ const Certificaciones = () => {
         </Container>
       </section>
 
-      {/* Comparación Visual */}
-      <section className="comparison-section py-5 bg-light">
+      {/* Beneficios */}
+      <section style={{ ...styles.sectionPadding, ...styles.bgLight }}>
         <Container>
-          <h2 className="text-center mb-5">¿Cuál certificación es para ti?</h2>
-          
-          <Row className="g-4">
+          <Row className="align-items-center">
             <Col lg={6}>
-              <Card className="comparison-card h-100 border-0 shadow">
-                <Card.Header className="bg-success text-white text-center py-4">
-                  <h3 className="mb-0">CONOCER</h3>
-                </Card.Header>
-                <Card.Body>
-                  <h5 className="mb-3">Ideal para:</h5>
-                  <ul className="comparison-list">
-                    <li>Validar competencias laborales generales</li>
-                    <li>Mejorar tu perfil profesional</li>
-                    <li>Cumplir requisitos empresariales</li>
-                    <li>Obtener reconocimiento académico</li>
-                  </ul>
-                  
-                  <div className="comparison-features mt-4">
-                    <div className="feature-item">
-                      <FontAwesomeIcon icon={faClock} className="text-success me-2" />
-                      <strong>Validez:</strong> Permanente
-                    </div>
-                    <div className="feature-item">
-                      <FontAwesomeIcon icon={faBuilding} className="text-success me-2" />
-                      <strong>Enfoque:</strong> Competencias laborales
-                    </div>
-                    <div className="feature-item">
-                      <FontAwesomeIcon icon={faChartLine} className="text-success me-2" />
-                      <strong>Costo:</strong> Incluido en el programa
-                    </div>
+              <h2 style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
+                ¿Por qué certificarte con nosotros?
+              </h2>
+              
+              <div style={{ marginBottom: '25px' }}>
+                <div style={{ display: 'flex', alignItems: 'start' }}>
+                  <div style={{ 
+                    background: '#002868',
+                    color: 'white',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: '20px',
+                    flexShrink: 0
+                  }}>
+                    <FontAwesomeIcon icon={faShieldAlt} />
                   </div>
+                  <div>
+                    <h5 style={{ marginBottom: '10px' }}>Validez Oficial SEP</h5>
+                    <p style={{ color: '#6c757d', margin: 0 }}>
+                      Certificaciones reconocidas por la Secretaría de Educación Pública 
+                      y aceptadas en todo el territorio nacional.
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-                  <div className="text-center mt-4">
-                    <img 
-                      src="/imgs/logos/certificado_conocer.jpg" 
-                      alt="Certificado CONOCER" 
-                      className="img-fluid rounded shadow-sm"
-                      style={{ maxHeight: '250px' }}
-                    />
+              <div style={{ marginBottom: '25px' }}>
+                <div style={{ display: 'flex', alignItems: 'start' }}>
+                  <div style={{ 
+                    background: '#BF0A30',
+                    color: 'white',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: '20px',
+                    flexShrink: 0
+                  }}>
+                    <FontAwesomeIcon icon={faGraduationCap} />
                   </div>
-                </Card.Body>
-              </Card>
+                  <div>
+                    <h5 style={{ marginBottom: '10px' }}>Preparación Integral</h5>
+                    <p style={{ color: '#6c757d', margin: 0 }}>
+                      Programa completo que te prepara paso a paso para obtener 
+                      tu certificación con éxito garantizado.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '25px' }}>
+                <div style={{ display: 'flex', alignItems: 'start' }}>
+                  <div style={{ 
+                    background: '#002868',
+                    color: 'white',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: '20px',
+                    flexShrink: 0
+                  }}>
+                    <FontAwesomeIcon icon={faClock} />
+                  </div>
+                  <div>
+                    <h5 style={{ marginBottom: '10px' }}>Proceso Ágil</h5>
+                    <p style={{ color: '#6c757d', margin: 0 }}>
+                      Gestión simplificada y acompañamiento continuo durante 
+                      todo el proceso de certificación.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', alignItems: 'start' }}>
+                  <div style={{ 
+                    background: '#BF0A30',
+                    color: 'white',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: '20px',
+                    flexShrink: 0
+                  }}>
+                    <FontAwesomeIcon icon={faTrophy} />
+                  </div>
+                  <div>
+                    <h5 style={{ marginBottom: '10px' }}>Alto Índice de Éxito</h5>
+                    <p style={{ color: '#6c757d', margin: 0 }}>
+                      98% de nuestros estudiantes obtienen su certificación 
+                      en el primer intento.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </Col>
 
             <Col lg={6}>
-              <Card className="comparison-card h-100 border-0 shadow">
-                <Card.Header className="bg-primary text-white text-center py-4">
-                  <h3 className="mb-0">CENNI</h3>
-                </Card.Header>
-                <Card.Body>
-                  <h5 className="mb-3">Ideal para:</h5>
-                  <ul className="comparison-list">
-                    <li>Acreditar nivel específico de inglés</li>
-                    <li>Postular a universidades internacionales</li>
-                    <li>Aplicar a empleos multinacionales</li>
-                    <li>Obtener becas y programas de intercambio</li>
-                  </ul>
-                  
-                  <div className="comparison-features mt-4">
-                    <div className="feature-item">
-                      <FontAwesomeIcon icon={faClock} className="text-primary me-2" />
-                      <strong>Validez:</strong> 5 años
+              <div style={{ 
+                background: 'white',
+                borderRadius: '20px',
+                padding: '40px',
+                boxShadow: '0 20px 60px rgba(0, 40, 104, 0.1)',
+                textAlign: 'center'
+              }}>
+                <div style={{ 
+                  background: '#f8f9fa',
+                  borderRadius: '15px',
+                  padding: '30px'
+                }}>
+                  <h4 style={{ color: '#002868', marginBottom: '20px' }}>
+                    ¿Listo para certificarte?
+                  </h4>
+                  <p style={{ color: '#6c757d', marginBottom: '20px' }}>
+                    Nuestro programa te prepara de manera integral para obtener 
+                    las certificaciones oficiales que impulsarán tu carrera.
+                  </p>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-around',
+                    flexWrap: 'wrap',
+                    gap: '20px'
+                  }}>
+                    <div>
+                      <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#002868' }}>8</div>
+                      <div style={{ color: '#6c757d', fontSize: '0.9rem' }}>Niveles</div>
                     </div>
-                    <div className="feature-item">
-                      <FontAwesomeIcon icon={faGlobe} className="text-primary me-2" />
-                      <strong>Enfoque:</strong> Nivel de dominio (A1-C2)
+                    <div>
+                      <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#BF0A30' }}>98%</div>
+                      <div style={{ color: '#6c757d', fontSize: '0.9rem' }}>Éxito</div>
                     </div>
-                    <div className="feature-item">
-                      <FontAwesomeIcon icon={faChartLine} className="text-primary me-2" />
-                      <strong>Costo:</strong> Evaluación adicional
+                    <div>
+                      <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#002868' }}>SEP</div>
+                      <div style={{ color: '#6c757d', fontSize: '0.9rem' }}>Validez</div>
                     </div>
                   </div>
-
-                  <div className="text-center mt-4">
-                    <img 
-                      src="/imgs/logos/certificado_cenni.webp" 
-                      alt="Certificado CENNI" 
-                      className="img-fluid rounded shadow-sm"
-                      style={{ maxHeight: '250px' }}
-                    />
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-
-      {/* FAQs */}
-      <section className="faq-section py-5">
-        <Container>
-          <h2 className="text-center mb-5">Preguntas Frecuentes</h2>
-          
-          <Row className="justify-content-center">
-            <Col lg={8}>
-              <Accordion defaultActiveKey="0">
-                {faqs.map((faq, index) => (
-                  <Accordion.Item eventKey={index.toString()} key={index}>
-                    <Accordion.Header>
-                      <FontAwesomeIcon icon={faQuestionCircle} className="text-primary me-3" />
-                      {faq.question}
-                    </Accordion.Header>
-                    <Accordion.Body>
-                      {faq.answer}
-                    </Accordion.Body>
-                  </Accordion.Item>
-                ))}
-              </Accordion>
+                </div>
+              </div>
             </Col>
           </Row>
         </Container>
       </section>
 
       {/* CTA Final */}
-      <section className="cta-cert py-5 bg-gradient">
-        <Container className="text-center">
-          <h2 className="mb-4 text-white">Da el siguiente paso en tu carrera</h2>
-          <p className="lead text-white mb-4">
-            Con nuestras certificaciones oficiales, tu dominio del inglés 
-            tendrá el respaldo que necesitas para alcanzar tus metas.
-          </p>
-          <div className="d-flex gap-3 justify-content-center flex-wrap">
-            <Button variant="warning" size="lg" className="px-5" href="/registro">
-              Comenzar mi preparación
-            </Button>
-            <Button variant="outline-light" size="lg" className="px-5" href="/contacto">
-              Solicitar más información
-            </Button>
+      <section style={{ 
+        background: 'linear-gradient(135deg, #002868 0%, #003f91 100%)',
+        color: 'white',
+        padding: '80px 0',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{ 
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          opacity: 0.1,
+          background: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.133 7-7s-3.134-7-7-7-7 3.133-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.133 7-7s-3.134-7-7-7-7 3.133-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.5' fill-rule='evenodd'/%3E%3C/svg%3E")`
+        }} />
+        
+        <Container className="text-center" style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+            <h2 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1.5rem', color: 'white' }}>
+              Da el siguiente paso en tu carrera profesional
+            </h2>
+            <p style={{ fontSize: '1.3rem', marginBottom: '3rem', opacity: 0.9, color: 'white' }}>
+              Únete a más de 250 estudiantes certificados que han transformado 
+              su futuro con nuestras certificaciones oficiales.
+            </p>
+            
+            <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Button 
+                size="lg"
+                style={{ 
+                  background: 'white',
+                  color: '#002868',
+                  border: 'none',
+                  padding: '15px 40px',
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  borderRadius: '30px',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                href="/registro"
+              >
+                <FontAwesomeIcon icon={faRocket} className="me-2" />
+                Comenzar ahora
+              </Button>
+              
+              <Button 
+                size="lg"
+                variant="outline-light"
+                style={{ 
+                  padding: '15px 40px',
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  borderRadius: '30px',
+                  border: '2px solid white',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'white';
+                  e.currentTarget.style.color = '#002868';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = 'white';
+                }}
+                href="/contacto"
+              >
+                Solicitar información
+              </Button>
+            </div>
           </div>
         </Container>
       </section>
