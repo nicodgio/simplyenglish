@@ -14,6 +14,8 @@ import About from './pages/About';
 import Certificaciones from './pages/Certificaciones';
 import Clases from './pages/Clases';
 import Horarios from './pages/Horarios';
+import Precios from './pages/Precios';
+
 
 function App() {
   return (
@@ -27,8 +29,8 @@ function App() {
             <Route path="/certificaciones" element={<Certificaciones />} />
             <Route path="/clases" element={<Clases />} />
             <Route path="/horarios" element={<Horarios />} />
+            <Route path="/precios" element={<Precios />} />
             {/* Rutas pendientes de implementar */}
-            <Route path="/precios" element={<div className="container py-5"><h1>Precios - En construcción</h1></div>} />
             <Route path="/contacto" element={<div className="container py-5"><h1>Contacto - En construcción</h1></div>} />
             <Route path="/registro" element={<div className="container py-5"><h1>Registro - En construcción</h1></div>} />
           </Routes>

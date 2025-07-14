@@ -1,409 +1,299 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Button, Badge, Alert, Form, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
-  faClock, faCalendarAlt, faUserEdit, faCreditCard, faFileDownload,
-  faChalkboardTeacher, faCheck, faArrowRight, faInfoCircle, faUsers,
-  faLaptop, faWifi, faHeadset, faGlobe, faStar, faCalendarCheck
+  faClock, faCalendarAlt, faArrowRight, faMoon, faSun, faCloudSun, 
+  faCloudMoon, faBolt, faStar, faGlobe, faCoffee, faBriefcase,
+  faHome, faLaptopHouse, faRunning, faUtensils, faBed, faGamepad,
+  faBook, faDumbbell, faShoppingCart, faChild
 } from '@fortawesome/free-solid-svg-icons';
 
 const Horarios = () => {
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [selectedDays, setSelectedDays] = useState([]);
 
   const schedules = [
     {
       id: 1,
       time: '4:00 PM - 5:00 PM',
       label: 'Tarde Temprana',
-      description: 'Aprovecha el inicio de la tarde con una clase dinámica y enfocada.',
-      availability: 'Alta',
-      availabilityColor: 'success',
-      spots: 8,
-      totalSpots: 12,
-      teachers: ['Prof. Maria', 'Prof. Carlos'],
-      ideal: 'Estudiantes y profesionales con horario flexible'
+      description: 'Comienza tu tarde con energía aprendiendo inglés',
+      icon: faCloudSun,
+      iconColor: '#FFD700',
+      ideal: 'Estudiantes y profesionales con horario flexible',
+      color: '#002868',
+      borderColor: '#BF0A30',
+      lifestyle: [
+        { icon: faCoffee, text: 'Después del café' },
+        { icon: faLaptopHouse, text: 'Home office flexible' },
+        { icon: faRunning, text: 'Pre-gimnasio' }
+      ]
     },
     {
       id: 2,
       time: '5:00 PM - 6:00 PM',
       label: 'Media Tarde',
-      description: 'Ideal para quienes terminan actividades a las 5 pm y buscan aprender al instante.',
-      availability: 'Media',
-      availabilityColor: 'warning',
-      spots: 5,
-      totalSpots: 12,
-      teachers: ['Prof. Ana', 'Prof. David'],
-      ideal: 'Estudiantes universitarios'
+      description: 'El balance perfecto entre trabajo y estudio',
+      icon: faSun,
+      iconColor: '#FFA500',
+      ideal: 'Estudiantes universitarios y trabajadores',
+      color: '#002868',
+      borderColor: '#002868',
+      lifestyle: [
+        { icon: faBook, text: 'Post-universidad' },
+        { icon: faBriefcase, text: 'Salida temprana' },
+        { icon: faShoppingCart, text: 'Antes de compras' }
+      ]
     },
     {
       id: 3,
       time: '6:00 PM - 7:00 PM',
-      label: 'Tarde',
-      description: 'Una hora perfecta para practicar y reforzar tus conocimientos antes de cenar.',
-      availability: 'Baja',
-      availabilityColor: 'danger',
-      spots: 2,
-      totalSpots: 12,
-      teachers: ['Prof. Luis', 'Prof. Sandra'],
+      label: 'Tarde Prime',
+      description: 'Nuestro horario estrella para profesionales',
+      icon: faBolt,
+      iconColor: '#FFD700',
       ideal: 'Profesionales que salen del trabajo',
-      popular: true
+      color: '#BF0A30',
+      borderColor: '#FFD700',
+      featured: true,
+      lifestyle: [
+        { icon: faBriefcase, text: 'Post-oficina' },
+        { icon: faUtensils, text: 'Pre-cena' },
+        { icon: faHome, text: 'Ya en casa' }
+      ]
     },
     {
       id: 4,
       time: '7:00 PM - 8:00 PM',
       label: 'Noche Temprana',
-      description: 'Cierra el día con una sesión interactiva: conversación y gramática en tiempo real.',
-      availability: 'Media',
-      availabilityColor: 'warning',
-      spots: 6,
-      totalSpots: 12,
-      teachers: ['Prof. Roberto', 'Prof. Elena'],
-      ideal: 'Familias y profesionales'
+      description: 'Aprende mientras cenas en familia',
+      icon: faCloudMoon,
+      iconColor: '#4169E1',
+      ideal: 'Familias y emprendedores',
+      color: '#002868',
+      borderColor: '#002868',
+      lifestyle: [
+        { icon: faUtensils, text: 'Durante cena' },
+        { icon: faChild, text: 'Niños cenando' },
+        { icon: faDumbbell, text: 'Post-ejercicio' }
+      ]
     },
     {
       id: 5,
       time: '8:00 PM - 9:00 PM',
       label: 'Noche',
-      description: 'Para noctámbulos: refuerza tu inglés al finalizar el día con energía.',
-      availability: 'Alta',
-      availabilityColor: 'success',
-      spots: 9,
-      totalSpots: 12,
-      teachers: ['Prof. Miguel', 'Prof. Patricia'],
-      ideal: 'Personas con agenda ocupada durante el día'
+      description: 'Cierra tu día con nuevos conocimientos',
+      icon: faMoon,
+      iconColor: '#191970',
+      ideal: 'Nocturnos y agenda ocupada',
+      color: '#002868',
+      borderColor: '#BF0A30',
+      lifestyle: [
+        { icon: faGamepad, text: 'Pre-relax' },
+        { icon: faBed, text: 'Pre-descanso' },
+        { icon: faHome, text: 'Tiempo personal' }
+      ]
     }
   ];
 
-  const weekDays = [
-    { id: 'lun', label: 'Lunes', short: 'L' },
-    { id: 'mar', label: 'Martes', short: 'M' },
-    { id: 'mie', label: 'Miércoles', short: 'M' },
-    { id: 'jue', label: 'Jueves', short: 'J' }
+  const timeZones = [
+    { zone: 'PST', diff: '-2 horas', location: 'California, Vancouver' },
+    { zone: 'MST', diff: '-1 hora', location: 'Denver, Phoenix' },
+    { zone: 'CST', diff: 'Hora base', location: 'México, Chicago', base: true },
+    { zone: 'EST', diff: '+1 hora', location: 'Nueva York, Toronto' },
+    { zone: 'GMT', diff: '+6 horas', location: 'Londres' },
+    { zone: 'CET', diff: '+7 horas', location: 'Madrid, París' }
   ];
 
-  const benefits = [
-    {
-      icon: faLaptop,
-      title: 'Clases 100% en línea',
-      description: 'Conectate desde cualquier lugar con internet'
-    },
-    {
-      icon: faUsers,
-      title: 'Grupos reducidos',
-      description: 'Máximo 12 estudiantes para atención personalizada'
-    },
-    {
-      icon: faHeadset,
-      title: 'Soporte técnico',
-      description: 'Asistencia inmediata durante las clases'
-    }
-  ];
-
-  const enrollmentSteps = [
-    {
-      icon: faUserEdit,
-      title: 'Regístrate',
-      description: 'Completa el formulario con tus datos'
-    },
-    {
-      icon: faClock,
-      title: 'Elige horario',
-      description: 'Selecciona el bloque que mejor te convenga'
-    },
-    {
-      icon: faCreditCard,
-      title: 'Realiza el pago',
-      description: 'Pago seguro en línea'
-    },
-    {
-      icon: faFileDownload,
-      title: 'Descarga tu guía',
-      description: 'Accede a los materiales del curso'
-    },
-    {
-      icon: faChalkboardTeacher,
-      title: '¡Comienza!',
-      description: 'Únete a tu primera clase'
-    }
-  ];
+  const dayActivities = {
+    lunes: { focus: 'Grammar Monday', activities: ['Estructuras nuevas', 'Reglas gramaticales', 'Ejercicios guiados'] },
+    martes: { focus: 'Talk Tuesday', activities: ['Conversación libre', 'Debates', 'Role-plays'] },
+    miercoles: { focus: 'World Wednesday', activities: ['Cultura y contexto', 'Videos reales', 'Comprensión auditiva'] },
+    jueves: { focus: 'Thinking Thursday', activities: ['Resolución de problemas', 'Presentaciones', 'Revisión semanal'] }
+  };
 
   const handleScheduleSelect = (schedule) => {
     setSelectedSchedule(schedule);
     setShowModal(true);
   };
 
-  const handleDayToggle = (dayId) => {
-    setSelectedDays(prev => {
-      if (prev.includes(dayId)) {
-        return prev.filter(d => d !== dayId);
-      } else {
-        return [...prev, dayId];
-      }
-    });
+  const styles = {
+    hero: {
+      background: 'linear-gradient(135deg, #002868 0%, #003f91 100%)',
+      color: 'white',
+      padding: '100px 0 60px',
+      position: 'relative',
+      overflow: 'hidden'
+    },
+    scheduleCard: {
+      background: 'white',
+      borderRadius: '20px',
+      padding: '30px',
+      height: '100%',
+      transition: 'all 0.4s ease',
+      position: 'relative',
+      overflow: 'hidden',
+      cursor: 'pointer',
+      border: '3px solid transparent'
+    },
+    featuredBadge: {
+      position: 'absolute',
+      top: '20px',
+      right: '20px',
+      background: '#FFD700',
+      color: '#002868',
+      padding: '5px 15px',
+      borderRadius: '20px',
+      fontSize: '0.8rem',
+      fontWeight: 'bold',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '5px'
+    },
+    timeIcon: {
+      width: '80px',
+      height: '80px',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      margin: '0 auto 20px',
+      background: '#f8f9fa',
+      transition: 'all 0.3s ease'
+    },
+    lifestyleItem: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px',
+      padding: '8px 15px',
+      background: '#f8f9fa',
+      borderRadius: '20px',
+      fontSize: '0.85rem',
+      marginBottom: '8px'
+    },
+    primaryButton: {
+      background: '#BF0A30',
+      color: 'white',
+      border: 'none',
+      padding: '12px 30px',
+      fontSize: '1rem',
+      fontWeight: 'bold',
+      borderRadius: '30px',
+      transition: 'all 0.3s ease'
+    },
+    outlineButton: {
+      background: 'transparent',
+      color: '#002868',
+      border: '2px solid #002868',
+      padding: '12px 30px',
+      fontSize: '1rem',
+      fontWeight: 'bold',
+      borderRadius: '30px',
+      transition: 'all 0.3s ease'
+    }
   };
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="schedules-hero">
+      {/* Hero Section - Más compacto */}
+      <section style={styles.hero}>
         <Container>
-          <Row className="align-items-center min-vh-60">
-            <Col lg={6}>
-              <Badge bg="warning" text="dark" className="mb-3">Horarios Flexibles</Badge>
-              <h1 className="display-4 fw-bold mb-4">
-                Encuentra el horario perfecto para ti
-              </h1>
-              <p className="lead mb-4">
-                Ofrecemos múltiples opciones de lunes a jueves para que puedas aprender 
-                inglés sin interrumpir tu rutina diaria. Cada sesión está diseñada para 
-                maximizar tu aprendizaje en solo 1 hora.
-              </p>
-              <div className="schedule-features">
-                <div className="feature-item mb-2">
-                  <FontAwesomeIcon icon={faCheck} className="text-success me-2" />
-                  <strong>4 horas semanales</strong> de práctica intensiva
-                </div>
-                <div className="feature-item mb-2">
-                  <FontAwesomeIcon icon={faCheck} className="text-success me-2" />
-                  <strong>Lunes a Jueves</strong> para mantener consistencia
-                </div>
-                <div className="feature-item mb-2">
-                  <FontAwesomeIcon icon={faCheck} className="text-success me-2" />
-                  <strong>Cambios flexibles</strong> con una semana de anticipación
-                </div>
-              </div>
-            </Col>
-            <Col lg={6} className="text-center">
-              <div className="schedule-visual">
-                <img 
-                  src="/imgs/horarios/horario.svg" 
-                  alt="Horarios flexibles" 
-                  className="img-fluid"
-                />
-              </div>
-            </Col>
-          </Row>
+          <div className="text-center">
+            <h1 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+              5 horarios, 5 estilos de vida
+            </h1>
+            <p style={{ fontSize: '1.2rem', opacity: 0.9, maxWidth: '600px', margin: '0 auto' }}>
+              Encuentra el momento perfecto del día para tu aprendizaje
+            </p>
+          </div>
         </Container>
       </section>
 
-      {/* How it Works */}
-      <section className="how-it-works py-5 bg-light">
+      {/* Schedule Cards - Sección principal */}
+      <section style={{ padding: '60px 0', marginTop: '-40px' }}>
         <Container>
-          <h2 className="text-center mb-5">Cómo funcionan nuestras clases</h2>
-          <Row className="g-4">
-            <Col lg={6}>
-              <Card className="info-card h-100 border-0 shadow-sm">
-                <Card.Body className="p-4">
-                  <h4 className="mb-4">
-                    <FontAwesomeIcon icon={faCalendarAlt} className="text-primary me-2" />
-                    Sistema de horarios
-                  </h4>
-                  <ul className="feature-list">
-                    <li>
-                      <strong>Horario fijo:</strong> Al inscribirte, eliges un bloque que mantendrás 
-                      durante todo el nivel.
-                    </li>
-                    <li>
-                      <strong>4 días a la semana:</strong> De lunes a jueves para crear un hábito 
-                      de estudio efectivo.
-                    </li>
-                    <li>
-                      <strong>1 hora diaria:</strong> Sesiones intensivas diseñadas para maximizar 
-                      tu aprendizaje.
-                    </li>
-                    <li>
-                      <strong>Plataforma:</strong> Clases en vivo a través de Google Classroom 
-                      con materiales interactivos.
-                    </li>
-                    <li>
-                      <strong>Flexibilidad:</strong> Puedes cambiar de horario al inicio de cada 
-                      nivel si lo necesitas.
-                    </li>
-                  </ul>
-                </Card.Body>
-              </Card>
-            </Col>
-            
-            <Col lg={6}>
-              <Card className="structure-card h-100 border-0 shadow-sm">
-                <Card.Body className="p-4">
-                  <h4 className="mb-4">
-                    <FontAwesomeIcon icon={faChalkboardTeacher} className="text-success me-2" />
-                    Estructura de cada clase
-                  </h4>
-                  <div className="class-timeline">
-                    <div className="timeline-item">
-                      <div className="timeline-badge">10 min</div>
-                      <div className="timeline-content">
-                        <h6>Calentamiento</h6>
-                        <p className="mb-0 text-muted">Revisión de conceptos previos y warm-up</p>
-                      </div>
-                    </div>
-                    <div className="timeline-item">
-                      <div className="timeline-badge">20 min</div>
-                      <div className="timeline-content">
-                        <h6>Tema nuevo</h6>
-                        <p className="mb-0 text-muted">Introducción de gramática y vocabulario</p>
-                      </div>
-                    </div>
-                    <div className="timeline-item">
-                      <div className="timeline-badge">25 min</div>
-                      <div className="timeline-content">
-                        <h6>Práctica activa</h6>
-                        <p className="mb-0 text-muted">Conversación y ejercicios interactivos</p>
-                      </div>
-                    </div>
-                    <div className="timeline-item">
-                      <div className="timeline-badge">5 min</div>
-                      <div className="timeline-content">
-                        <h6>Cierre</h6>
-                        <p className="mb-0 text-muted">Retroalimentación y tarea</p>
-                      </div>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-
-      {/* Schedule Cards */}
-      <section className="schedule-cards py-5">
-        <Container>
-          <h2 className="text-center mb-5">Horarios disponibles</h2>
-          
-          <Alert variant="info" className="text-center mb-5">
-            <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
-            Todos los horarios son en <strong>hora de México Central (CST)</strong>
-          </Alert>
-          
           <Row className="g-4">
             {schedules.map((schedule) => (
-              <Col key={schedule.id} xs={12} sm={6} lg={4} xl={2.4} className="d-flex">
-                <Card className="schedule-card w-100 border-0 shadow">
-                  {schedule.popular && (
-                    <div className="popular-badge">
-                      <FontAwesomeIcon icon={faStar} className="me-1" />
+              <Col key={schedule.id} md={6} lg={4} className="mb-4">
+                <div
+                  style={{
+                    ...styles.scheduleCard,
+                    borderColor: schedule.borderColor,
+                    borderWidth: schedule.featured ? '3px' : '2px'
+                  }}
+                  onClick={() => handleScheduleSelect(schedule)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-10px)';
+                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 40, 104, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  {schedule.featured && (
+                    <div style={styles.featuredBadge}>
+                      <FontAwesomeIcon icon={faStar} />
                       Más Popular
                     </div>
                   )}
-                  <Card.Body className="text-center p-4">
-                    <div className="schedule-icon mb-3">
-                      <FontAwesomeIcon icon={faClock} size="3x" className="text-primary" />
-                    </div>
-                    
-                    <h5 className="schedule-time">{schedule.time}</h5>
-                    <p className="schedule-label text-muted">{schedule.label}</p>
-                    
-                    <div className="availability-indicator mb-3">
-                      <Badge bg={schedule.availabilityColor}>
-                        {schedule.availability === 'Alta' && 'Lugares disponibles'}
-                        {schedule.availability === 'Media' && 'Pocos lugares'}
-                        {schedule.availability === 'Baja' && '¡Últimos lugares!'}
-                      </Badge>
-                    </div>
-                    
-                    <div className="spots-info mb-3">
-                      <small className="text-muted">
-                        {schedule.spots} de {schedule.totalSpots} lugares disponibles
-                      </small>
-                      <div className="progress mt-2" style={{ height: '5px' }}>
-                        <div 
-                          className={`progress-bar bg-${schedule.availabilityColor}`}
-                          style={{ width: `${(schedule.spots / schedule.totalSpots) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-                    
-                    <p className="schedule-desc small">{schedule.description}</p>
-                    
-                    <Button 
-                      variant="primary" 
-                      className="w-100"
-                      onClick={() => handleScheduleSelect(schedule)}
-                    >
-                      Seleccionar horario
-                    </Button>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </Container>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="benefits-section py-5 bg-light">
-        <Container>
-          <h2 className="text-center mb-5">Todos los horarios incluyen</h2>
-          <Row className="g-4">
-            {benefits.map((benefit, index) => (
-              <Col md={4} key={index}>
-                <Card className="benefit-card h-100 border-0 shadow-sm text-center">
-                  <Card.Body className="p-4">
-                    <div className="benefit-icon mb-3">
-                      <FontAwesomeIcon icon={benefit.icon} size="3x" className="text-primary" />
-                    </div>
-                    <h5>{benefit.title}</h5>
-                    <p className="text-muted mb-0">{benefit.description}</p>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-          
-          <Row className="mt-5">
-            <Col lg={8} className="mx-auto">
-              <Card className="special-features border-0 shadow">
-                <Card.Body className="p-5">
-                  <h4 className="text-center mb-4">Características especiales de nuestras clases</h4>
-                  <Row>
-                    <Col md={6}>
-                      <ul className="feature-list">
-                        <li>Profesores nativos y certificados</li>
-                        <li>Material digital incluido</li>
-                        <li>Grabaciones de clase disponibles</li>
-                        <li>Evaluaciones periódicas</li>
-                      </ul>
-                    </Col>
-                    <Col md={6}>
-                      <ul className="feature-list">
-                        <li>Retroalimentación personalizada</li>
-                        <li>Grupo de WhatsApp para dudas</li>
-                        <li>Actividades extra opcionales</li>
-                        <li>Certificado al completar el nivel</li>
-                      </ul>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-
-      {/* Enrollment Process */}
-      <section className="enrollment-process py-5">
-        <Container>
-          <h2 className="text-center mb-5">¿Cómo inscribirme?</h2>
-          <Row className="g-4 process-steps">
-            {enrollmentSteps.map((step, index) => (
-              <Col key={index} xs={12} sm={6} md={4} lg={2.4} className="text-center">
-                <div className="process-step-card">
-                  <div className="step-number">{index + 1}</div>
-                  <div className="step-icon mb-3">
-                    <FontAwesomeIcon icon={step.icon} size="2x" className="text-primary" />
+                  
+                  <div style={{
+                    ...styles.timeIcon,
+                    background: schedule.color + '10',
+                    color: schedule.iconColor
+                  }}>
+                    <FontAwesomeIcon icon={schedule.icon} size="2x" />
                   </div>
-                  <h6>{step.title}</h6>
-                  <p className="small text-muted">{step.description}</p>
-                  {index < enrollmentSteps.length - 1 && (
-                    <div className="step-arrow">
-                      <FontAwesomeIcon icon={faArrowRight} className="text-muted" />
-                    </div>
-                  )}
+                  
+                  <h4 style={{ color: schedule.color, marginBottom: '10px' }}>
+                    {schedule.time}
+                  </h4>
+                  <h5 style={{ color: '#002868', marginBottom: '15px' }}>
+                    {schedule.label}
+                  </h5>
+                  <p style={{ color: '#6c757d', marginBottom: '20px', fontSize: '0.95rem' }}>
+                    {schedule.description}
+                  </p>
+                  
+                  <div style={{ marginBottom: '20px' }}>
+                    <p style={{ 
+                      fontSize: '0.85rem', 
+                      color: '#495057',
+                      fontWeight: '600',
+                      marginBottom: '15px'
+                    }}>
+                      Perfecto si tu día incluye:
+                    </p>
+                    {schedule.lifestyle.map((item, idx) => (
+                      <div key={idx} style={styles.lifestyleItem}>
+                        <FontAwesomeIcon 
+                          icon={item.icon} 
+                          style={{ color: schedule.color, fontSize: '1rem' }}
+                        />
+                        <span>{item.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <Button 
+                    style={{
+                      ...styles.outlineButton,
+                      borderColor: schedule.color,
+                      color: schedule.color,
+                      width: '100%'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = schedule.color;
+                      e.currentTarget.style.color = 'white';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = schedule.color;
+                    }}
+                  >
+                    Este es mi horario
+                  </Button>
                 </div>
               </Col>
             ))}
@@ -411,78 +301,207 @@ const Horarios = () => {
         </Container>
       </section>
 
-      {/* Schedule Selection Modal */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
-        {selectedSchedule && (
-          <>
-            <Modal.Header closeButton>
-              <Modal.Title>
-                Confirmar horario: {selectedSchedule.time}
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Alert variant="info">
-                <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
-                Has seleccionado el horario de <strong>{selectedSchedule.label}</strong>
-              </Alert>
-              
-              <h5 className="mb-3">Información del horario:</h5>
-              <Row className="mb-4">
-                <Col md={6}>
-                  <p><strong>Horario:</strong> {selectedSchedule.time}</p>
-                  <p><strong>Disponibilidad:</strong> {selectedSchedule.spots} lugares disponibles</p>
-                  <p><strong>Ideal para:</strong> {selectedSchedule.ideal}</p>
-                </Col>
-                <Col md={6}>
-                  <p><strong>Profesores disponibles:</strong></p>
-                  <ul>
-                    {selectedSchedule.teachers.map((teacher, idx) => (
-                      <li key={idx}>{teacher}</li>
+      {/* Time Zone Converter */}
+      <section style={{ padding: '80px 0', background: '#f8f9fa' }}>
+        <Container>
+          <div className="text-center mb-5">
+            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: '#002868' }}>
+              ¿En qué zona horaria estás?
+            </h2>
+            <p style={{ fontSize: '1.1rem', color: '#6c757d' }}>
+              Todos nuestros horarios están en hora de México Central (CST)
+            </p>
+          </div>
+
+          <Row className="g-3">
+            {timeZones.map((tz, index) => (
+              <Col key={index} xs={6} md={4} lg={2}>
+                <div style={{
+                  background: tz.base ? '#002868' : 'white',
+                  color: tz.base ? 'white' : '#495057',
+                  borderRadius: '15px',
+                  padding: '20px',
+                  textAlign: 'center',
+                  border: tz.base ? 'none' : '2px solid #e9ecef',
+                  height: '100%'
+                }}>
+                  <h5 style={{ 
+                    fontSize: '1.2rem', 
+                    marginBottom: '10px',
+                    color: tz.base ? 'white' : '#002868'
+                  }}>
+                    {tz.zone}
+                  </h5>
+                  <p style={{ 
+                    fontSize: '0.9rem', 
+                    marginBottom: '5px',
+                    fontWeight: 'bold',
+                    color: tz.base ? '#FFD700' : '#BF0A30'
+                  }}>
+                    {tz.diff}
+                  </p>
+                  <small style={{ 
+                    fontSize: '0.75rem',
+                    opacity: tz.base ? 0.9 : 0.7
+                  }}>
+                    {tz.location}
+                  </small>
+                </div>
+              </Col>
+            ))}
+          </Row>
+
+          <div className="text-center mt-4">
+            <p style={{ color: '#6c757d', fontSize: '0.95rem' }}>
+              <FontAwesomeIcon icon={faGlobe} className="me-2" />
+              Ejemplo: Si estás en Nueva York y eliges 6:00 PM CST, tu clase será a las 7:00 PM EST
+            </p>
+          </div>
+        </Container>
+      </section>
+
+      {/* Weekly Focus */}
+      <section style={{ padding: '80px 0' }}>
+        <Container>
+          <div className="text-center mb-5">
+            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: '#002868' }}>
+              Cada día tiene un propósito
+            </h2>
+            <p style={{ fontSize: '1.1rem', color: '#6c757d' }}>
+              Metodología estructurada de lunes a jueves
+            </p>
+          </div>
+
+          <Row className="g-4">
+            {Object.entries(dayActivities).map(([day, info], index) => (
+              <Col key={day} md={6} lg={3}>
+                <div style={{
+                  background: index % 2 === 0 ? '#002868' : '#BF0A30',
+                  color: 'white',
+                  borderRadius: '20px',
+                  padding: '30px',
+                  height: '100%',
+                  textAlign: 'center'
+                }}>
+                  <h4 style={{ 
+                    textTransform: 'capitalize',
+                    marginBottom: '10px',
+                    fontSize: '1.3rem'
+                  }}>
+                    {day}
+                  </h4>
+                  <p style={{ 
+                    fontSize: '1.1rem',
+                    fontWeight: 'bold',
+                    color: '#FFD700',
+                    marginBottom: '20px'
+                  }}>
+                    {info.focus}
+                  </p>
+                  <ul style={{ 
+                    listStyle: 'none', 
+                    padding: 0,
+                    margin: 0,
+                    textAlign: 'left'
+                  }}>
+                    {info.activities.map((activity, idx) => (
+                      <li key={idx} style={{ 
+                        marginBottom: '10px',
+                        fontSize: '0.95rem',
+                        opacity: 0.9
+                      }}>
+                        • {activity}
+                      </li>
                     ))}
                   </ul>
-                </Col>
-              </Row>
-              
-              <h5 className="mb-3">Selecciona los días de la semana:</h5>
-              <div className="days-selector mb-4">
-                <Row className="g-2">
-                  {weekDays.map((day) => (
-                    <Col key={day.id} xs={3}>
-                      <Form.Check
-                        type="checkbox"
-                        id={`day-${day.id}`}
-                        label={day.label}
-                        checked={selectedDays.includes(day.id)}
-                        onChange={() => handleDayToggle(day.id)}
-                        className="day-checkbox"
-                      />
-                    </Col>
-                  ))}
+                </div>
+              </Col>
+            ))}
+          </Row>
+        </Container>
+      </section>
+
+      {/* Schedule Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
+        {selectedSchedule && (
+          <>
+            <Modal.Header closeButton style={{ border: 'none', padding: '30px 30px 0' }}>
+              <Modal.Title style={{ color: '#002868', fontSize: '1.8rem' }}>
+                Excelente elección
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body style={{ padding: '30px' }}>
+              <div style={{
+                background: selectedSchedule.color + '10',
+                borderRadius: '15px',
+                padding: '20px',
+                marginBottom: '25px'
+              }}>
+                <Row className="align-items-center">
+                  <Col md={2} className="text-center">
+                    <FontAwesomeIcon 
+                      icon={selectedSchedule.icon} 
+                      style={{ fontSize: '3rem', color: selectedSchedule.iconColor }}
+                    />
+                  </Col>
+                  <Col md={10}>
+                    <h4 style={{ color: selectedSchedule.color, marginBottom: '10px' }}>
+                      {selectedSchedule.label}: {selectedSchedule.time}
+                    </h4>
+                    <p style={{ margin: 0, color: '#495057' }}>
+                      {selectedSchedule.description}
+                    </p>
+                  </Col>
                 </Row>
               </div>
-              
-              {selectedDays.length === 4 && (
-                <Alert variant="success">
-                  <FontAwesomeIcon icon={faCheck} className="me-2" />
-                  Perfecto! Has seleccionado los 4 días de clase.
-                </Alert>
-              )}
-              
-              {selectedDays.length > 0 && selectedDays.length < 4 && (
-                <Alert variant="warning">
-                  Recuerda que las clases son de lunes a jueves. 
-                  Has seleccionado {selectedDays.length} de 4 días.
-                </Alert>
-              )}
+
+              <Row>
+                <Col md={6}>
+                  <h6 style={{ color: '#002868', marginBottom: '15px' }}>
+                    Tu semana de aprendizaje:
+                  </h6>
+                  <ul style={{ paddingLeft: '20px', color: '#6c757d' }}>
+                    <li>Lunes: Grammar Monday</li>
+                    <li>Martes: Talk Tuesday</li>
+                    <li>Miércoles: World Wednesday</li>
+                    <li>Jueves: Thinking Thursday</li>
+                  </ul>
+                </Col>
+                <Col md={6}>
+                  <h6 style={{ color: '#002868', marginBottom: '15px' }}>
+                    Próximos pasos:
+                  </h6>
+                  <ol style={{ paddingLeft: '20px', color: '#6c757d' }}>
+                    <li>Completa tu registro</li>
+                    <li>Recibe tu acceso</li>
+                    <li>Únete a tu primera clase</li>
+                  </ol>
+                </Col>
+              </Row>
             </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowModal(false)}>
-                Cancelar
+            <Modal.Footer style={{ border: 'none', padding: '0 30px 30px' }}>
+              <Button 
+                variant="secondary" 
+                onClick={() => setShowModal(false)}
+                style={{
+                  padding: '12px 30px',
+                  borderRadius: '30px'
+                }}
+              >
+                Cambiar horario
               </Button>
               <Button 
-                variant="primary" 
-                disabled={selectedDays.length !== 4}
+                style={{
+                  ...styles.primaryButton,
+                  padding: '12px 40px'
+                }}
                 href="/registro"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#9f0825';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#BF0A30';
+                }}
               >
                 Continuar con el registro
                 <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
@@ -493,20 +512,43 @@ const Horarios = () => {
       </Modal>
 
       {/* CTA Section */}
-      <section className="cta-schedules py-5 bg-gradient">
-        <Container className="text-center">
-          <h2 className="mb-4 text-white">¿Ya elegiste tu horario ideal?</h2>
-          <p className="lead text-white mb-4">
-            No esperes más para comenzar tu aprendizaje. Nuestros grupos se llenan rápido.
+      <section style={{ 
+        background: 'linear-gradient(135deg, #002868 0%, #003f91 100%)',
+        color: 'white',
+        padding: '80px 0',
+        textAlign: 'center'
+      }}>
+        <Container>
+          <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>
+            ¿Ya encontraste tu horario ideal?
+          </h2>
+          <p style={{ fontSize: '1.2rem', marginBottom: '3rem', opacity: 0.9 }}>
+            El primer paso hacia tu meta de hablar inglés está a un clic
           </p>
-          <div className="d-flex gap-3 justify-content-center flex-wrap">
-            <Button variant="warning" size="lg" className="px-5" href="/registro">
-              Inscribirme ahora
-            </Button>
-            <Button variant="outline-light" size="lg" className="px-5" href="/contacto">
-              Tengo dudas
-            </Button>
-          </div>
+          
+          <Button 
+            size="lg"
+            style={{ 
+              background: '#FFD700',
+              color: '#002868',
+              border: 'none',
+              padding: '15px 50px',
+              fontSize: '1.1rem',
+              fontWeight: 'bold',
+              borderRadius: '30px',
+              transition: 'all 0.3s ease'
+            }}
+            href="/registro"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            <FontAwesomeIcon icon={faCalendarAlt} className="me-2" />
+            Reservar mi lugar ahora
+          </Button>
         </Container>
       </section>
     </>
