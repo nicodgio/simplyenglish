@@ -15,6 +15,7 @@ import Certificaciones from './pages/Certificaciones';
 import Clases from './pages/Clases';
 import Horarios from './pages/Horarios';
 import Precios from './pages/Precios';
+import CertificacionCENNI from './pages/CertificacionCENNI';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/nosotros" element={<About />} />
             <Route path="/certificaciones" element={<Certificaciones />} />
+            <Route path="/certificacion-cenni" element={<CertificacionCENNI />} />
             <Route path="/clases" element={<Clases />} />
             <Route path="/horarios" element={<Horarios />} />
             <Route path="/precios" element={<Precios />} />

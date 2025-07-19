@@ -22,6 +22,7 @@ const NavigationBar = () => {
             <Nav.Link as={Link} to="/">Inicio</Nav.Link>
             <Nav.Link as={Link} to="/nosotros">Nosotros</Nav.Link>
             <Nav.Link as={Link} to="/certificaciones">Certificaciones</Nav.Link>
+            <Nav.Link as={Link} to="/certificacion-cenni">CENNI</Nav.Link>
             <Nav.Link as={Link} to="/clases">Clases</Nav.Link>
             <Nav.Link as={Link} to="/horarios">Horarios</Nav.Link>
             <Nav.Link as={Link} to="/precios">Precios</Nav.Link>
