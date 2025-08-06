@@ -16,7 +16,8 @@ import Clases from './pages/Clases';
 import Horarios from './pages/Horarios';
 import Precios from './pages/Precios';
 import CertificacionCENNI from './pages/CertificacionCENNI';
-
+import Contacto from './pages/Contacto';
+import Registro from './pages/Registro';
 
 function App() {
   return (
@@ -32,9 +33,8 @@ function App() {
             <Route path="/clases" element={<Clases />} />
             <Route path="/horarios" element={<Horarios />} />
             <Route path="/precios" element={<Precios />} />
-            {/* Rutas pendientes de implementar */}
-            <Route path="/contacto" element={<div className="container py-5"><h1>Contacto - En construcción</h1></div>} />
-            <Route path="/registro" element={<div className="container py-5"><h1>Registro - En construcción</h1></div>} />
+            <Route path="/contacto" element={<Contacto />} />
+            <Route path="/registro" element={<Registro />} />
           </Routes>
         </main>
         <Footer />

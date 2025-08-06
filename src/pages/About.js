@@ -41,36 +41,26 @@ const About = () => {
   }, []);
 
   const styles = {
-    hero: {
-      background: '#002868',
+    header: {
+      background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
       color: 'white',
-      padding: '80px 0',
-      position: 'relative',
-      overflow: 'hidden'
+      padding: '100px 0 80px',
+      position: 'relative'
     },
-    heroPattern: {
+    headerPattern: {
       position: 'absolute',
       top: 0,
+      left: 0,
       right: 0,
-      width: '50%',
-      height: '100%',
-      background: 'url("data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-      opacity: 0.1
+      bottom: 0,
+      opacity: 0.03,
+      backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
+      backgroundSize: '40px 40px'
     },
     container: {
       maxWidth: '1200px',
       margin: '0 auto',
       padding: '0 15px'
-    },
-    badge: {
-      background: 'rgba(255, 255, 255, 0.2)',
-      color: 'white',
-      padding: '8px 20px',
-      borderRadius: '25px',
-      display: 'inline-block',
-      marginBottom: '20px',
-      backdropFilter: 'blur(10px)',
-      border: '1px solid rgba(255, 255, 255, 0.3)'
     },
     statsCard: {
       background: 'white',
@@ -85,10 +75,7 @@ const About = () => {
     statsNumber: {
       fontSize: '3rem',
       fontWeight: 'bold',
-      background: 'linear-gradient(135deg, #002868 0%, #BF0A30 100%)',
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-      backgroundClip: 'text',
+      color: '#002868',
       marginBottom: '10px'
     },
     missionCard: {
@@ -233,6 +220,23 @@ const About = () => {
       boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
       padding: '30px',
       marginBottom: '20px'
+    },
+    benefitsGrid: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '15px',
+      marginTop: '40px',
+      flexWrap: 'nowrap'
+    },
+    benefitItem: {
+      display: 'flex',
+      alignItems: 'center',
+      background: 'rgba(255, 255, 255, 0.1)',
+      padding: '10px 18px',
+      borderRadius: '12px',
+      border: '1px solid rgba(255, 255, 255, 0.2)',
+      whiteSpace: 'nowrap',
+      fontSize: '0.95rem'
     }
   };
 
@@ -252,54 +256,65 @@ const About = () => {
     teacher: '👨‍🏫',
     comments: '💬',
     laptop: '💻',
-    rocket: '🚀'
+    rocket: '🚀',
+    shield: '🛡️'
   };
 
   return (
     <>
-      {/* Hero Section */}
-      <section style={styles.hero}>
-        <div style={styles.heroPattern} />
+      {/* Hero Section Mejorado */}
+      <section style={styles.header}>
+        <div style={styles.headerPattern} />
         <div style={styles.container}>
-          <div style={styles.row}>
-            <div style={{ ...styles.col, flex: '0 0 50%' }}>
-              <div style={{ ...styles.badge, marginBottom: '30px' }}>
-                {icons.star} Desde 2021 - Puerto Vallarta
-              </div>
-              <h1 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1.5rem', color: 'white' }}>
-                Transformamos el futuro<br />
-                a través del inglés
-              </h1>
-              <p style={{ fontSize: '1.3rem', opacity: 0.9, marginBottom: '2rem', color: 'white' }}>
-                En Simply English, creemos que dominar el inglés es más que aprender un idioma: 
-                es abrir puertas a oportunidades globales ilimitadas.
-              </p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ color: '#4CAF50', fontSize: '1.5rem', marginRight: '10px' }}>{icons.check}</span>
-                  <span>Certificación CONOCER</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ color: '#4CAF50', fontSize: '1.5rem', marginRight: '10px' }}>{icons.check}</span>
-                  <span>100% Online</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ color: '#4CAF50', fontSize: '1.5rem', marginRight: '10px' }}>{icons.check}</span>
-                  <span>Validez SEP</span>
-                </div>
-              </div>
+          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '8px',
+              padding: '12px 24px',
+              display: 'inline-block',
+              marginBottom: '30px'
+            }}>
+              {icons.shield} Centro Educativo Autorizado
             </div>
-            <div style={{ ...styles.col, flex: '0 0 50%', textAlign: 'center' }}>
-              <img
-                src="/imgs/about/about.webp"
-                alt="Simply English Academy"
-                style={{ 
-                  width: '100%', 
-                  maxWidth: '500px', 
-                  borderRadius: '20px',
-                  boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
-                }}
-              />
+            <h1 style={{ 
+              fontSize: '3.5rem', 
+              fontWeight: '700', 
+              marginBottom: '24px',
+              color: 'white'
+            }}>
+              Transformamos vidas<br />
+              <span style={{ color: '#f8fafc' }}>a través del inglés</span>
+            </h1>
+            <p style={{ 
+              fontSize: '1.3rem', 
+              opacity: 0.9, 
+              marginBottom: '40px',
+              maxWidth: '600px',
+              margin: '0 auto 40px',
+              color: 'white'
+            }}>
+              En Simply English, creemos que dominar el inglés es más que aprender un idioma: 
+              es abrir puertas a oportunidades globales ilimitadas.
+            </p>
+            
+            {/* Beneficios principales */}
+            <div style={styles.benefitsGrid}>
+              <div style={styles.benefitItem}>
+                <span style={{ color: '#4CAF50', fontSize: '1.2rem', marginRight: '10px' }}>{icons.check}</span>
+                <span style={{ fontWeight: '600' }}>Certificación CONOCER</span>
+              </div>
+              <div style={styles.benefitItem}>
+                <span style={{ color: '#4CAF50', fontSize: '1.2rem', marginRight: '10px' }}>{icons.check}</span>
+                <span style={{ fontWeight: '600' }}>Clases 100% en vivo</span>
+              </div>
+              <div style={styles.benefitItem}>
+                <span style={{ color: '#4CAF50', fontSize: '1.2rem', marginRight: '10px' }}>{icons.check}</span>
+                <span style={{ fontWeight: '600' }}>Validez SEP</span>
+              </div>
+              <div style={styles.benefitItem}>
+                <span style={{ color: '#4CAF50', fontSize: '1.2rem', marginRight: '10px' }}>{icons.check}</span>
+                <span style={{ fontWeight: '600' }}>Desde 2021</span>
+              </div>
             </div>
           </div>
         </div>
@@ -308,14 +323,14 @@ const About = () => {
       {/* Stats Section */}
       <section className="stats-section" style={{ ...styles.sectionPadding, marginTop: '-50px' }}>
         <div style={styles.container}>
-          <div style={{ ...styles.row, justifyContent: 'space-around' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
             {[
               { number: counters.years, suffix: '+', label: 'Años de experiencia', icon: icons.trophy, color: '#002868' },
               { number: counters.students, suffix: '+', label: 'Estudiantes graduados', icon: icons.graduation, color: '#BF0A30' },
               { number: counters.satisfaction, suffix: '%', label: 'Satisfacción', icon: icons.star, color: '#002868' },
               { number: counters.companies, suffix: '+', label: 'Empresas aliadas', icon: icons.handshake, color: '#BF0A30' }
             ].map((stat, index) => (
-              <div key={index} style={{ ...styles.col, flex: '0 0 22%' }}>
+              <div key={index} style={{ flex: '1', minWidth: '200px', maxWidth: '250px' }}>
                 <div 
                   style={styles.statsCard}
                   onMouseEnter={(e) => {
