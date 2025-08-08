@@ -706,36 +706,6 @@ const Registro = () => {
           </div>
         </div>
       </section>
-
-      <footer style={{ 
-        background: '#f8fafc',
-        color: '#1f2937',
-        padding: '40px 0',
-        textAlign: 'center',
-        borderTop: '1px solid #e5e7eb'
-      }}>
-        <div style={styles.container}>
-          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <div style={{ marginBottom: '20px' }}>
-              <FontAwesomeIcon icon={faGraduationCap} style={{ fontSize: '2rem', marginBottom: '15px', color: '#002868' }} />
-              <h5 style={{ marginBottom: '10px', color: '#002868', fontWeight: '600' }}>Simply English</h5>
-              <p style={{ color: '#4b5563', margin: 0, fontSize: '1rem' }}>
-                Centro educativo autorizado para la enseñanza del idioma inglés y aplicación de exámenes CENNI
-              </p>
-            </div>
-            
-            <div style={{ 
-              borderTop: '1px solid #d1d5db',
-              paddingTop: '20px',
-              fontSize: '0.9rem'
-            }}>
-              <p style={{ margin: 0, color: '#6b7280' }}>
-                © 2025 Simply English. Todos los derechos reservados. | Centro Evaluador CENNI Autorizado por SEP
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
