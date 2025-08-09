@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faUserPlus, faGraduationCap, faCertificate, faInfoCircle,
@@ -9,7 +9,6 @@ import {
 
 const Registro = () => {
   const [formData, setFormData] = useState({
-    // Datos personales
     nombre: '',
     apellidoPaterno: '',
     apellidoMaterno: '',
@@ -21,8 +20,6 @@ const Registro = () => {
     ciudad: '',
     estado: '',
     codigoPostal: '',
-    
-    // Datos académicos
     programaInteres: '',
     nivelActual: '',
     experienciaPrevia: '',
@@ -33,6 +30,15 @@ const Registro = () => {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState('success');
+
+  useEffect(() => {
+    document.title = 'Registro de Estudiantes - Simply English | Inscríbete Ahora';
+    
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.content = 'Regístrate en Simply English. Cursos de inglés desde $1,245/mes. Certificación CENNI disponible. Evaluación gratuita de nivel. Inscripción en línea.';
+    }
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -46,12 +52,10 @@ const Registro = () => {
     e.preventDefault();
     console.log('Registro enviado:', formData);
     
-    // Mostrar alerta de éxito
     setAlertType('success');
     setShowAlert(true);
     setTimeout(() => setShowAlert(false), 7000);
     
-    // Reset form
     setFormData({
       nombre: '',
       apellidoPaterno: '',
@@ -74,8 +78,8 @@ const Registro = () => {
   };
 
   const programasDisponibles = [
-    { value: 'simply-mensual', label: 'Simply English - Plan Mensual ($1,000 MXN/mes)' },
-    { value: 'simply-trimestral', label: 'Simply English - Plan Trimestral ($2,700 MXN)' },
+    { value: 'simply-mensual', label: 'Simply English - Plan Mensual ($1,245 MXN/mes)' },
+    { value: 'simply-trimestral', label: 'Simply English - Plan Trimestral ($3,110 MXN)' },
     { value: 'cenni-basico', label: 'Certificación CENNI Básico ($1,866 MXN)' },
     { value: 'cenni-plus', label: 'Certificación CENNI Plus ($2,488 MXN)' },
     { value: 'cenni-pro', label: 'Certificación CENNI Pro ($3,420 MXN)' }
@@ -95,13 +99,16 @@ const Registro = () => {
     container: {
       maxWidth: '1200px',
       margin: '0 auto',
-      padding: '0 20px'
+      padding: '0 15px',
+      width: '100%',
+      boxSizing: 'border-box'
     },
     header: {
       background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
       color: 'white',
-      padding: '100px 0 80px',
-      position: 'relative'
+      padding: 'clamp(60px, 10vw, 100px) 0 clamp(40px, 8vw, 80px)',
+      position: 'relative',
+      overflow: 'hidden'
     },
     headerPattern: {
       position: 'absolute',
@@ -113,136 +120,169 @@ const Registro = () => {
       backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: '40px 40px'
     },
+    badge: {
+      background: 'rgba(255, 255, 255, 0.1)',
+      color: 'white',
+      padding: 'clamp(8px, 1.5vw, 12px) clamp(16px, 3vw, 24px)',
+      borderRadius: '25px',
+      display: 'inline-block',
+      marginBottom: 'clamp(20px, 4vw, 30px)',
+      border: '1px solid rgba(255, 255, 255, 0.3)',
+      fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)'
+    },
     academicCard: {
       background: 'white',
       border: '1px solid #e5e7eb',
       borderRadius: '12px',
-      padding: '40px',
+      padding: 'clamp(25px, 4vw, 40px)',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-      marginBottom: '30px'
+      marginBottom: 'clamp(20px, 4vw, 30px)'
     },
     formControl: {
       border: '2px solid #e5e7eb',
       borderRadius: '8px',
-      padding: '12px 16px',
-      fontSize: '1rem',
+      padding: 'clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 16px)',
+      fontSize: 'clamp(0.9rem, 1.5vw, 1rem)',
       transition: 'all 0.3s ease',
       backgroundColor: '#f8fafc',
       width: '100%',
-      marginBottom: '20px'
+      marginBottom: 'clamp(15px, 3vw, 20px)',
+      boxSizing: 'border-box'
     },
     formLabel: {
       fontWeight: '600',
       color: '#002868',
-      marginBottom: '8px',
-      display: 'block'
+      marginBottom: 'clamp(6px, 1vw, 8px)',
+      display: 'block',
+      fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
     },
     officialButton: {
       background: '#002868',
       color: 'white',
       border: 'none',
-      padding: '16px 32px',
-      fontSize: '1.1rem',
+      padding: 'clamp(12px, 2vw, 16px) clamp(20px, 4vw, 32px)',
+      fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)',
       fontWeight: '600',
       borderRadius: '8px',
       transition: 'all 0.3s ease',
       cursor: 'pointer',
       textDecoration: 'none',
-      display: 'inline-block'
+      display: 'inline-block',
+      textAlign: 'center',
+      marginBottom: '15px',
+      marginRight: '15px'
     },
     secondaryButton: {
       background: 'transparent',
       color: '#002868',
       border: '2px solid #002868',
-      padding: '16px 32px',
-      fontSize: '1.1rem',
+      padding: 'clamp(12px, 2vw, 16px) clamp(20px, 4vw, 32px)',
+      fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)',
       fontWeight: '600',
       borderRadius: '8px',
       transition: 'all 0.3s ease',
       cursor: 'pointer',
       textDecoration: 'none',
-      display: 'inline-block'
+      display: 'inline-block',
+      textAlign: 'center',
+      marginBottom: '15px'
     },
     warningBox: {
       background: '#fef3c7',
       border: '2px solid #f59e0b',
       borderRadius: '12px',
-      padding: '25px',
-      marginBottom: '30px'
+      padding: 'clamp(20px, 4vw, 25px)',
+      marginBottom: 'clamp(20px, 4vw, 30px)'
     },
     successAlert: {
       background: '#d1fae5',
       border: '1px solid #10b981',
       borderRadius: '8px',
-      padding: '16px',
+      padding: 'clamp(12px, 2vw, 16px)',
       marginBottom: '20px',
-      color: '#065f46'
-    },
-    row: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '20px',
-      marginBottom: '20px'
-    },
-    col: {
-      flex: '1',
-      minWidth: '250px'
-    },
-    colHalf: {
-      flex: '1',
-      minWidth: '200px'
-    },
-    colThird: {
-      flex: '1',
-      minWidth: '150px'
+      color: '#065f46',
+      fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
     },
     sectionTitle: {
       color: '#002868',
-      fontSize: '1.5rem',
+      fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
       fontWeight: '600',
-      marginBottom: '25px',
+      marginBottom: 'clamp(20px, 4vw, 25px)',
       paddingBottom: '10px',
       borderBottom: '2px solid #e5e7eb'
     },
     textArea: {
-      minHeight: '100px',
+      minHeight: 'clamp(80px, 15vw, 100px)',
       resize: 'vertical',
       fontFamily: 'inherit'
+    },
+    sectionPadding: {
+      padding: 'clamp(40px, 8vw, 80px) 0'
+    },
+    mainGrid: {
+      display: 'grid',
+      gridTemplateColumns: '1fr',
+      gap: 'clamp(20px, 4vw, 40px)'
+    },
+    formGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+      gap: 'clamp(15px, 3vw, 20px)',
+      marginBottom: 'clamp(15px, 3vw, 20px)'
+    },
+    formGridHalf: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: 'clamp(15px, 3vw, 20px)',
+      marginBottom: 'clamp(15px, 3vw, 20px)'
+    },
+    formGridThird: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+      gap: 'clamp(15px, 3vw, 20px)',
+      marginBottom: 'clamp(15px, 3vw, 20px)'
+    },
+    buttonGroup: {
+      display: 'flex',
+      gap: '15px',
+      flexWrap: 'wrap',
+      justifyContent: 'flex-start'
     }
   };
 
+  // Media query para desktop
+  if (typeof window !== 'undefined' && window.innerWidth > 768) {
+    styles.mainGrid.gridTemplateColumns = '2fr 1fr';
+  }
+
   return (
-    <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
-      <section style={styles.header}>
+    <main style={{ background: '#f8fafc', minHeight: '100vh', overflowX: 'hidden', width: '100%' }}>
+      <section style={styles.header} aria-label="Registro de estudiantes">
         <div style={styles.headerPattern} />
         <div style={styles.container}>
           <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={{ 
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '8px',
-              padding: '12px 24px',
-              display: 'inline-block',
-              marginBottom: '30px'
-            }}>
-              <FontAwesomeIcon icon={faUserPlus} className="me-2" />
+            <div style={styles.badge}>
+              <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
               Registro de Estudiantes
             </div>
             <h1 style={{ 
-              fontSize: '3.5rem', 
+              fontSize: 'clamp(2rem, 6vw, 3.5rem)', 
               fontWeight: '700', 
               marginBottom: '24px',
-              color: 'white'
+              color: 'white',
+              lineHeight: '1.2'
             }}>
               Únete a Simply English<br />
               <span style={{ color: '#f8fafc' }}>Comienza tu camino al éxito</span>
             </h1>
             <p style={{ 
-              fontSize: '1.3rem', 
+              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', 
               opacity: 0.9, 
               marginBottom: '0',
               maxWidth: '600px',
               margin: '0 auto',
-              color: 'white'
+              color: 'white',
+              padding: '0 15px'
             }}>
               Regístrate en nuestros programas académicos y certificaciones oficiales
             </p>
@@ -250,26 +290,40 @@ const Registro = () => {
         </div>
       </section>
 
-      <section style={{ padding: '80px 0', marginTop: '-40px' }}>
+      <section style={{ ...styles.sectionPadding, marginTop: 'clamp(-30px, -5vw, -40px)' }} aria-label="Formulario de registro">
         <div style={styles.container}>
           
-          {/* Aviso importante */}
           <div style={styles.warningBox}>
-            <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'flex-start',
+              flexDirection: window.innerWidth < 480 ? 'column' : 'row',
+              gap: '15px'
+            }}>
               <FontAwesomeIcon 
                 icon={faExclamationTriangle} 
                 style={{ 
                   color: '#f59e0b',
-                  fontSize: '1.5rem',
-                  marginRight: '15px',
-                  marginTop: '3px'
+                  fontSize: 'clamp(1.2rem, 2vw, 1.5rem)',
+                  marginTop: '3px',
+                  flexShrink: 0
                 }}
               />
               <div style={{ flex: 1 }}>
-                <h5 style={{ color: '#92400e', marginBottom: '10px', fontWeight: '600' }}>
+                <h5 style={{ 
+                  color: '#92400e', 
+                  marginBottom: '10px', 
+                  fontWeight: '600',
+                  fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
+                }}>
                   ¡Recomendación importante!
                 </h5>
-                <p style={{ color: '#92400e', marginBottom: '20px', lineHeight: '1.6' }}>
+                <p style={{ 
+                  color: '#92400e', 
+                  marginBottom: '20px', 
+                  lineHeight: '1.6',
+                  fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+                }}>
                   Antes de completar tu registro, te recomendamos hablar con uno de nuestros 
                   asesores académicos para que te ayude a elegir el programa que mejor se adapte 
                   a tu nivel actual y objetivos de aprendizaje.
@@ -280,7 +334,8 @@ const Registro = () => {
                     ...styles.secondaryButton,
                     background: '#f59e0b',
                     color: 'white',
-                    border: 'none'
+                    border: 'none',
+                    marginRight: '0'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = '#d97706';
@@ -288,6 +343,7 @@ const Registro = () => {
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = '#f59e0b';
                   }}
+                  aria-label="Contactar con asesor académico"
                 >
                   <FontAwesomeIcon icon={faHeadset} style={{ marginRight: '10px' }} />
                   Hablar con un asesor
@@ -303,19 +359,18 @@ const Registro = () => {
             </div>
           )}
 
-          <div style={styles.row}>
-            <div style={{ flex: '2', minWidth: '600px' }}>
+          <div style={styles.mainGrid}>
+            <div>
               <div style={styles.academicCard}>
-                <div onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}>
                   
-                  {/* Datos Personales */}
                   <div style={styles.sectionTitle}>
                     <FontAwesomeIcon icon={faUser} style={{ marginRight: '10px' }} />
                     Datos Personales
                   </div>
 
-                  <div style={styles.row}>
-                    <div style={styles.colHalf}>
+                  <div style={styles.formGridHalf}>
+                    <div>
                       <label style={styles.formLabel}>Nombre *</label>
                       <input
                         type="text"
@@ -329,7 +384,7 @@ const Registro = () => {
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
-                    <div style={styles.colHalf}>
+                    <div>
                       <label style={styles.formLabel}>Apellido Paterno *</label>
                       <input
                         type="text"
@@ -345,8 +400,8 @@ const Registro = () => {
                     </div>
                   </div>
 
-                  <div style={styles.row}>
-                    <div style={styles.colHalf}>
+                  <div style={styles.formGridHalf}>
+                    <div>
                       <label style={styles.formLabel}>Apellido Materno</label>
                       <input
                         type="text"
@@ -359,7 +414,7 @@ const Registro = () => {
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
-                    <div style={styles.colHalf}>
+                    <div>
                       <label style={styles.formLabel}>Fecha de Nacimiento *</label>
                       <input
                         type="date"
@@ -374,8 +429,8 @@ const Registro = () => {
                     </div>
                   </div>
 
-                  <div style={styles.row}>
-                    <div style={styles.colHalf}>
+                  <div style={styles.formGridHalf}>
+                    <div>
                       <label style={styles.formLabel}>Email *</label>
                       <input
                         type="email"
@@ -389,7 +444,7 @@ const Registro = () => {
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
-                    <div style={styles.colHalf}>
+                    <div>
                       <label style={styles.formLabel}>Teléfono *</label>
                       <input
                         type="tel"
@@ -405,7 +460,7 @@ const Registro = () => {
                     </div>
                   </div>
 
-                  <div style={{ marginBottom: '20px' }}>
+                  <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
                     <label style={styles.formLabel}>Género</label>
                     <select
                       name="genero"
@@ -423,7 +478,7 @@ const Registro = () => {
                     </select>
                   </div>
 
-                  <div style={{ marginBottom: '20px' }}>
+                  <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
                     <label style={styles.formLabel}>Dirección *</label>
                     <input
                       type="text"
@@ -438,8 +493,8 @@ const Registro = () => {
                     />
                   </div>
 
-                  <div style={styles.row}>
-                    <div style={styles.colThird}>
+                  <div style={styles.formGridThird}>
+                    <div>
                       <label style={styles.formLabel}>Ciudad *</label>
                       <input
                         type="text"
@@ -453,7 +508,7 @@ const Registro = () => {
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
-                    <div style={styles.colThird}>
+                    <div>
                       <label style={styles.formLabel}>Estado *</label>
                       <input
                         type="text"
@@ -467,7 +522,7 @@ const Registro = () => {
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
-                    <div style={styles.colThird}>
+                    <div>
                       <label style={styles.formLabel}>Código Postal *</label>
                       <input
                         type="text"
@@ -483,13 +538,12 @@ const Registro = () => {
                     </div>
                   </div>
 
-                  {/* Información Académica */}
-                  <div style={{ ...styles.sectionTitle, marginTop: '40px' }}>
+                  <div style={{ ...styles.sectionTitle, marginTop: 'clamp(30px, 6vw, 40px)' }}>
                     <FontAwesomeIcon icon={faGraduationCap} style={{ marginRight: '10px' }} />
                     Información Académica
                   </div>
 
-                  <div style={{ marginBottom: '20px' }}>
+                  <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
                     <label style={styles.formLabel}>Programa de Interés *</label>
                     <select
                       name="programaInteres"
@@ -509,7 +563,7 @@ const Registro = () => {
                     </select>
                   </div>
 
-                  <div style={{ marginBottom: '20px' }}>
+                  <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
                     <label style={styles.formLabel}>Nivel Actual de Inglés *</label>
                     <select
                       name="nivelActual"
@@ -529,8 +583,8 @@ const Registro = () => {
                     </select>
                   </div>
 
-                  <div style={styles.row}>
-                    <div style={styles.colHalf}>
+                  <div style={styles.formGridHalf}>
+                    <div>
                       <label style={styles.formLabel}>Horario de Preferencia</label>
                       <select
                         name="horarioPreferencia"
@@ -541,14 +595,15 @@ const Registro = () => {
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       >
                         <option value="">Selecciona un horario</option>
-                        <option value="matutino">Matutino (9:00 AM - 12:00 PM)</option>
-                        <option value="vespertino">Vespertino (2:00 PM - 5:00 PM)</option>
-                        <option value="nocturno">Nocturno (6:00 PM - 9:00 PM)</option>
-                        <option value="sabados">Sábados</option>
+                        <option value="4pm-5pm">4:00 PM - 5:00 PM</option>
+                        <option value="5pm-6pm">5:00 PM - 6:00 PM</option>
+                        <option value="6pm-7pm">6:00 PM - 7:00 PM</option>
+                        <option value="7pm-8pm">7:00 PM - 8:00 PM</option>
+                        <option value="8pm-9pm">8:00 PM - 9:00 PM</option>
                         <option value="flexible">Flexible</option>
                       </select>
                     </div>
-                    <div style={styles.colHalf}>
+                    <div>
                       <label style={styles.formLabel}>Modalidad de Preferencia</label>
                       <select
                         name="modalidadPreferencia"
@@ -559,15 +614,15 @@ const Registro = () => {
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       >
                         <option value="">Selecciona modalidad</option>
+                        <option value="online">En línea (recomendado)</option>
                         <option value="presencial">Presencial</option>
-                        <option value="online">En línea</option>
                         <option value="hibrida">Híbrida</option>
                         <option value="sin-preferencia">Sin preferencia</option>
                       </select>
                     </div>
                   </div>
 
-                  <div style={{ marginBottom: '20px' }}>
+                  <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
                     <label style={styles.formLabel}>Experiencia Previa en Inglés</label>
                     <textarea
                       name="experienciaPrevia"
@@ -580,7 +635,7 @@ const Registro = () => {
                     />
                   </div>
 
-                  <div style={{ marginBottom: '30px' }}>
+                  <div style={{ marginBottom: 'clamp(20px, 4vw, 30px)' }}>
                     <label style={styles.formLabel}>Objetivos de Aprendizaje</label>
                     <textarea
                       name="objetivos"
@@ -593,9 +648,9 @@ const Registro = () => {
                     />
                   </div>
 
-                  <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                  <div style={styles.buttonGroup}>
                     <button 
-                      onClick={handleSubmit}
+                      type="submit"
                       style={styles.officialButton}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = '#001845';
@@ -605,6 +660,7 @@ const Registro = () => {
                         e.currentTarget.style.background = '#002868';
                         e.currentTarget.style.transform = 'scale(1)';
                       }}
+                      aria-label="Completar registro en Simply English"
                     >
                       <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
                       Completar Registro
@@ -621,28 +677,48 @@ const Registro = () => {
                         e.currentTarget.style.background = 'transparent';
                         e.currentTarget.style.color = '#002868';
                       }}
+                      aria-label="Contactar con asesor antes del registro"
                     >
                       <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '10px' }} />
                       Hablar primero con asesor
                     </a>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
 
-            <div style={{ flex: '1', minWidth: '300px' }}>
-              <div style={{ ...styles.academicCard, marginBottom: '30px' }}>
+            <div>
+              <div style={styles.academicCard}>
                 <div style={{ textAlign: 'center', marginBottom: '25px' }}>
-                  <FontAwesomeIcon icon={faInfoCircle} style={{ fontSize: '3rem', color: '#002868', marginBottom: '20px' }} />
-                  <h4 style={{ color: '#002868', marginBottom: '15px' }}>Información Importante</h4>
+                  <FontAwesomeIcon icon={faInfoCircle} style={{ 
+                    fontSize: 'clamp(2rem, 4vw, 3rem)', 
+                    color: '#002868', 
+                    marginBottom: '20px' 
+                  }} />
+                  <h4 style={{ 
+                    color: '#002868', 
+                    marginBottom: '15px',
+                    fontSize: 'clamp(1.1rem, 2vw, 1.3rem)'
+                  }}>
+                    Información Importante
+                  </h4>
                 </div>
                 
                 <div style={{ marginBottom: '25px' }}>
-                  <h6 style={{ color: '#BF0A30', marginBottom: '10px' }}>
+                  <h6 style={{ 
+                    color: '#BF0A30', 
+                    marginBottom: '10px',
+                    fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+                  }}>
                     <FontAwesomeIcon icon={faClipboardList} style={{ marginRight: '8px' }} />
                     Proceso de Inscripción
                   </h6>
-                  <ul style={{ paddingLeft: '20px', color: '#6b7280', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                  <ul style={{ 
+                    paddingLeft: '20px', 
+                    color: '#6b7280', 
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
+                    lineHeight: '1.6' 
+                  }}>
                     <li>Evaluación de nivel inicial</li>
                     <li>Confirmación de disponibilidad</li>
                     <li>Proceso de pago</li>
@@ -651,11 +727,20 @@ const Registro = () => {
                 </div>
 
                 <div style={{ marginBottom: '25px' }}>
-                  <h6 style={{ color: '#BF0A30', marginBottom: '10px' }}>
+                  <h6 style={{ 
+                    color: '#BF0A30', 
+                    marginBottom: '10px',
+                    fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+                  }}>
                     <FontAwesomeIcon icon={faBookOpen} style={{ marginRight: '8px' }} />
                     Documentos Requeridos
                   </h6>
-                  <ul style={{ paddingLeft: '20px', color: '#6b7280', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                  <ul style={{ 
+                    paddingLeft: '20px', 
+                    color: '#6b7280', 
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
+                    lineHeight: '1.6' 
+                  }}>
                     <li>Identificación oficial</li>
                     <li>Comprobante de domicilio</li>
                     <li>Fotografía tamaño infantil</li>
@@ -667,11 +752,19 @@ const Registro = () => {
                   background: '#f0f9ff',
                   border: '1px solid #0284c7',
                   borderRadius: '8px',
-                  padding: '15px',
+                  padding: 'clamp(12px, 2vw, 15px)',
                   textAlign: 'center'
                 }}>
-                  <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#0284c7', fontSize: '1.2rem', marginBottom: '8px' }} />
-                  <div style={{ fontSize: '0.9rem', fontWeight: '600', color: '#0284c7' }}>
+                  <FontAwesomeIcon icon={faCheckCircle} style={{ 
+                    color: '#0284c7', 
+                    fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
+                    marginBottom: '8px' 
+                  }} />
+                  <div style={{ 
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
+                    fontWeight: '600', 
+                    color: '#0284c7' 
+                  }}>
                     Respuesta en 24 horas
                   </div>
                 </div>
@@ -681,12 +774,26 @@ const Registro = () => {
                 background: 'white',
                 border: '2px solid #002868',
                 borderRadius: '12px',
-                padding: '25px',
+                padding: 'clamp(20px, 4vw, 25px)',
                 textAlign: 'center'
               }}>
-                <FontAwesomeIcon icon={faCertificate} style={{ fontSize: '2.5rem', color: '#BF0A30', marginBottom: '15px' }} />
-                <h5 style={{ color: '#002868', marginBottom: '10px' }}>Centro Autorizado</h5>
-                <p style={{ color: '#6b7280', fontSize: '0.9rem', marginBottom: '15px' }}>
+                <FontAwesomeIcon icon={faCertificate} style={{ 
+                  fontSize: 'clamp(2rem, 4vw, 2.5rem)', 
+                  color: '#BF0A30', 
+                  marginBottom: '15px' 
+                }} />
+                <h5 style={{ 
+                  color: '#002868', 
+                  marginBottom: '10px',
+                  fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
+                }}>
+                  Centro Autorizado
+                </h5>
+                <p style={{ 
+                  color: '#6b7280', 
+                  fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
+                  marginBottom: '15px' 
+                }}>
                   Evaluador oficial CENNI reconocido por la Secretaría de Educación Pública
                 </p>
                 <div style={{ 
@@ -694,7 +801,7 @@ const Registro = () => {
                   color: 'white',
                   padding: '8px 16px',
                   borderRadius: '20px',
-                  fontSize: '0.85rem',
+                  fontSize: 'clamp(0.7rem, 1.2vw, 0.85rem)',
                   fontWeight: '600',
                   display: 'inline-block'
                 }}>
@@ -706,7 +813,7 @@ const Registro = () => {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 };
 

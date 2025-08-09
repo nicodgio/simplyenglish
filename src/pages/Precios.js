@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Button, Card, Table, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faGraduationCap, faShieldAlt, faCertificate, faUsers, 
@@ -9,15 +8,22 @@ import {
   faCheckCircle, faPhoneAlt, faEnvelope, faMapMarkerAlt
 } from '@fortawesome/free-solid-svg-icons';
 
-const PreciosRediseño = () => {
+const Precios = () => {
   const [selectedSection, setSelectedSection] = useState('simply');
-  const [selectedPlan, setSelectedPlan] = useState('mensual');
-  const [selectedCenni, setSelectedCenni] = useState('pro');
+
+  useEffect(() => {
+    document.title = 'Precios y Planes - Simply English | Cursos de Inglés y Certificación CENNI';
+    
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.content = 'Planes de inglés desde $1,245/mes. Certificación CENNI desde $1,866. Precios transparentes, sin compromisos ocultos. Consulta gratuita.';
+    }
+  }, []);
 
   const simplyPlans = {
     mensual: {
       name: 'Plan Mensual',
-      price: 1000,
+      price: 1245,
       duration: 'mes',
       features: [
         'Clases en vivo grupales',
@@ -30,13 +36,13 @@ const PreciosRediseño = () => {
     },
     trimestral: {
       name: 'Plan Trimestral',
-      price: 2700,
-      originalPrice: 3000,
+      price: 3110,
+      originalPrice: 3735,
       duration: '3 meses',
-      savings: 300,
+      savings: 625,
       features: [
         'Todo lo del plan mensual',
-        'Precio preferencial (10% descuento)',
+        'Precio preferencial (17% descuento)',
         'Garantía de continuidad',
         'Evaluación integral trimestral',
         'Certificado de nivel completado',
@@ -97,8 +103,9 @@ const PreciosRediseño = () => {
     header: {
       background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
       color: 'white',
-      padding: '100px 0 80px',
-      position: 'relative'
+      padding: 'clamp(60px, 10vw, 100px) 0 clamp(40px, 8vw, 80px)',
+      position: 'relative',
+      overflow: 'hidden'
     },
     headerPattern: {
       position: 'absolute',
@@ -110,21 +117,31 @@ const PreciosRediseño = () => {
       backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: '40px 40px'
     },
+    badge: {
+      background: 'rgba(255, 255, 255, 0.1)',
+      color: 'white',
+      padding: 'clamp(8px, 1.5vw, 12px) clamp(16px, 3vw, 24px)',
+      borderRadius: '25px',
+      display: 'inline-block',
+      marginBottom: 'clamp(20px, 4vw, 30px)',
+      border: '1px solid rgba(255, 255, 255, 0.3)',
+      fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)'
+    },
     sectionNav: {
       background: 'white',
       borderRadius: '12px',
       padding: '8px',
       boxShadow: '0 4px 20px rgba(0, 40, 104, 0.1)',
       display: 'inline-flex',
-      marginBottom: '60px'
+      marginBottom: 'clamp(40px, 6vw, 60px)'
     },
     navButton: {
       background: 'transparent',
       border: 'none',
-      padding: '16px 32px',
+      padding: 'clamp(12px, 2vw, 16px) clamp(20px, 3vw, 32px)',
       borderRadius: '8px',
       fontWeight: '600',
-      fontSize: '1.1rem',
+      fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)',
       transition: 'all 0.3s ease',
       cursor: 'pointer'
     },
@@ -132,23 +149,25 @@ const PreciosRediseño = () => {
       background: 'white',
       border: '1px solid #e5e7eb',
       borderRadius: '12px',
-      padding: '40px',
+      padding: 'clamp(25px, 4vw, 40px)',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
       height: '100%',
-      transition: 'all 0.3s ease'
+      transition: 'all 0.3s ease',
+      display: 'flex',
+      flexDirection: 'column'
     },
     priceTag: {
-      fontSize: '3rem',
+      fontSize: 'clamp(2rem, 5vw, 3rem)',
       fontWeight: '700',
       color: '#002868',
       lineHeight: '1'
     },
-    badge: {
+    badgeRecommended: {
       background: '#BF0A30',
       color: 'white',
       padding: '6px 16px',
       borderRadius: '20px',
-      fontSize: '0.85rem',
+      fontSize: 'clamp(0.7rem, 1.3vw, 0.85rem)',
       fontWeight: '600',
       display: 'inline-block'
     },
@@ -161,7 +180,7 @@ const PreciosRediseño = () => {
       display: 'flex',
       alignItems: 'flex-start',
       marginBottom: '12px',
-      fontSize: '0.95rem'
+      fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)'
     },
     checkIcon: {
       color: '#10b981',
@@ -179,72 +198,91 @@ const PreciosRediseño = () => {
       background: '#f8fafc',
       border: '2px solid #002868',
       borderRadius: '12px',
-      padding: '30px',
+      padding: 'clamp(20px, 4vw, 30px)',
       textAlign: 'center'
     },
     officialButton: {
       background: '#002868',
       color: 'white',
       border: 'none',
-      padding: '16px 32px',
-      fontSize: '1.1rem',
+      padding: 'clamp(12px, 2vw, 16px) clamp(20px, 4vw, 32px)',
+      fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)',
       fontWeight: '600',
       borderRadius: '8px',
-      transition: 'all 0.3s ease'
+      transition: 'all 0.3s ease',
+      textDecoration: 'none',
+      display: 'inline-block',
+      textAlign: 'center'
     },
     comparisonTable: {
       background: 'white',
       borderRadius: '12px',
       overflow: 'hidden',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
+    },
+    sectionPadding: {
+      padding: 'clamp(40px, 8vw, 80px) 0'
+    },
+    bgLight: {
+      background: '#f8fafc'
+    },
+    container: {
+      maxWidth: '1200px',
+      margin: '0 auto',
+      padding: '0 15px',
+      width: '100%',
+      boxSizing: 'border-box'
+    },
+    tableCell: {
+      padding: '15px',
+      fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
+    },
+    tableCellCenter: {
+      padding: '15px',
+      textAlign: 'center',
+      fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
     }
   };
 
   return (
-    <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
-      <section style={styles.header}>
+    <main style={{ background: '#f8fafc', minHeight: '100vh', overflowX: 'hidden', width: '100%' }}>
+      <section style={styles.header} aria-label="Precios y planes">
         <div style={styles.headerPattern} />
-        <Container>
-          <Row>
-            <Col lg={8} className="mx-auto text-center">
-              <div style={{ 
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '8px',
-                padding: '12px 24px',
-                display: 'inline-block',
-                marginBottom: '30px'
-              }}>
-                <FontAwesomeIcon icon={faUniversity} className="me-2" />
-                Institución Certificada
-              </div>
-              <h1 style={{ 
-                fontSize: '3.5rem', 
-                fontWeight: '700', 
-                marginBottom: '24px',
-                color: 'white'
-              }}>
-                Programas de Inglés y<br />
-                <span style={{ color: '#f8fafc' }}>Certificación CENNI</span>
-              </h1>
-              <p style={{ 
-                fontSize: '1.3rem', 
-                opacity: 0.9, 
-                marginBottom: '0',
-                maxWidth: '600px',
-                margin: '0 auto',
-                color: 'white'
-              }}>
-                Formación académica de excelencia y certificación oficial 
-                reconocida por la Secretaría de Educación Pública
-              </p>
-            </Col>
-          </Row>
-        </Container>
+        <div style={styles.container}>
+          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+            <div style={styles.badge}>
+              <FontAwesomeIcon icon={faUniversity} style={{ marginRight: '10px' }} />
+              Institución Certificada
+            </div>
+            <h1 style={{ 
+              fontSize: 'clamp(2rem, 6vw, 3.5rem)', 
+              fontWeight: '700', 
+              marginBottom: '24px',
+              color: 'white',
+              lineHeight: '1.2'
+            }}>
+              Programas de Inglés y<br />
+              <span style={{ color: '#f8fafc' }}>Certificación CENNI</span>
+            </h1>
+            <p style={{ 
+              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', 
+              opacity: 0.9, 
+              marginBottom: '0',
+              maxWidth: '600px',
+              margin: '0 auto',
+              color: 'white',
+              padding: '0 15px'
+            }}>
+              Formación académica de excelencia y certificación oficial 
+              reconocida por la Secretaría de Educación Pública
+            </p>
+          </div>
+        </div>
       </section>
 
-      <section style={{ padding: '80px 0', marginTop: '-40px' }}>
-        <Container>
-          <div className="text-center mb-5">
+      <section style={{ ...styles.sectionPadding, marginTop: 'clamp(-30px, -5vw, -40px)' }} aria-label="Selección de programas">
+        <div style={styles.container}>
+          <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
             <div style={styles.sectionNav}>
               <button
                 style={{
@@ -253,8 +291,9 @@ const PreciosRediseño = () => {
                   color: selectedSection === 'simply' ? 'white' : '#6b7280'
                 }}
                 onClick={() => setSelectedSection('simply')}
+                aria-label="Ver precios del curso Simply English"
               >
-                <FontAwesomeIcon icon={faGraduationCap} className="me-2" />
+                <FontAwesomeIcon icon={faGraduationCap} style={{ marginRight: '8px' }} />
                 Curso Simply English
               </button>
               <button
@@ -264,8 +303,9 @@ const PreciosRediseño = () => {
                   color: selectedSection === 'cenni' ? 'white' : '#6b7280'
                 }}
                 onClick={() => setSelectedSection('cenni')}
+                aria-label="Ver precios de certificación CENNI"
               >
-                <FontAwesomeIcon icon={faCertificate} className="me-2" />
+                <FontAwesomeIcon icon={faCertificate} style={{ marginRight: '8px' }} />
                 Certificación CENNI
               </button>
             </div>
@@ -273,576 +313,991 @@ const PreciosRediseño = () => {
 
           {selectedSection === 'simply' && (
             <>
-              <Row className="mb-5">
-                <Col lg={8} className="mx-auto text-center">
-                  <h2 style={{ fontSize: '2.5rem', fontWeight: '700', color: '#002868', marginBottom: '20px' }}>
-                    Programa Académico Simply English
-                  </h2>
-                  <p style={{ fontSize: '1.2rem', color: '#6b7280', marginBottom: '40px' }}>
-                    Metodología estructurada para el dominio del idioma inglés con enfoque comunicativo
-                  </p>
-                </Col>
-              </Row>
+              <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
+                <h2 style={{ 
+                  fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
+                  fontWeight: '700', 
+                  color: '#002868', 
+                  marginBottom: '20px' 
+                }}>
+                  Programa Académico Simply English
+                </h2>
+                <p style={{ 
+                  fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
+                  color: '#6b7280', 
+                  marginBottom: '40px' 
+                }}>
+                  Metodología estructurada para el dominio del idioma inglés con enfoque comunicativo
+                </p>
+              </div>
 
-              <Row className="align-items-center mb-5">
-                <Col lg={6}>
-                  <div style={styles.governmentSeal}>
-                    <FontAwesomeIcon icon={faShieldAlt} style={{ fontSize: '3rem', color: '#002868', marginBottom: '20px' }} />
-                    <h4 style={{ color: '#002868', marginBottom: '15px' }}>Programa Oficial</h4>
-                    <p style={{ color: '#6b7280', marginBottom: '20px' }}>
-                      Curso estructurado con validez académica y reconocimiento institucional
-                    </p>
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', flexWrap: 'wrap' }}>
-                      <div className="text-center">
-                        <FontAwesomeIcon icon={faUsers} style={{ color: '#002868', fontSize: '1.5rem' }} />
-                        <div style={{ fontSize: '0.9rem', color: '#6b7280', marginTop: '5px' }}>Grupos Reducidos</div>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: 'clamp(20px, 4vw, 40px)',
+                alignItems: 'center',
+                marginBottom: 'clamp(2rem, 4vw, 3rem)'
+              }}>
+                <div style={styles.governmentSeal}>
+                  <FontAwesomeIcon icon={faShieldAlt} style={{ 
+                    fontSize: 'clamp(2rem, 4vw, 3rem)', 
+                    color: '#002868', 
+                    marginBottom: '20px' 
+                  }} />
+                  <h4 style={{ 
+                    color: '#002868', 
+                    marginBottom: '15px',
+                    fontSize: 'clamp(1rem, 2vw, 1.2rem)'
+                  }}>
+                    Programa Oficial
+                  </h4>
+                  <p style={{ 
+                    color: '#6b7280', 
+                    marginBottom: '20px',
+                    fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+                  }}>
+                    Curso estructurado con validez académica y reconocimiento institucional
+                  </p>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    gap: 'clamp(20px, 4vw, 30px)', 
+                    flexWrap: 'wrap' 
+                  }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <FontAwesomeIcon icon={faUsers} style={{ 
+                        color: '#002868', 
+                        fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' 
+                      }} />
+                      <div style={{ 
+                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
+                        color: '#6b7280', 
+                        marginTop: '5px' 
+                      }}>
+                        Grupos Reducidos
                       </div>
-                      <div className="text-center">
-                        <FontAwesomeIcon icon={faClock} style={{ color: '#002868', fontSize: '1.5rem' }} />
-                        <div style={{ fontSize: '0.9rem', color: '#6b7280', marginTop: '5px' }}>Horarios Flexibles</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <FontAwesomeIcon icon={faClock} style={{ 
+                        color: '#002868', 
+                        fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' 
+                      }} />
+                      <div style={{ 
+                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
+                        color: '#6b7280', 
+                        marginTop: '5px' 
+                      }}>
+                        Horarios Flexibles
                       </div>
-                      <div className="text-center">
-                        <FontAwesomeIcon icon={faAward} style={{ color: '#002868', fontSize: '1.5rem' }} />
-                        <div style={{ fontSize: '0.9rem', color: '#6b7280', marginTop: '5px' }}>Certificación</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <FontAwesomeIcon icon={faAward} style={{ 
+                        color: '#002868', 
+                        fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' 
+                      }} />
+                      <div style={{ 
+                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
+                        color: '#6b7280', 
+                        marginTop: '5px' 
+                      }}>
+                        Certificación
                       </div>
                     </div>
                   </div>
-                </Col>
-                <Col lg={6}>
-                  <div style={{ padding: '40px 0' }}>
-                    <h3 style={{ color: '#002868', marginBottom: '25px' }}>Características del Programa</h3>
+                </div>
+                
+                <div style={{ padding: 'clamp(20px, 4vw, 40px) 0' }}>
+                  <h3 style={{ 
+                    color: '#002868', 
+                    marginBottom: '25px',
+                    fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)'
+                  }}>
+                    Características del Programa
+                  </h3>
+                  <ul style={styles.featureList}>
+                    <li style={styles.featureItem}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                      <span>Metodología comunicativa basada en competencias</span>
+                    </li>
+                    <li style={styles.featureItem}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                      <span>8 niveles estructurados del Marco Común Europeo</span>
+                    </li>
+                    <li style={styles.featureItem}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                      <span>Profesores certificados y especializados</span>
+                    </li>
+                    <li style={styles.featureItem}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                      <span>Material académico actualizado</span>
+                    </li>
+                    <li style={styles.featureItem}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                      <span>Evaluaciones de progreso continuas</span>
+                    </li>
+                    <li style={styles.featureItem}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                      <span>Plataforma digital complementaria</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: 'clamp(20px, 4vw, 30px)'
+              }}>
+                <article style={styles.academicCard}>
+                  <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                    <h3 style={{ 
+                      color: '#002868', 
+                      marginBottom: '10px',
+                      fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)'
+                    }}>
+                      {simplyPlans.mensual.name}
+                    </h3>
+                    <div style={styles.priceTag}>
+                      ${simplyPlans.mensual.price}
+                    </div>
+                    <div style={{ 
+                      color: '#6b7280', 
+                      fontSize: 'clamp(1rem, 1.8vw, 1.1rem)' 
+                    }}>
+                      MXN por {simplyPlans.mensual.duration}
+                    </div>
+                  </div>
+                  
+                  <div style={{ marginBottom: '30px', flex: '1' }}>
+                    <h5 style={{ 
+                      color: '#002868', 
+                      marginBottom: '20px',
+                      fontSize: 'clamp(1rem, 1.8vw, 1.1rem)'
+                    }}>
+                      Incluye:
+                    </h5>
                     <ul style={styles.featureList}>
-                      <li style={styles.featureItem}>
-                        <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                        <span>Metodología comunicativa basada en competencias</span>
-                      </li>
-                      <li style={styles.featureItem}>
-                        <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                        <span>8 niveles estructurados del Marco Común Europeo</span>
-                      </li>
-                      <li style={styles.featureItem}>
-                        <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                        <span>Profesores certificados y especializados</span>
-                      </li>
-                      <li style={styles.featureItem}>
-                        <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                        <span>Material académico actualizado</span>
-                      </li>
-                      <li style={styles.featureItem}>
-                        <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                        <span>Evaluaciones de progreso continuas</span>
-                      </li>
-                      <li style={styles.featureItem}>
-                        <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                        <span>Plataforma digital complementaria</span>
-                      </li>
+                      {simplyPlans.mensual.features.map((feature, index) => (
+                        <li key={index} style={styles.featureItem}>
+                          <FontAwesomeIcon icon={faCheck} style={styles.checkIcon} />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
-                </Col>
-              </Row>
 
-              <Row className="g-4">
-                <Col lg={6}>
-                  <Card style={{ 
-                    ...styles.academicCard,
-                    display: 'flex',
-                    flexDirection: 'column'
+                  <a
+                    href="/registro"
+                    style={{
+                      ...styles.officialButton,
+                      width: '100%',
+                      marginTop: 'auto'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#001845';
+                      e.currentTarget.style.transform = 'scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = '#002868';
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                    aria-label="Inscribirse al plan mensual"
+                  >
+                    <FontAwesomeIcon icon={faFileAlt} style={{ marginRight: '8px' }} />
+                    Inscribirse
+                  </a>
+                </article>
+
+                <article style={{
+                  ...styles.academicCard,
+                  border: '2px solid #BF0A30',
+                  position: 'relative'
+                }}>
+                  <div style={{ 
+                    position: 'absolute',
+                    top: '-15px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: '#BF0A30',
+                    color: 'white',
+                    padding: '8px 24px',
+                    borderRadius: '20px',
+                    fontSize: 'clamp(0.7rem, 1.3vw, 0.9rem)',
+                    fontWeight: '600'
                   }}>
-                    <div className="text-center mb-4">
-                      <h3 style={{ color: '#002868', marginBottom: '10px' }}>{simplyPlans.mensual.name}</h3>
-                      <div style={styles.priceTag}>
-                        ${simplyPlans.mensual.price}
-                      </div>
-                      <div style={{ color: '#6b7280', fontSize: '1.1rem' }}>MXN por {simplyPlans.mensual.duration}</div>
-                    </div>
-                    
-                    <div className="mb-4" style={{ flex: '1' }}>
-                      <h5 style={{ color: '#002868', marginBottom: '20px' }}>Incluye:</h5>
-                      <ul style={styles.featureList}>
-                        {simplyPlans.mensual.features.map((feature, index) => (
-                          <li key={index} style={styles.featureItem}>
-                            <FontAwesomeIcon icon={faCheck} style={styles.checkIcon} />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    Recomendado
+                  </div>
 
-                    <Button 
-                      style={styles.officialButton}
-                      className="w-100 mt-auto"
-                      size="lg"
-                      href="/registro"
-                    >
-                      <FontAwesomeIcon icon={faFileAlt} className="me-2" />
-                      Inscribirse
-                    </Button>
-                  </Card>
-                </Col>
-
-                <Col lg={6}>
-                  <Card style={{ 
-                    ...styles.academicCard,
-                    border: '2px solid #BF0A30',
-                    position: 'relative',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}>
-                    <div style={{ 
-                      position: 'absolute',
-                      top: '-15px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      background: '#BF0A30',
-                      color: 'white',
-                      padding: '8px 24px',
-                      borderRadius: '20px',
-                      fontSize: '0.9rem',
-                      fontWeight: '600'
+                  <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                    <h3 style={{ 
+                      color: '#002868', 
+                      marginBottom: '10px',
+                      fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)'
                     }}>
-                      Recomendado
+                      {simplyPlans.trimestral.name}
+                    </h3>
+                    <div style={{ 
+                      textDecoration: 'line-through',
+                      color: '#9ca3af',
+                      fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+                      marginBottom: '5px'
+                    }}>
+                      ${simplyPlans.trimestral.originalPrice} MXN
                     </div>
+                    <div style={styles.priceTag}>
+                      ${simplyPlans.trimestral.price}
+                    </div>
+                    <div style={{ 
+                      color: '#6b7280', 
+                      fontSize: 'clamp(1rem, 1.8vw, 1.1rem)' 
+                    }}>
+                      MXN por {simplyPlans.trimestral.duration}
+                    </div>
+                    <div style={{ 
+                      background: '#10b981',
+                      color: 'white',
+                      padding: '4px 12px',
+                      borderRadius: '12px',
+                      fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                      display: 'inline-block',
+                      marginTop: '10px'
+                    }}>
+                      Ahorras ${simplyPlans.trimestral.savings} MXN
+                    </div>
+                  </div>
+                  
+                  <div style={{ marginBottom: '30px', flex: '1' }}>
+                    <h5 style={{ 
+                      color: '#002868', 
+                      marginBottom: '20px',
+                      fontSize: 'clamp(1rem, 1.8vw, 1.1rem)'
+                    }}>
+                      Incluye:
+                    </h5>
+                    <ul style={styles.featureList}>
+                      {simplyPlans.trimestral.features.map((feature, index) => (
+                        <li key={index} style={styles.featureItem}>
+                          <FontAwesomeIcon icon={faCheck} style={styles.checkIcon} />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-                    <div className="text-center mb-4">
-                      <h3 style={{ color: '#002868', marginBottom: '10px' }}>{simplyPlans.trimestral.name}</h3>
-                      <div style={{ 
-                        textDecoration: 'line-through',
-                        color: '#9ca3af',
-                        fontSize: '1.2rem',
-                        marginBottom: '5px'
-                      }}>
-                        ${simplyPlans.trimestral.originalPrice} MXN
-                      </div>
-                      <div style={styles.priceTag}>
-                        ${simplyPlans.trimestral.price}
-                      </div>
-                      <div style={{ color: '#6b7280', fontSize: '1.1rem' }}>MXN por {simplyPlans.trimestral.duration}</div>
-                      <div style={{ 
-                        background: '#10b981',
-                        color: 'white',
-                        padding: '4px 12px',
-                        borderRadius: '12px',
-                        fontSize: '0.9rem',
-                        display: 'inline-block',
-                        marginTop: '10px'
-                      }}>
-                        Ahorras ${simplyPlans.trimestral.savings} MXN
-                      </div>
-                    </div>
-                    
-                    <div className="mb-4" style={{ flex: '1' }}>
-                      <h5 style={{ color: '#002868', marginBottom: '20px' }}>Incluye:</h5>
-                      <ul style={styles.featureList}>
-                        {simplyPlans.trimestral.features.map((feature, index) => (
-                          <li key={index} style={styles.featureItem}>
-                            <FontAwesomeIcon icon={faCheck} style={styles.checkIcon} />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <Button 
-                      style={{ ...styles.officialButton, background: '#BF0A30' }}
-                      className="w-100 mt-auto"
-                      size="lg"
-                      href="/registro"
-                    >
-                      <FontAwesomeIcon icon={faFileAlt} className="me-2" />
-                      Inscribirse
-                    </Button>
-                  </Card>
-                </Col>
-              </Row>
+                  <a
+                    href="/registro"
+                    style={{
+                      ...styles.officialButton,
+                      background: '#BF0A30',
+                      width: '100%',
+                      marginTop: 'auto'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#9f0825';
+                      e.currentTarget.style.transform = 'scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = '#BF0A30';
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                    aria-label="Inscribirse al plan trimestral recomendado"
+                  >
+                    <FontAwesomeIcon icon={faFileAlt} style={{ marginRight: '8px' }} />
+                    Inscribirse
+                  </a>
+                </article>
+              </div>
             </>
           )}
 
           {selectedSection === 'cenni' && (
             <>
-              <Row className="mb-5">
-                <Col lg={8} className="mx-auto text-center">
-                  <h2 style={{ fontSize: '2.5rem', fontWeight: '700', color: '#002868', marginBottom: '20px' }}>
-                    Certificación CENNI
-                  </h2>
-                  <p style={{ fontSize: '1.2rem', color: '#6b7280', marginBottom: '20px' }}>
-                    Certificación Nacional de Nivel de Idioma - Reconocimiento Oficial SEP
-                  </p>
-                  <div style={styles.badge}>
-                    <FontAwesomeIcon icon={faShieldAlt} className="me-2" />
-                    Centro Evaluador Autorizado
-                  </div>
-                </Col>
-              </Row>
+              <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
+                <h2 style={{ 
+                  fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
+                  fontWeight: '700', 
+                  color: '#002868', 
+                  marginBottom: '20px' 
+                }}>
+                  Certificación CENNI
+                </h2>
+                <p style={{ 
+                  fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
+                  color: '#6b7280', 
+                  marginBottom: '20px' 
+                }}>
+                  Certificación Nacional de Nivel de Idioma - Reconocimiento Oficial SEP
+                </p>
+                <div style={styles.badgeRecommended}>
+                  <FontAwesomeIcon icon={faShieldAlt} style={{ marginRight: '8px' }} />
+                  Centro Evaluador Autorizado
+                </div>
+              </div>
 
-              <Row className="align-items-center mb-5">
-                <Col lg={4}>
-                  <div style={{ 
-                    background: 'white',
-                    border: '3px solid #002868',
-                    borderRadius: '12px',
-                    padding: '30px',
-                    textAlign: 'center'
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: 'clamp(20px, 4vw, 40px)',
+                alignItems: 'center',
+                marginBottom: 'clamp(2rem, 4vw, 3rem)'
+              }}>
+                <div style={{ 
+                  background: 'white',
+                  border: '3px solid #002868',
+                  borderRadius: '12px',
+                  padding: 'clamp(20px, 4vw, 30px)',
+                  textAlign: 'center'
+                }}>
+                  <FontAwesomeIcon icon={faCertificate} style={{ 
+                    fontSize: 'clamp(2.5rem, 5vw, 4rem)', 
+                    color: '#BF0A30', 
+                    marginBottom: '20px' 
+                  }} />
+                  <h4 style={{ 
+                    color: '#002868', 
+                    marginBottom: '15px',
+                    fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                   }}>
-                    <FontAwesomeIcon icon={faCertificate} style={{ fontSize: '4rem', color: '#BF0A30', marginBottom: '20px' }} />
-                    <h4 style={{ color: '#002868', marginBottom: '15px' }}>Validez Oficial</h4>
-                    <p style={{ color: '#6b7280', fontSize: '0.95rem' }}>
-                      Reconocido por la Secretaría de Educación Pública y empresas nacionales e internacionales
-                    </p>
+                    Validez Oficial
+                  </h4>
+                  <p style={{ 
+                    color: '#6b7280', 
+                    fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)' 
+                  }}>
+                    Reconocido por la Secretaría de Educación Pública y empresas nacionales e internacionales
+                  </p>
+                </div>
+                
+                <div style={{ padding: 'clamp(10px, 2vw, 20px) 0' }}>
+                  <h3 style={{ 
+                    color: '#002868', 
+                    marginBottom: '25px',
+                    fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)'
+                  }}>
+                    ¿Qué es el CENNI?
+                  </h3>
+                  <p style={{ 
+                    fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)', 
+                    color: '#6b7280', 
+                    marginBottom: '25px' 
+                  }}>
+                    La Certificación Nacional de Nivel de Idioma (CENNI) es el instrumento oficial 
+                    de la Secretaría de Educación Pública para evaluar y certificar el nivel de 
+                    dominio del idioma inglés de acuerdo al Marco Común Europeo de Referencia.
+                  </p>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '15px'
+                  }}>
+                    <div>
+                      <ul style={styles.featureList}>
+                        <li style={styles.featureItem}>
+                          <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                          <span>Validez nacional e internacional</span>
+                        </li>
+                        <li style={styles.featureItem}>
+                          <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                          <span>Reconocido por universidades</span>
+                        </li>
+                        <li style={styles.featureItem}>
+                          <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                          <span>Requerido por empresas</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <ul style={styles.featureList}>
+                        <li style={styles.featureItem}>
+                          <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                          <span>Evaluación integral de habilidades</span>
+                        </li>
+                        <li style={styles.featureItem}>
+                          <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                          <span>Certificado digital y físico</span>
+                        </li>
+                        <li style={styles.featureItem}>
+                          <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
+                          <span>Vigencia permanente</span>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                </Col>
-                <Col lg={8}>
-                  <div style={{ padding: '20px 0' }}>
-                    <h3 style={{ color: '#002868', marginBottom: '25px' }}>¿Qué es el CENNI?</h3>
-                    <p style={{ fontSize: '1.1rem', color: '#6b7280', marginBottom: '25px' }}>
-                      La Certificación Nacional de Nivel de Idioma (CENNI) es el instrumento oficial 
-                      de la Secretaría de Educación Pública para evaluar y certificar el nivel de 
-                      dominio del idioma inglés de acuerdo al Marco Común Europeo de Referencia.
-                    </p>
-                    <Row>
-                      <Col md={6}>
-                        <ul style={styles.featureList}>
-                          <li style={styles.featureItem}>
-                            <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                            <span>Validez nacional e internacional</span>
-                          </li>
-                          <li style={styles.featureItem}>
-                            <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                            <span>Reconocido por universidades</span>
-                          </li>
-                          <li style={styles.featureItem}>
-                            <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                            <span>Requerido por empresas</span>
-                          </li>
-                        </ul>
-                      </Col>
-                      <Col md={6}>
-                        <ul style={styles.featureList}>
-                          <li style={styles.featureItem}>
-                            <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                            <span>Evaluación integral de habilidades</span>
-                          </li>
-                          <li style={styles.featureItem}>
-                            <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                            <span>Certificado digital y físico</span>
-                          </li>
-                          <li style={styles.featureItem}>
-                            <FontAwesomeIcon icon={faCheckCircle} style={styles.checkIcon} />
-                            <span>Vigencia permanente</span>
-                          </li>
-                        </ul>
-                      </Col>
-                    </Row>
-                  </div>
-                </Col>
-              </Row>
+                </div>
+              </div>
 
-              <Row className="g-4 mb-5">
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: 'clamp(20px, 4vw, 30px)',
+                marginBottom: 'clamp(2rem, 4vw, 3rem)'
+              }}>
                 {Object.entries(cenniOptions).map(([key, option]) => (
-                  <Col lg={4} key={key}>
-                    <Card style={{ 
+                  <article
+                    key={key}
+                    style={{
                       ...styles.academicCard,
                       border: option.popular ? '2px solid #BF0A30' : '1px solid #e5e7eb',
-                      position: 'relative',
-                      height: 'auto'
-                    }}>
-                      {option.popular && (
-                        <div style={{ 
-                          position: 'absolute',
-                          top: '-15px',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          background: '#BF0A30',
-                          color: 'white',
-                          padding: '8px 20px',
-                          borderRadius: '20px',
-                          fontSize: '0.85rem',
-                          fontWeight: '600'
-                        }}>
-                          Más Popular
-                        </div>
-                      )}
-
-                      <div className="text-center mb-4">
-                        <h4 style={{ color: '#002868', marginBottom: '10px' }}>{option.name}</h4>
-                        <div style={{ ...styles.priceTag, fontSize: '2.5rem' }}>
-                          ${option.price}
-                        </div>
-                        <div style={{ color: '#6b7280', fontSize: '1rem' }}>MXN</div>
-                        <p style={{ color: '#6b7280', fontSize: '0.95rem', marginTop: '15px', marginBottom: '0' }}>
-                          {option.description}
-                        </p>
+                      position: 'relative'
+                    }}
+                  >
+                    {option.popular && (
+                      <div style={{ 
+                        position: 'absolute',
+                        top: '-15px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        background: '#BF0A30',
+                        color: 'white',
+                        padding: '8px 20px',
+                        borderRadius: '20px',
+                        fontSize: 'clamp(0.7rem, 1.3vw, 0.85rem)',
+                        fontWeight: '600'
+                      }}>
+                        Más Popular
                       </div>
+                    )}
 
-                      <div className="mb-4">
-                        <h6 style={{ color: '#10b981', marginBottom: '15px' }}>
-                          <FontAwesomeIcon icon={faCheck} className="me-2" />
-                          Incluye:
+                    <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                      <h4 style={{ 
+                        color: '#002868', 
+                        marginBottom: '10px',
+                        fontSize: 'clamp(1.1rem, 2vw, 1.3rem)'
+                      }}>
+                        {option.name}
+                      </h4>
+                      <div style={{ ...styles.priceTag, fontSize: 'clamp(1.8rem, 4vw, 2.5rem)' }}>
+                        ${option.price}
+                      </div>
+                      <div style={{ 
+                        color: '#6b7280', 
+                        fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' 
+                      }}>
+                        MXN
+                      </div>
+                      <p style={{ 
+                        color: '#6b7280', 
+                        fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)', 
+                        marginTop: '15px', 
+                        marginBottom: '0' 
+                      }}>
+                        {option.description}
+                      </p>
+                    </div>
+
+                    <div style={{ marginBottom: '30px' }}>
+                      <h6 style={{ 
+                        color: '#10b981', 
+                        marginBottom: '15px',
+                        fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+                      }}>
+                        <FontAwesomeIcon icon={faCheck} style={{ marginRight: '8px' }} />
+                        Incluye:
+                      </h6>
+                      <ul style={styles.featureList}>
+                        {option.includes.map((item, index) => (
+                          <li key={index} style={styles.featureItem}>
+                            <FontAwesomeIcon icon={faCheck} style={styles.checkIcon} />
+                            <span style={{ fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)' }}>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {option.excludes && (
+                      <div style={{ marginBottom: '30px' }}>
+                        <h6 style={{ 
+                          color: '#ef4444', 
+                          marginBottom: '15px',
+                          fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+                        }}>
+                          No incluye:
                         </h6>
                         <ul style={styles.featureList}>
-                          {option.includes.map((item, index) => (
+                          {option.excludes.map((item, index) => (
                             <li key={index} style={styles.featureItem}>
-                              <FontAwesomeIcon icon={faCheck} style={styles.checkIcon} />
-                              <span style={{ fontSize: '0.9rem' }}>{item}</span>
+                              <span style={{ 
+                                color: '#ef4444', 
+                                marginRight: '12px', 
+                                fontSize: '1.1rem' 
+                              }}>
+                                ×
+                              </span>
+                              <span style={{ 
+                                fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
+                                color: '#6b7280' 
+                              }}>
+                                {item}
+                              </span>
                             </li>
                           ))}
                         </ul>
                       </div>
+                    )}
 
-                      {option.excludes && (
-                        <div className="mb-4">
-                          <h6 style={{ color: '#ef4444', marginBottom: '15px' }}>
-                            No incluye:
-                          </h6>
-                          <ul style={styles.featureList}>
-                            {option.excludes.map((item, index) => (
-                              <li key={index} style={styles.featureItem}>
-                                <span style={{ color: '#ef4444', marginRight: '12px', fontSize: '1.1rem' }}>×</span>
-                                <span style={{ fontSize: '0.9rem', color: '#6b7280' }}>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      <Button 
-                        style={{
-                          ...styles.officialButton,
-                          background: option.popular ? '#BF0A30' : '#002868'
-                        }}
-                        className="w-100"
-                        size="lg"
-                        href="/registro"
-                      >
-                        <FontAwesomeIcon icon={faClipboardCheck} className="me-2" />
-                        Solicitar
-                      </Button>
-                    </Card>
-                  </Col>
+                    <a
+                      href="/registro"
+                      style={{
+                        ...styles.officialButton,
+                        background: option.popular ? '#BF0A30' : '#002868',
+                        width: '100%',
+                        marginTop: 'auto'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = option.popular ? '#9f0825' : '#001845';
+                        e.currentTarget.style.transform = 'scale(1.02)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = option.popular ? '#BF0A30' : '#002868';
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
+                      aria-label={`Solicitar certificación ${option.name}`}
+                    >
+                      <FontAwesomeIcon icon={faClipboardCheck} style={{ marginRight: '8px' }} />
+                      Solicitar
+                    </a>
+                  </article>
                 ))}
-              </Row>
+              </div>
 
-              <Row>
-                <Col lg={10} className="mx-auto">
-                  <div style={styles.comparisonTable}>
-                    <div style={{ 
-                      background: '#002868',
+              <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                <div style={styles.comparisonTable}>
+                  <div style={{ 
+                    background: '#002868',
+                    color: 'white',
+                    padding: 'clamp(15px, 3vw, 20px)',
+                    textAlign: 'center'
+                  }}>
+                    <h4 style={{ 
+                      margin: 0, 
                       color: 'white',
-                      padding: '20px',
-                      textAlign: 'center'
+                      fontSize: 'clamp(1.1rem, 2vw, 1.3rem)'
                     }}>
-                      <h4 style={{ margin: 0, color: 'white' }}>
-                        <FontAwesomeIcon icon={faChartBar} className="me-2" />
-                        Comparación de Paquetes CENNI
-                      </h4>
-                    </div>
-                    <div style={{ padding: '30px' }}>
-                      <Table responsive style={{ margin: 0 }}>
-                        <thead>
-                          <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                            <th style={{ padding: '15px', fontWeight: '600', color: '#002868' }}>Servicio</th>
-                            <th style={{ padding: '15px', textAlign: 'center', fontWeight: '600', color: '#002868' }}>Básico</th>
-                            <th style={{ padding: '15px', textAlign: 'center', fontWeight: '600', color: '#002868' }}>Plus</th>
-                            <th style={{ padding: '15px', textAlign: 'center', fontWeight: '600', color: '#002868' }}>Pro</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td style={{ padding: '15px', fontWeight: '500' }}>Examen CENNI</td>
-                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                              <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
-                            </td>
-                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                              <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
-                            </td>
-                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                              <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
-                            </td>
-                          </tr>
-                          <tr style={{ background: '#f8fafc' }}>
-                            <td style={{ padding: '15px', fontWeight: '500' }}>Trámite del certificado</td>
-                            <td style={{ padding: '15px', textAlign: 'center', color: '#ef4444' }}>×</td>
-                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                              <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
-                            </td>
-                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                              <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style={{ padding: '15px', fontWeight: '500' }}>Curso de preparación (10h)</td>
-                            <td style={{ padding: '15px', textAlign: 'center', color: '#ef4444' }}>×</td>
-                            <td style={{ padding: '15px', textAlign: 'center', color: '#ef4444' }}>×</td>
-                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                              <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
-                            </td>
-                          </tr>
-                          <tr style={{ background: '#f8fafc' }}>
-                            <td style={{ padding: '15px', fontWeight: '500' }}>Examen de práctica</td>
-                            <td style={{ padding: '15px', textAlign: 'center', color: '#ef4444' }}>×</td>
-                            <td style={{ padding: '15px', textAlign: 'center', color: '#ef4444' }}>×</td>
-                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                              <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style={{ padding: '15px', fontWeight: '500' }}>Material de estudio</td>
-                            <td style={{ padding: '15px', textAlign: 'center', color: '#ef4444' }}>×</td>
-                            <td style={{ padding: '15px', textAlign: 'center', color: '#ef4444' }}>×</td>
-                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                              <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
-                            </td>
-                          </tr>
-                          <tr style={{ background: '#f8fafc' }}>
-                            <td style={{ padding: '15px', fontWeight: '500' }}>Asesoría personalizada</td>
-                            <td style={{ padding: '15px', textAlign: 'center', color: '#ef4444' }}>×</td>
-                            <td style={{ padding: '15px', textAlign: 'center', color: '#ef4444' }}>×</td>
-                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                              <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
-                            </td>
-                          </tr>
-                          <tr style={{ borderTop: '2px solid #e5e7eb', fontWeight: '600' }}>
-                            <td style={{ padding: '20px 15px', fontSize: '1.1rem', color: '#002868' }}>Precio Total</td>
-                            <td style={{ padding: '20px 15px', textAlign: 'center', fontSize: '1.3rem', fontWeight: '700', color: '#002868' }}>
-                              $1,866 MXN
-                            </td>
-                            <td style={{ padding: '20px 15px', textAlign: 'center', fontSize: '1.3rem', fontWeight: '700', color: '#002868' }}>
-                              $2,488 MXN
-                            </td>
-                            <td style={{ padding: '20px 15px', textAlign: 'center', fontSize: '1.3rem', fontWeight: '700', color: '#BF0A30' }}>
-                              $3,420 MXN
-                            </td>
-                          </tr>
-                        </tbody>
-                      </Table>
-                    </div>
+                      <FontAwesomeIcon icon={faChartBar} style={{ marginRight: '8px' }} />
+                      Comparación de Paquetes CENNI
+                    </h4>
                   </div>
-                </Col>
-              </Row>
+                  <div style={{ padding: 'clamp(20px, 4vw, 30px)', overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
+                          <th style={{ 
+                            ...styles.tableCell, 
+                            fontWeight: '600', 
+                            color: '#002868',
+                            textAlign: 'left'
+                          }}>
+                            Servicio
+                          </th>
+                          <th style={{ 
+                            ...styles.tableCellCenter, 
+                            fontWeight: '600', 
+                            color: '#002868' 
+                          }}>
+                            Básico
+                          </th>
+                          <th style={{ 
+                            ...styles.tableCellCenter, 
+                            fontWeight: '600', 
+                            color: '#002868' 
+                          }}>
+                            Plus
+                          </th>
+                          <th style={{ 
+                            ...styles.tableCellCenter, 
+                            fontWeight: '600', 
+                            color: '#002868' 
+                          }}>
+                            Pro
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td style={{ ...styles.tableCell, fontWeight: '500' }}>Examen CENNI</td>
+                          <td style={styles.tableCellCenter}>
+                            <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
+                          </td>
+                          <td style={styles.tableCellCenter}>
+                            <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
+                          </td>
+                          <td style={styles.tableCellCenter}>
+                            <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
+                          </td>
+                        </tr>
+                        <tr style={{ background: '#f8fafc' }}>
+                          <td style={{ ...styles.tableCell, fontWeight: '500' }}>Trámite del certificado</td>
+                          <td style={{ ...styles.tableCellCenter, color: '#ef4444' }}>×</td>
+                          <td style={styles.tableCellCenter}>
+                            <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
+                          </td>
+                          <td style={styles.tableCellCenter}>
+                            <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style={{ ...styles.tableCell, fontWeight: '500' }}>Curso de preparación (10h)</td>
+                          <td style={{ ...styles.tableCellCenter, color: '#ef4444' }}>×</td>
+                          <td style={{ ...styles.tableCellCenter, color: '#ef4444' }}>×</td>
+                          <td style={styles.tableCellCenter}>
+                            <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
+                          </td>
+                        </tr>
+                        <tr style={{ background: '#f8fafc' }}>
+                          <td style={{ ...styles.tableCell, fontWeight: '500' }}>Examen de práctica</td>
+                          <td style={{ ...styles.tableCellCenter, color: '#ef4444' }}>×</td>
+                          <td style={{ ...styles.tableCellCenter, color: '#ef4444' }}>×</td>
+                          <td style={styles.tableCellCenter}>
+                            <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style={{ ...styles.tableCell, fontWeight: '500' }}>Material de estudio</td>
+                          <td style={{ ...styles.tableCellCenter, color: '#ef4444' }}>×</td>
+                          <td style={{ ...styles.tableCellCenter, color: '#ef4444' }}>×</td>
+                          <td style={styles.tableCellCenter}>
+                            <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
+                          </td>
+                        </tr>
+                        <tr style={{ background: '#f8fafc' }}>
+                          <td style={{ ...styles.tableCell, fontWeight: '500' }}>Asesoría personalizada</td>
+                          <td style={{ ...styles.tableCellCenter, color: '#ef4444' }}>×</td>
+                          <td style={{ ...styles.tableCellCenter, color: '#ef4444' }}>×</td>
+                          <td style={styles.tableCellCenter}>
+                            <FontAwesomeIcon icon={faCheck} style={{ color: '#10b981' }} />
+                          </td>
+                        </tr>
+                        <tr style={{ borderTop: '2px solid #e5e7eb', fontWeight: '600' }}>
+                          <td style={{ 
+                            ...styles.tableCell, 
+                            fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)', 
+                            color: '#002868',
+                            padding: 'clamp(15px, 3vw, 20px) 15px'
+                          }}>
+                            Precio Total
+                          </td>
+                          <td style={{ 
+                            ...styles.tableCellCenter, 
+                            fontSize: 'clamp(1rem, 2vw, 1.3rem)', 
+                            fontWeight: '700', 
+                            color: '#002868',
+                            padding: 'clamp(15px, 3vw, 20px) 15px'
+                          }}>
+                            $1,866 MXN
+                          </td>
+                          <td style={{ 
+                            ...styles.tableCellCenter, 
+                            fontSize: 'clamp(1rem, 2vw, 1.3rem)', 
+                            fontWeight: '700', 
+                            color: '#002868',
+                            padding: 'clamp(15px, 3vw, 20px) 15px'
+                          }}>
+                            $2,488 MXN
+                          </td>
+                          <td style={{ 
+                            ...styles.tableCellCenter, 
+                            fontSize: 'clamp(1rem, 2vw, 1.3rem)', 
+                            fontWeight: '700', 
+                            color: '#BF0A30',
+                            padding: 'clamp(15px, 3vw, 20px) 15px'
+                          }}>
+                            $3,420 MXN
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </>
           )}
-        </Container>
+        </div>
       </section>
 
       <section style={{ 
         background: 'white',
-        padding: '80px 0',
+        padding: 'clamp(40px, 8vw, 80px) 0',
         borderTop: '1px solid #e5e7eb'
-      }}>
-        <Container>
-          <Row>
-            <Col lg={8} className="mx-auto">
-              <div style={{ 
-                background: '#f8fafc',
-                border: '1px solid #002868',
-                borderRadius: '12px',
-                padding: '40px',
+      }} aria-label="Centro evaluador oficial">
+        <div style={styles.container}>
+          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+            <div style={{ 
+              background: '#f8fafc',
+              border: '1px solid #002868',
+              borderRadius: '12px',
+              padding: 'clamp(30px, 5vw, 40px)',
+              textAlign: 'center'
+            }}>
+              <FontAwesomeIcon icon={faUniversity} style={{ 
+                fontSize: 'clamp(2rem, 4vw, 3rem)', 
+                color: '#002868', 
+                marginBottom: '20px' 
+              }} />
+              <h3 style={{ 
+                color: '#002868', 
+                marginBottom: '20px',
+                fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)'
+              }}>
+                Centro Evaluador Oficial
+              </h3>
+              <p style={{ 
+                color: '#6b7280', 
+                fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)', 
+                marginBottom: '30px' 
+              }}>
+                Simply English es un centro evaluador autorizado por la Secretaría de Educación Pública 
+                para la aplicación del examen CENNI. Nuestro registro oficial nos permite ofrecer 
+                certificaciones con validez nacional e internacional.
+              </p>
+              
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                gap: 'clamp(20px, 4vw, 30px)',
                 textAlign: 'center'
               }}>
-                <FontAwesomeIcon icon={faUniversity} style={{ fontSize: '3rem', color: '#002868', marginBottom: '20px' }} />
-                <h3 style={{ color: '#002868', marginBottom: '20px' }}>Centro Evaluador Oficial</h3>
-                <p style={{ color: '#6b7280', fontSize: '1.1rem', marginBottom: '30px' }}>
-                  Simply English es un centro evaluador autorizado por la Secretaría de Educación Pública 
-                  para la aplicación del examen CENNI. Nuestro registro oficial nos permite ofrecer 
-                  certificaciones con validez nacional e internacional.
-                </p>
-                
-                <Row className="text-center">
-                  <Col md={4} className="mb-3">
-                    <FontAwesomeIcon icon={faShieldAlt} style={{ fontSize: '2rem', color: '#BF0A30', marginBottom: '10px' }} />
-                    <h6 style={{ color: '#002868' }}>Validez Oficial</h6>
-                    <p style={{ color: '#6b7280', fontSize: '0.9rem', margin: 0 }}>Reconocido por SEP</p>
-                  </Col>
-                  <Col md={4} className="mb-3">
-                    <FontAwesomeIcon icon={faCertificate} style={{ fontSize: '2rem', color: '#BF0A30', marginBottom: '10px' }} />
-                    <h6 style={{ color: '#002868' }}>Certificado Digital</h6>
-                    <p style={{ color: '#6b7280', fontSize: '0.9rem', margin: 0 }}>Formato electrónico</p>
-                  </Col>
-                  <Col md={4} className="mb-3">
-                    <FontAwesomeIcon icon={faHandshake} style={{ fontSize: '2rem', color: '#BF0A30', marginBottom: '10px' }} />
-                    <h6 style={{ color: '#002868' }}>Respaldo Institucional</h6>
-                    <p style={{ color: '#6b7280', fontSize: '0.9rem', margin: 0 }}>Garantía de calidad</p>
-                  </Col>
-                </Row>
+                <div>
+                  <FontAwesomeIcon icon={faShieldAlt} style={{ 
+                    fontSize: 'clamp(1.5rem, 3vw, 2rem)', 
+                    color: '#BF0A30', 
+                    marginBottom: '10px' 
+                  }} />
+                  <h6 style={{ 
+                    color: '#002868',
+                    fontSize: 'clamp(0.9rem, 1.5vw, 1rem)',
+                    marginBottom: '5px'
+                  }}>
+                    Validez Oficial
+                  </h6>
+                  <p style={{ 
+                    color: '#6b7280', 
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
+                    margin: 0 
+                  }}>
+                    Reconocido por SEP
+                  </p>
+                </div>
+                <div>
+                  <FontAwesomeIcon icon={faCertificate} style={{ 
+                    fontSize: 'clamp(1.5rem, 3vw, 2rem)', 
+                    color: '#BF0A30', 
+                    marginBottom: '10px' 
+                  }} />
+                  <h6 style={{ 
+                    color: '#002868',
+                    fontSize: 'clamp(0.9rem, 1.5vw, 1rem)',
+                    marginBottom: '5px'
+                  }}>
+                    Certificado Digital
+                  </h6>
+                  <p style={{ 
+                    color: '#6b7280', 
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
+                    margin: 0 
+                  }}>
+                    Formato electrónico
+                  </p>
+                </div>
+                <div>
+                  <FontAwesomeIcon icon={faHandshake} style={{ 
+                    fontSize: 'clamp(1.5rem, 3vw, 2rem)', 
+                    color: '#BF0A30', 
+                    marginBottom: '10px' 
+                  }} />
+                  <h6 style={{ 
+                    color: '#002868',
+                    fontSize: 'clamp(0.9rem, 1.5vw, 1rem)',
+                    marginBottom: '5px'
+                  }}>
+                    Respaldo Institucional
+                  </h6>
+                  <p style={{ 
+                    color: '#6b7280', 
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
+                    margin: 0 
+                  }}>
+                    Garantía de calidad
+                  </p>
+                </div>
               </div>
-            </Col>
-          </Row>
-        </Container>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section style={{ 
         background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
         color: 'white',
-        padding: '80px 0'
-      }}>
-        <Container>
-          <Row>
-            <Col lg={8} className="mx-auto text-center">
-              <h2 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '20px', color: 'white' }}>
-                ¿Listo para certificar tu nivel de inglés?
-              </h2>
-              <p style={{ fontSize: '1.2rem', opacity: 0.9, marginBottom: '40px', color: 'white' }}>
-                Contáctanos para más información sobre nuestros programas académicos 
-                y procesos de certificación oficial
-              </p>
-              
-              <Row className="text-center mb-4">
-                <Col md={4} className="mb-3">
-                  <FontAwesomeIcon icon={faPhoneAlt} style={{ fontSize: '1.5rem', marginBottom: '10px' }} />
-                  <div style={{ fontSize: '1.1rem', fontWeight: '600' }}>Teléfono</div>
-                  <div style={{ opacity: 0.9 }}>+52 (33) 1234-5678</div>
-                </Col>
-                <Col md={4} className="mb-3">
-                  <FontAwesomeIcon icon={faEnvelope} style={{ fontSize: '1.5rem', marginBottom: '10px' }} />
-                  <div style={{ fontSize: '1.1rem', fontWeight: '600' }}>Email</div>
-                  <div style={{ opacity: 0.9 }}>info@simplyenglish.mx</div>
-                </Col>
-                <Col md={4} className="mb-3">
-                  <FontAwesomeIcon icon={faMapMarkerAlt} style={{ fontSize: '1.5rem', marginBottom: '10px' }} />
-                  <div style={{ fontSize: '1.1rem', fontWeight: '600' }}>Ubicación</div>
-                  <div style={{ opacity: 0.9 }}>Centro de Mascota, Jalisco</div>
-                </Col>
-              </Row>
-
-              <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '40px' }}>
-                <Button 
-                  size="lg"
-                  style={{ 
-                    background: 'white',
-                    color: '#002868',
-                    border: 'none',
-                    padding: '16px 32px',
-                    fontSize: '1.1rem',
-                    fontWeight: '600',
-                    borderRadius: '8px'
-                  }}
-                  href="/contacto"
-                >
-                  <FontAwesomeIcon icon={faFileAlt} className="me-2" />
-                  Solicitar Información
-                </Button>
-                
-                <Button 
-                  size="lg"
-                  variant="outline-light"
-                  style={{ 
-                    padding: '16px 32px',
-                    fontSize: '1.1rem',
-                    fontWeight: '600',
-                    borderRadius: '8px',
-                    border: '2px solid white'
-                  }}
-                  href="/registro"
-                >
-                  <FontAwesomeIcon icon={faCalendarAlt} className="me-2" />
-                  Agendar Cita
-                </Button>
+        padding: 'clamp(40px, 8vw, 80px) 0',
+        position: 'relative',
+        overflow: 'hidden'
+      }} aria-label="Contacto y llamada a la acción">
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          opacity: 0.03,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundSize: '40px 40px'
+        }} />
+        
+        <div style={styles.container}>
+          <div style={{ 
+            maxWidth: '800px', 
+            margin: '0 auto', 
+            textAlign: 'center',
+            position: 'relative',
+            zIndex: 1
+          }}>
+            <h2 style={{ 
+              fontSize: 'clamp(2rem, 5vw, 2.5rem)', 
+              fontWeight: '700', 
+              marginBottom: '20px', 
+              color: 'white' 
+            }}>
+              ¿Listo para certificar tu nivel de inglés?
+            </h2>
+            <p style={{ 
+              fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', 
+              opacity: 0.9, 
+              marginBottom: '40px', 
+              color: 'white',
+              padding: '0 15px'
+            }}>
+              Contáctanos para más información sobre nuestros programas académicos 
+              y procesos de certificación oficial
+            </p>
+            
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: 'clamp(20px, 4vw, 30px)',
+              textAlign: 'center',
+              marginBottom: '40px'
+            }}>
+              <div>
+                <FontAwesomeIcon icon={faPhoneAlt} style={{ 
+                  fontSize: 'clamp(1.2rem, 2vw, 1.5rem)', 
+                  marginBottom: '10px' 
+                }} />
+                <div style={{ 
+                  fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)', 
+                  fontWeight: '600' 
+                }}>
+                  Teléfono
+                </div>
+                <div style={{ 
+                  opacity: 0.9,
+                  fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
+                }}>
+                  +52 (33) 1234-5678
+                </div>
               </div>
-            </Col>
-          </Row>
-        </Container>
+              <div>
+                <FontAwesomeIcon icon={faEnvelope} style={{ 
+                  fontSize: 'clamp(1.2rem, 2vw, 1.5rem)', 
+                  marginBottom: '10px' 
+                }} />
+                <div style={{ 
+                  fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)', 
+                  fontWeight: '600' 
+                }}>
+                  Email
+                </div>
+                <div style={{ 
+                  opacity: 0.9,
+                  fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
+                }}>
+                  info@simplyenglish.mx
+                </div>
+              </div>
+              <div>
+                <FontAwesomeIcon icon={faMapMarkerAlt} style={{ 
+                  fontSize: 'clamp(1.2rem, 2vw, 1.5rem)', 
+                  marginBottom: '10px' 
+                }} />
+                <div style={{ 
+                  fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)', 
+                  fontWeight: '600' 
+                }}>
+                  Ubicación
+                </div>
+                <div style={{ 
+                  opacity: 0.9,
+                  fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
+                }}>
+                  Centro de Mascota, Jalisco
+                </div>
+              </div>
+            </div>
+
+            <div style={{ 
+              display: 'flex', 
+              gap: '20px', 
+              justifyContent: 'center', 
+              flexWrap: 'wrap' 
+            }}>
+              <a
+                href="/contacto"
+                style={{ 
+                  background: 'white',
+                  color: '#002868',
+                  border: 'none',
+                  padding: 'clamp(12px, 2vw, 16px) clamp(20px, 4vw, 32px)',
+                  fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)',
+                  fontWeight: '600',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  display: 'inline-block'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = '0 10px 30px rgba(255,255,255,0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                aria-label="Solicitar información sobre programas"
+              >
+                <FontAwesomeIcon icon={faFileAlt} style={{ marginRight: '8px' }} />
+                Solicitar Información
+              </a>
+              
+              <a
+                href="/registro"
+                style={{ 
+                  background: 'transparent',
+                  color: 'white',
+                  border: '2px solid white',
+                  padding: 'clamp(12px, 2vw, 16px) clamp(20px, 4vw, 32px)',
+                  fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)',
+                  fontWeight: '600',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  display: 'inline-block'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'white';
+                  e.currentTarget.style.color = '#002868';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = 'white';
+                }}
+                aria-label="Agendar cita con Simply English"
+              >
+                <FontAwesomeIcon icon={faCalendarAlt} style={{ marginRight: '8px' }} />
+                Agendar Cita
+              </a>
+            </div>
+          </div>
+        </div>
       </section>
-    </div>
+    </main>
   );
 };
 
-export default PreciosRediseño;
+export default Precios;
