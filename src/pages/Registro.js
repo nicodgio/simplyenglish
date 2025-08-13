@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
+import {
   faUserPlus, faGraduationCap, faCertificate, faInfoCircle,
   faUser, faEnvelope, faPhone, faCalendarAlt, faMapMarkerAlt,
   faIdCard, faBookOpen, faLanguage, faClipboardList,
@@ -33,7 +33,7 @@ const Registro = () => {
 
   useEffect(() => {
     document.title = 'Registro de Estudiantes - Simply English | Inscríbete Ahora';
-    
+
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.content = 'Regístrate en Simply English. Cursos de inglés desde $1,245/mes. Certificación CENNI disponible. Evaluación gratuita de nivel. Inscripción en línea.';
@@ -48,33 +48,63 @@ const Registro = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Registro enviado:', formData);
-    
-    setAlertType('success');
+
+    setAlertType('info');
     setShowAlert(true);
-    setTimeout(() => setShowAlert(false), 7000);
-    
-    setFormData({
-      nombre: '',
-      apellidoPaterno: '',
-      apellidoMaterno: '',
-      email: '',
-      telefono: '',
-      fechaNacimiento: '',
-      genero: '',
-      direccion: '',
-      ciudad: '',
-      estado: '',
-      codigoPostal: '',
-      programaInteres: '',
-      nivelActual: '',
-      experienciaPrevia: '',
-      objetivos: '',
-      horarioPreferencia: '',
-      modalidadPreferencia: ''
-    });
+
+    try {
+      const response = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/registro', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setAlertType('success');
+        setShowAlert(true);
+        setTimeout(() => setShowAlert(false), 7000);
+
+        if (result.data && result.data.token) {
+          localStorage.setItem('userToken', result.data.token);
+          localStorage.setItem('userId', result.data.userId);
+        }
+
+        setFormData({
+          nombre: '',
+          apellidoPaterno: '',
+          apellidoMaterno: '',
+          email: '',
+          telefono: '',
+          fechaNacimiento: '',
+          genero: '',
+          direccion: '',
+          ciudad: '',
+          estado: '',
+          codigoPostal: '',
+          programaInteres: '',
+          nivelActual: '',
+          experienciaPrevia: '',
+          objetivos: '',
+          horarioPreferencia: '',
+          modalidadPreferencia: ''
+        });
+      } else {
+        setAlertType('error');
+        setShowAlert(true);
+        setTimeout(() => setShowAlert(false), 7000);
+      }
+    } catch (error) {
+      console.error('Error en el registro:', error);
+      setAlertType('error');
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 7000);
+    }
   };
 
   const programasDisponibles = [
@@ -255,6 +285,30 @@ const Registro = () => {
     styles.mainGrid.gridTemplateColumns = '2fr 1fr';
   }
 
+  const alertMessages = {
+    success: '¡Registro completado exitosamente! Nos pondremos en contacto contigo en las próximas 24 horas para confirmar tu inscripción y coordinar tu evaluación inicial.',
+    error: 'Hubo un error al procesar tu registro. Por favor, verifica tus datos e intenta nuevamente.',
+    info: 'Procesando tu registro, por favor espera...'
+  };
+
+  const alertStyles = {
+    success: {
+      background: '#d1fae5',
+      border: '1px solid #10b981',
+      color: '#065f46'
+    },
+    error: {
+      background: '#fee2e2',
+      border: '1px solid #ef4444',
+      color: '#991b1b'
+    },
+    info: {
+      background: '#dbeafe',
+      border: '1px solid #3b82f6',
+      color: '#1e40af'
+    }
+  };
+
   return (
     <main style={{ background: '#f8fafc', minHeight: '100vh', overflowX: 'hidden', width: '100%' }}>
       <section style={styles.header} aria-label="Registro de estudiantes">
@@ -265,9 +319,9 @@ const Registro = () => {
               <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
               Registro de Estudiantes
             </div>
-            <h1 style={{ 
-              fontSize: 'clamp(2rem, 6vw, 3.5rem)', 
-              fontWeight: '700', 
+            <h1 style={{
+              fontSize: 'clamp(2rem, 6vw, 3.5rem)',
+              fontWeight: '700',
               marginBottom: '24px',
               color: 'white',
               lineHeight: '1.2'
@@ -275,9 +329,9 @@ const Registro = () => {
               Únete a Simply English<br />
               <span style={{ color: '#f8fafc' }}>Comienza tu camino al éxito</span>
             </h1>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', 
-              opacity: 0.9, 
+            <p style={{
+              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
+              opacity: 0.9,
               marginBottom: '0',
               maxWidth: '600px',
               margin: '0 auto',
@@ -292,17 +346,17 @@ const Registro = () => {
 
       <section style={{ ...styles.sectionPadding, marginTop: 'clamp(-30px, -5vw, -40px)' }} aria-label="Formulario de registro">
         <div style={styles.container}>
-          
+
           <div style={styles.warningBox}>
-            <div style={{ 
-              display: 'flex', 
+            <div style={{
+              display: 'flex',
               alignItems: 'flex-start',
               flexDirection: window.innerWidth < 480 ? 'column' : 'row',
               gap: '15px'
             }}>
-              <FontAwesomeIcon 
-                icon={faExclamationTriangle} 
-                style={{ 
+              <FontAwesomeIcon
+                icon={faExclamationTriangle}
+                style={{
                   color: '#f59e0b',
                   fontSize: 'clamp(1.2rem, 2vw, 1.5rem)',
                   marginTop: '3px',
@@ -310,25 +364,25 @@ const Registro = () => {
                 }}
               />
               <div style={{ flex: 1 }}>
-                <h5 style={{ 
-                  color: '#92400e', 
-                  marginBottom: '10px', 
+                <h5 style={{
+                  color: '#92400e',
+                  marginBottom: '10px',
                   fontWeight: '600',
                   fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
                 }}>
                   ¡Recomendación importante!
                 </h5>
-                <p style={{ 
-                  color: '#92400e', 
-                  marginBottom: '20px', 
+                <p style={{
+                  color: '#92400e',
+                  marginBottom: '20px',
                   lineHeight: '1.6',
                   fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                 }}>
-                  Antes de completar tu registro, te recomendamos hablar con uno de nuestros 
-                  asesores académicos para que te ayude a elegir el programa que mejor se adapte 
+                  Antes de completar tu registro, te recomendamos hablar con uno de nuestros
+                  asesores académicos para que te ayude a elegir el programa que mejor se adapte
                   a tu nivel actual y objetivos de aprendizaje.
                 </p>
-                <a 
+                <a
                   href="/contacto"
                   style={{
                     ...styles.secondaryButton,
@@ -353,9 +407,15 @@ const Registro = () => {
           </div>
 
           {showAlert && (
-            <div style={styles.successAlert}>
-              <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '10px' }} />
-              ¡Registro completado exitosamente! Nos pondremos en contacto contigo en las próximas 24 horas para confirmar tu inscripción y coordinar tu evaluación inicial.
+            <div style={{
+              ...styles.successAlert,
+              ...alertStyles[alertType]
+            }}>
+              <FontAwesomeIcon
+                icon={alertType === 'success' ? faCheckCircle : alertType === 'error' ? faExclamationTriangle : faInfoCircle}
+                style={{ marginRight: '10px' }}
+              />
+              {alertMessages[alertType]}
             </div>
           )}
 
@@ -363,7 +423,7 @@ const Registro = () => {
             <div>
               <div style={styles.academicCard}>
                 <form onSubmit={handleSubmit}>
-                  
+
                   <div style={styles.sectionTitle}>
                     <FontAwesomeIcon icon={faUser} style={{ marginRight: '10px' }} />
                     Datos Personales
@@ -649,7 +709,7 @@ const Registro = () => {
                   </div>
 
                   <div style={styles.buttonGroup}>
-                    <button 
+                    <button
                       type="submit"
                       style={styles.officialButton}
                       onMouseEnter={(e) => {
@@ -666,7 +726,7 @@ const Registro = () => {
                       Completar Registro
                     </button>
 
-                    <a 
+                    <a
                       href="/contacto"
                       style={styles.secondaryButton}
                       onMouseEnter={(e) => {
@@ -690,34 +750,34 @@ const Registro = () => {
             <div>
               <div style={styles.academicCard}>
                 <div style={{ textAlign: 'center', marginBottom: '25px' }}>
-                  <FontAwesomeIcon icon={faInfoCircle} style={{ 
-                    fontSize: 'clamp(2rem, 4vw, 3rem)', 
-                    color: '#002868', 
-                    marginBottom: '20px' 
+                  <FontAwesomeIcon icon={faInfoCircle} style={{
+                    fontSize: 'clamp(2rem, 4vw, 3rem)',
+                    color: '#002868',
+                    marginBottom: '20px'
                   }} />
-                  <h4 style={{ 
-                    color: '#002868', 
+                  <h4 style={{
+                    color: '#002868',
                     marginBottom: '15px',
                     fontSize: 'clamp(1.1rem, 2vw, 1.3rem)'
                   }}>
                     Información Importante
                   </h4>
                 </div>
-                
+
                 <div style={{ marginBottom: '25px' }}>
-                  <h6 style={{ 
-                    color: '#BF0A30', 
+                  <h6 style={{
+                    color: '#BF0A30',
                     marginBottom: '10px',
                     fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                   }}>
                     <FontAwesomeIcon icon={faClipboardList} style={{ marginRight: '8px' }} />
                     Proceso de Inscripción
                   </h6>
-                  <ul style={{ 
-                    paddingLeft: '20px', 
-                    color: '#6b7280', 
-                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
-                    lineHeight: '1.6' 
+                  <ul style={{
+                    paddingLeft: '20px',
+                    color: '#6b7280',
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                    lineHeight: '1.6'
                   }}>
                     <li>Evaluación de nivel inicial</li>
                     <li>Confirmación de disponibilidad</li>
@@ -727,19 +787,19 @@ const Registro = () => {
                 </div>
 
                 <div style={{ marginBottom: '25px' }}>
-                  <h6 style={{ 
-                    color: '#BF0A30', 
+                  <h6 style={{
+                    color: '#BF0A30',
                     marginBottom: '10px',
                     fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                   }}>
                     <FontAwesomeIcon icon={faBookOpen} style={{ marginRight: '8px' }} />
                     Documentos Requeridos
                   </h6>
-                  <ul style={{ 
-                    paddingLeft: '20px', 
-                    color: '#6b7280', 
-                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
-                    lineHeight: '1.6' 
+                  <ul style={{
+                    paddingLeft: '20px',
+                    color: '#6b7280',
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                    lineHeight: '1.6'
                   }}>
                     <li>Identificación oficial</li>
                     <li>Comprobante de domicilio</li>
@@ -748,55 +808,55 @@ const Registro = () => {
                   </ul>
                 </div>
 
-                <div style={{ 
+                <div style={{
                   background: '#f0f9ff',
                   border: '1px solid #0284c7',
                   borderRadius: '8px',
                   padding: 'clamp(12px, 2vw, 15px)',
                   textAlign: 'center'
                 }}>
-                  <FontAwesomeIcon icon={faCheckCircle} style={{ 
-                    color: '#0284c7', 
-                    fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
-                    marginBottom: '8px' 
+                  <FontAwesomeIcon icon={faCheckCircle} style={{
+                    color: '#0284c7',
+                    fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+                    marginBottom: '8px'
                   }} />
-                  <div style={{ 
-                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
-                    fontWeight: '600', 
-                    color: '#0284c7' 
+                  <div style={{
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                    fontWeight: '600',
+                    color: '#0284c7'
                   }}>
                     Respuesta en 24 horas
                   </div>
                 </div>
               </div>
 
-              <div style={{ 
+              <div style={{
                 background: 'white',
                 border: '2px solid #002868',
                 borderRadius: '12px',
                 padding: 'clamp(20px, 4vw, 25px)',
                 textAlign: 'center'
               }}>
-                <FontAwesomeIcon icon={faCertificate} style={{ 
-                  fontSize: 'clamp(2rem, 4vw, 2.5rem)', 
-                  color: '#BF0A30', 
-                  marginBottom: '15px' 
+                <FontAwesomeIcon icon={faCertificate} style={{
+                  fontSize: 'clamp(2rem, 4vw, 2.5rem)',
+                  color: '#BF0A30',
+                  marginBottom: '15px'
                 }} />
-                <h5 style={{ 
-                  color: '#002868', 
+                <h5 style={{
+                  color: '#002868',
                   marginBottom: '10px',
                   fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
                 }}>
                   Centro Autorizado
                 </h5>
-                <p style={{ 
-                  color: '#6b7280', 
-                  fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', 
-                  marginBottom: '15px' 
+                <p style={{
+                  color: '#6b7280',
+                  fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                  marginBottom: '15px'
                 }}>
                   Evaluador oficial CENNI reconocido por la Secretaría de Educación Pública
                 </p>
-                <div style={{ 
+                <div style={{
                   background: '#10b981',
                   color: 'white',
                   padding: '8px 16px',
