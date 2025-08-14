@@ -17,7 +17,9 @@ import Horarios from './pages/Horarios';
 import Precios from './pages/Precios';
 import CertificacionCENNI from './pages/CertificacionCENNI';
 import Contacto from './pages/Contacto';
+import Usuarios from './pages/Usuarios';
 import Registro from './pages/Registro';
+import Pago from './pages/Pago';
 
 function App() {
   return (
@@ -34,7 +36,9 @@ function App() {
             <Route path="/horarios" element={<Horarios />} />
             <Route path="/precios" element={<Precios />} />
             <Route path="/contacto" element={<Contacto />} />
+            <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/registro" element={<Registro />} />
+            <Route path="/pago" element={<Pago />} />
           </Routes>
         </main>
         <Footer />

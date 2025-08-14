@@ -30,6 +30,8 @@ const Registro = () => {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState('success');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [registeredUser, setRegisteredUser] = useState(null);
 
   useEffect(() => {
     document.title = 'Registro de Estudiantes - Simply English | Inscríbete Ahora';
@@ -50,11 +52,13 @@ const Registro = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsSubmitting(true);
     setAlertType('info');
     setShowAlert(true);
 
     try {
+      console.log('Enviando datos:', formData);
+      
       const response = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/registro', {
         method: 'POST',
         headers: {
@@ -63,18 +67,24 @@ const Registro = () => {
         body: JSON.stringify(formData)
       });
 
-      const result = await response.json();
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
 
-      if (result.success) {
+      const result = await response.json();
+      console.log('Response data:', result);
+
+      if (response.ok && result.success) {
         setAlertType('success');
         setShowAlert(true);
-        setTimeout(() => setShowAlert(false), 7000);
+        
+        // Guardar información del usuario registrado en el estado
+        setRegisteredUser({
+          userId: result.data?.userId,
+          token: result.data?.token,
+          usuario: result.data?.usuario
+        });
 
-        if (result.data && result.data.token) {
-          localStorage.setItem('userToken', result.data.token);
-          localStorage.setItem('userId', result.data.userId);
-        }
-
+        // Limpiar formulario
         setFormData({
           nombre: '',
           apellidoPaterno: '',
@@ -94,7 +104,10 @@ const Registro = () => {
           horarioPreferencia: '',
           modalidadPreferencia: ''
         });
+
+        setTimeout(() => setShowAlert(false), 10000);
       } else {
+        console.error('Error en la respuesta:', result);
         setAlertType('error');
         setShowAlert(true);
         setTimeout(() => setShowAlert(false), 7000);
@@ -104,6 +117,8 @@ const Registro = () => {
       setAlertType('error');
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 7000);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -187,7 +202,7 @@ const Registro = () => {
       fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
     },
     officialButton: {
-      background: '#002868',
+      background: isSubmitting ? '#6b7280' : '#002868',
       color: 'white',
       border: 'none',
       padding: 'clamp(12px, 2vw, 16px) clamp(20px, 4vw, 32px)',
@@ -195,12 +210,13 @@ const Registro = () => {
       fontWeight: '600',
       borderRadius: '8px',
       transition: 'all 0.3s ease',
-      cursor: 'pointer',
+      cursor: isSubmitting ? 'not-allowed' : 'pointer',
       textDecoration: 'none',
       display: 'inline-block',
       textAlign: 'center',
       marginBottom: '15px',
-      marginRight: '15px'
+      marginRight: '15px',
+      opacity: isSubmitting ? 0.7 : 1
     },
     secondaryButton: {
       background: 'transparent',
@@ -280,14 +296,15 @@ const Registro = () => {
     }
   };
 
-  // Media query para desktop
   if (typeof window !== 'undefined' && window.innerWidth > 768) {
     styles.mainGrid.gridTemplateColumns = '2fr 1fr';
   }
 
   const alertMessages = {
-    success: '¡Registro completado exitosamente! Nos pondremos en contacto contigo en las próximas 24 horas para confirmar tu inscripción y coordinar tu evaluación inicial.',
-    error: 'Hubo un error al procesar tu registro. Por favor, verifica tus datos e intenta nuevamente.',
+    success: registeredUser 
+      ? `¡Registro completado exitosamente! Tu ID de usuario es: ${registeredUser.userId}. Nos pondremos en contacto contigo en las próximas 24 horas para confirmar tu inscripción y coordinar tu evaluación inicial.`
+      : '¡Registro completado exitosamente! Nos pondremos en contacto contigo en las próximas 24 horas para confirmar tu inscripción y coordinar tu evaluación inicial.',
+    error: 'Hubo un error al procesar tu registro. Por favor, verifica tus datos e intenta nuevamente. Si el problema persiste, contacta soporte.',
     info: 'Procesando tu registro, por favor espera...'
   };
 
@@ -440,6 +457,7 @@ const Registro = () => {
                         style={styles.formControl}
                         placeholder="Tu nombre"
                         required
+                        disabled={isSubmitting}
                         onFocus={(e) => e.target.style.borderColor = '#002868'}
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
@@ -454,6 +472,7 @@ const Registro = () => {
                         style={styles.formControl}
                         placeholder="Apellido paterno"
                         required
+                        disabled={isSubmitting}
                         onFocus={(e) => e.target.style.borderColor = '#002868'}
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
@@ -470,6 +489,7 @@ const Registro = () => {
                         onChange={handleInputChange}
                         style={styles.formControl}
                         placeholder="Apellido materno"
+                        disabled={isSubmitting}
                         onFocus={(e) => e.target.style.borderColor = '#002868'}
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
@@ -483,6 +503,7 @@ const Registro = () => {
                         onChange={handleInputChange}
                         style={styles.formControl}
                         required
+                        disabled={isSubmitting}
                         onFocus={(e) => e.target.style.borderColor = '#002868'}
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
@@ -500,6 +521,7 @@ const Registro = () => {
                         style={styles.formControl}
                         placeholder="tu@email.com"
                         required
+                        disabled={isSubmitting}
                         onFocus={(e) => e.target.style.borderColor = '#002868'}
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
@@ -514,6 +536,7 @@ const Registro = () => {
                         style={styles.formControl}
                         placeholder="+52 (33) 1234-5678"
                         required
+                        disabled={isSubmitting}
                         onFocus={(e) => e.target.style.borderColor = '#002868'}
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
@@ -527,6 +550,7 @@ const Registro = () => {
                       value={formData.genero}
                       onChange={handleInputChange}
                       style={styles.formControl}
+                      disabled={isSubmitting}
                       onFocus={(e) => e.target.style.borderColor = '#002868'}
                       onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     >
@@ -548,6 +572,7 @@ const Registro = () => {
                       style={styles.formControl}
                       placeholder="Calle, número, colonia"
                       required
+                      disabled={isSubmitting}
                       onFocus={(e) => e.target.style.borderColor = '#002868'}
                       onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     />
@@ -564,6 +589,7 @@ const Registro = () => {
                         style={styles.formControl}
                         placeholder="Ciudad"
                         required
+                        disabled={isSubmitting}
                         onFocus={(e) => e.target.style.borderColor = '#002868'}
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
@@ -578,6 +604,7 @@ const Registro = () => {
                         style={styles.formControl}
                         placeholder="Estado"
                         required
+                        disabled={isSubmitting}
                         onFocus={(e) => e.target.style.borderColor = '#002868'}
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
@@ -592,6 +619,7 @@ const Registro = () => {
                         style={styles.formControl}
                         placeholder="C.P."
                         required
+                        disabled={isSubmitting}
                         onFocus={(e) => e.target.style.borderColor = '#002868'}
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
@@ -611,6 +639,7 @@ const Registro = () => {
                       onChange={handleInputChange}
                       style={styles.formControl}
                       required
+                      disabled={isSubmitting}
                       onFocus={(e) => e.target.style.borderColor = '#002868'}
                       onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     >
@@ -631,6 +660,7 @@ const Registro = () => {
                       onChange={handleInputChange}
                       style={styles.formControl}
                       required
+                      disabled={isSubmitting}
                       onFocus={(e) => e.target.style.borderColor = '#002868'}
                       onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     >
@@ -651,6 +681,7 @@ const Registro = () => {
                         value={formData.horarioPreferencia}
                         onChange={handleInputChange}
                         style={styles.formControl}
+                        disabled={isSubmitting}
                         onFocus={(e) => e.target.style.borderColor = '#002868'}
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       >
@@ -670,6 +701,7 @@ const Registro = () => {
                         value={formData.modalidadPreferencia}
                         onChange={handleInputChange}
                         style={styles.formControl}
+                        disabled={isSubmitting}
                         onFocus={(e) => e.target.style.borderColor = '#002868'}
                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       >
@@ -690,6 +722,7 @@ const Registro = () => {
                       onChange={handleInputChange}
                       style={{ ...styles.formControl, ...styles.textArea }}
                       placeholder="Describe brevemente tu experiencia estudiando inglés (cursos previos, certificaciones, tiempo de estudio, etc.)"
+                      disabled={isSubmitting}
                       onFocus={(e) => e.target.style.borderColor = '#002868'}
                       onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     />
@@ -703,6 +736,7 @@ const Registro = () => {
                       onChange={handleInputChange}
                       style={{ ...styles.formControl, ...styles.textArea }}
                       placeholder="¿Cuáles son tus objetivos al estudiar inglés? (trabajo, estudios, viajes, certificación, etc.)"
+                      disabled={isSubmitting}
                       onFocus={(e) => e.target.style.borderColor = '#002868'}
                       onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     />
@@ -712,30 +746,43 @@ const Registro = () => {
                     <button
                       type="submit"
                       style={styles.officialButton}
+                      disabled={isSubmitting}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#001845';
-                        e.currentTarget.style.transform = 'scale(1.02)';
+                        if (!isSubmitting) {
+                          e.currentTarget.style.background = '#001845';
+                          e.currentTarget.style.transform = 'scale(1.02)';
+                        }
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = '#002868';
-                        e.currentTarget.style.transform = 'scale(1)';
+                        if (!isSubmitting) {
+                          e.currentTarget.style.background = '#002868';
+                          e.currentTarget.style.transform = 'scale(1)';
+                        }
                       }}
                       aria-label="Completar registro en Simply English"
                     >
                       <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
-                      Completar Registro
+                      {isSubmitting ? 'Procesando...' : 'Completar Registro'}
                     </button>
 
                     <a
                       href="/contacto"
-                      style={styles.secondaryButton}
+                      style={{
+                        ...styles.secondaryButton,
+                        opacity: isSubmitting ? 0.5 : 1,
+                        pointerEvents: isSubmitting ? 'none' : 'auto'
+                      }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#002868';
-                        e.currentTarget.style.color = 'white';
+                        if (!isSubmitting) {
+                          e.currentTarget.style.background = '#002868';
+                          e.currentTarget.style.color = 'white';
+                        }
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.color = '#002868';
+                        if (!isSubmitting) {
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.color = '#002868';
+                        }
                       }}
                       aria-label="Contactar con asesor antes del registro"
                     >
