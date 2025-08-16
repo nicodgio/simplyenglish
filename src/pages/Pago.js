@@ -4,7 +4,8 @@ import {
   faCreditCard, faUserCheck, faGraduationCap, faInfoCircle,
   faEnvelope, faCalendarAlt, faDollarSign, faCheckCircle,
   faExclamationTriangle, faShieldAlt, faArrowRight, faSearch,
-  faCertificate, faBookOpen, faClock, faUsers
+  faCertificate, faBookOpen, faClock, faUsers, faSpinner,
+  faTag, faAward
 } from '@fortawesome/free-solid-svg-icons';
 
 const Pago = () => {
@@ -14,6 +15,8 @@ const Pago = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState('info');
   const [alertMessage, setAlertMessage] = useState('');
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [isCreatingSubscription, setIsCreatingSubscription] = useState(false);
 
   useEffect(() => {
     document.title = 'Realizar Pago - Simply English | Inscripción y Certificaciones';
@@ -28,28 +31,39 @@ const Pago = () => {
     e.preventDefault();
     setIsSearching(true);
     setShowAlert(false);
+    setUserData(null);
+    setSelectedOption(null);
 
     try {
       console.log('Buscando usuario con email:', email);
       
-      // Aquí irá la llamada a la API para buscar el usuario
-      const response = await fetch(`https://mediumpurple-horse-686620.hostingersite.com/api/usuario/${email}`, {
+      const response = await fetch(`https://mediumpurple-horse-686620.hostingersite.com/api/usuario.php?email=${encodeURIComponent(email)}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         }
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success && result.data) {
-          setUserData(result.data);
+      console.log('Response status:', response.status);
+      const result = await response.json();
+      console.log('Response data:', result);
+
+      if (response.ok && result.success && result.data) {
+        setUserData(result.data);
+        
+        // Verificar si tiene pago pendiente
+        if (result.data.usuario?.pago_activo_id && result.data.usuario?.estado_pago === 'PENDIENTE') {
+          setAlertType('warning');
+          setAlertMessage('Tienes un pago pendiente. Completa tu pago para activar tu suscripción.');
+        } else if (result.data.puede_pagar && result.data.opciones_pago?.length > 0) {
           setAlertType('success');
-          setAlertMessage('¡Usuario encontrado! Revisa los detalles de tu programa.');
+          setAlertMessage(result.data.mensaje_estado);
+        } else if (result.data.usuario?.estado_suscripcion === 'ACTIVA') {
+          setAlertType('info');
+          setAlertMessage('Tu suscripción está activa. Si deseas continuar con el siguiente nivel, contacta soporte.');
         } else {
-          setAlertType('error');
-          setAlertMessage('No se encontró ningún usuario registrado con este email.');
-          setUserData(null);
+          setAlertType('warning');
+          setAlertMessage('No hay opciones de pago disponibles en este momento. Contacta a un asesor.');
         }
       } else {
         setAlertType('error');
@@ -64,54 +78,77 @@ const Pago = () => {
     } finally {
       setIsSearching(false);
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 5000);
+      setTimeout(() => setShowAlert(false), 8000);
     }
   };
 
-  const handlePayment = () => {
-    if (!userData) return;
-    
-    console.log('Procesando pago para:', userData);
-    
-    // Aquí irá la redirección a OpenPay
-    alert('Redirigiendo a la pasarela de OpenPay...\n(Próximamente implementada)');
+  const handleSelectOption = (option) => {
+    setSelectedOption(option);
+    console.log('Opción seleccionada:', option);
   };
 
-  const programDetails = {
-    'simply-mensual': {
-      name: 'Simply English - Plan Mensual',
-      price: 1245,
-      description: 'Acceso completo por 1 mes',
-      duration: '1 mes',
-      benefits: ['Clases en vivo', 'Material digital', 'Soporte académico', 'Evaluaciones']
-    },
-    'simply-trimestral': {
-      name: 'Simply English - Plan Trimestral',
-      price: 3110,
-      description: 'Acceso completo por 3 meses',
-      duration: '3 meses',
-      benefits: ['Clases en vivo', 'Material digital', 'Soporte académico', 'Evaluaciones', '15% de descuento']
-    },
-    'cenni-basico': {
-      name: 'Certificación CENNI Básico',
-      price: 1866,
-      description: 'Certificación oficial nivel básico',
-      duration: 'Certificación',
-      benefits: ['Examen oficial', 'Certificado SEP', 'Preparación incluida', 'Válido nacionalmente']
-    },
-    'cenni-plus': {
-      name: 'Certificación CENNI Plus',
-      price: 2488,
-      description: 'Certificación oficial nivel intermedio',
-      duration: 'Certificación',
-      benefits: ['Examen oficial', 'Certificado SEP', 'Preparación incluida', 'Válido nacionalmente', 'Nivel intermedio']
-    },
-    'cenni-pro': {
-      name: 'Certificación CENNI Pro',
-      price: 3420,
-      description: 'Certificación oficial nivel avanzado',
-      duration: 'Certificación',
-      benefits: ['Examen oficial', 'Certificado SEP', 'Preparación incluida', 'Válido nacionalmente', 'Nivel avanzado']
+  const handleCreateSubscription = async () => {
+    if (!selectedOption || !userData?.usuario) return;
+
+    setIsCreatingSubscription(true);
+    
+    try {
+      console.log('Creando suscripción:', selectedOption);
+
+      const subscriptionData = {
+        action: 'crear_suscripcion',
+        usuario_id: userData.usuario.usuario_id,
+        tipo_programa: selectedOption.codigo,
+        nivel_inicio: selectedOption.nivel_inicio,
+        nivel_fin: selectedOption.nivel_fin || selectedOption.nivel_inicio
+      };
+
+      const response = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/usuario.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(subscriptionData)
+      });
+
+      console.log('Subscription response status:', response.status);
+      const result = await response.json();
+      console.log('Subscription response:', result);
+
+      if (response.ok && result.success) {
+        setAlertType('success');
+        if (result.data.accion === 'reemplazada') {
+          setAlertMessage(`¡Suscripción actualizada! Se canceló la anterior y se creó una nueva. Referencia: SE-${String(result.data.pago_id).padStart(6, '0')}`);
+        } else {
+          setAlertMessage(`¡Suscripción creada! Referencia: SE-${String(result.data.pago_id).padStart(6, '0')}. Procede con el pago.`);
+        }
+        
+        // Aquí se integrará con OpenPay
+        console.log('Datos del pago:', result.data);
+        
+        const mensaje_openpay = result.data.accion === 'reemplazada' 
+          ? `¡Suscripción actualizada exitosamente!\n\nSe canceló automáticamente la suscripción pendiente anterior y se creó una nueva.\n\n`
+          : `¡Suscripción creada exitosamente!\n\n`;
+          
+        alert(`${mensaje_openpay}Referencia: SE-${String(result.data.pago_id).padStart(6, '0')}\nMonto: ${selectedOption.precio.toLocaleString()} MXN\n\nPróximamente se abrirá la pasarela de OpenPay.`);
+        
+        // Limpiar selección
+        setSelectedOption(null);
+        // Recargar datos del usuario
+        handleEmailSearch({ preventDefault: () => {} });
+        
+      } else {
+        setAlertType('error');
+        setAlertMessage(`Error al crear suscripción: ${result.error || 'Error desconocido'}`);
+      }
+    } catch (error) {
+      console.error('Error al crear suscripción:', error);
+      setAlertType('error');
+      setAlertMessage('Error de conexión. Por favor intenta nuevamente.');
+    } finally {
+      setIsCreatingSubscription(false);
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 8000);
     }
   };
 
@@ -190,8 +227,32 @@ const Pago = () => {
       textAlign: 'center',
       opacity: isSearching ? 0.7 : 1
     },
+    optionCard: {
+      background: 'white',
+      border: '2px solid #e5e7eb',
+      borderRadius: '12px',
+      padding: 'clamp(20px, 3vw, 25px)',
+      marginBottom: '20px',
+      cursor: 'pointer',
+      transition: 'all 0.3s ease',
+      position: 'relative'
+    },
+    selectedCard: {
+      borderColor: '#002868',
+      background: '#f8fafc'
+    },
+    priceTag: {
+      background: 'linear-gradient(135deg, #BF0A30 0%, #8B0000 100%)',
+      color: 'white',
+      padding: '8px 16px',
+      borderRadius: '25px',
+      fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
+      fontWeight: '700',
+      display: 'inline-block',
+      marginBottom: '15px'
+    },
     payButton: {
-      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+      background: isCreatingSubscription ? '#6b7280' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
       color: 'white',
       border: 'none',
       padding: 'clamp(16px, 3vw, 20px) clamp(32px, 6vw, 48px)',
@@ -199,13 +260,14 @@ const Pago = () => {
       fontWeight: '600',
       borderRadius: '12px',
       transition: 'all 0.3s ease',
-      cursor: 'pointer',
+      cursor: isCreatingSubscription ? 'not-allowed' : 'pointer',
       textDecoration: 'none',
       display: 'inline-block',
       textAlign: 'center',
       width: '100%',
       marginTop: '20px',
-      boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+      boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+      opacity: isCreatingSubscription ? 0.7 : 1
     },
     alert: {
       borderRadius: '8px',
@@ -224,29 +286,6 @@ const Pago = () => {
       paddingBottom: '10px',
       borderBottom: '2px solid #e5e7eb'
     },
-    priceTag: {
-      background: 'linear-gradient(135deg, #BF0A30 0%, #8B0000 100%)',
-      color: 'white',
-      padding: '8px 16px',
-      borderRadius: '25px',
-      fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
-      fontWeight: '700',
-      display: 'inline-block',
-      marginBottom: '15px'
-    },
-    benefitsList: {
-      listStyle: 'none',
-      padding: 0,
-      margin: 0
-    },
-    benefitItem: {
-      padding: '8px 0',
-      borderBottom: '1px solid #f3f4f6',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '10px',
-      fontSize: 'clamp(0.85rem, 1.4vw, 0.95rem)'
-    },
     mainGrid: {
       display: 'grid',
       gridTemplateColumns: '1fr',
@@ -254,6 +293,34 @@ const Pago = () => {
     },
     sectionPadding: {
       padding: 'clamp(40px, 8vw, 80px) 0'
+    },
+    userInfo: {
+      background: '#f0f9ff',
+      border: '1px solid #0284c7',
+      borderRadius: '8px',
+      padding: 'clamp(15px, 3vw, 20px)',
+      marginBottom: '20px'
+    },
+    levelBadge: {
+      background: '#10b981',
+      color: 'white',
+      padding: '4px 12px',
+      borderRadius: '15px',
+      fontSize: 'clamp(0.7rem, 1.2vw, 0.8rem)',
+      fontWeight: '600',
+      display: 'inline-block',
+      marginLeft: '10px'
+    },
+    savingsBadge: {
+      background: '#059669',
+      color: 'white',
+      padding: '4px 8px',
+      borderRadius: '12px',
+      fontSize: 'clamp(0.7rem, 1.1vw, 0.75rem)',
+      fontWeight: '600',
+      position: 'absolute',
+      top: '15px',
+      right: '15px'
     }
   };
 
@@ -276,6 +343,11 @@ const Pago = () => {
       background: '#dbeafe',
       border: '1px solid #3b82f6',
       color: '#1e40af'
+    },
+    warning: {
+      background: '#fef3c7',
+      border: '1px solid #f59e0b',
+      color: '#92400e'
     }
   };
 
@@ -323,7 +395,7 @@ const Pago = () => {
               ...alertStyles[alertType]
             }}>
               <FontAwesomeIcon
-                icon={alertType === 'success' ? faCheckCircle : alertType === 'error' ? faExclamationTriangle : faInfoCircle}
+                icon={alertType === 'success' ? faCheckCircle : alertType === 'error' ? faExclamationTriangle : alertType === 'warning' ? faExclamationTriangle : faInfoCircle}
               />
               {alertMessage}
             </div>
@@ -377,74 +449,210 @@ const Pago = () => {
                       }
                     }}
                   >
-                    <FontAwesomeIcon icon={faSearch} style={{ marginRight: '10px' }} />
+                    <FontAwesomeIcon icon={isSearching ? faSpinner : faSearch} spin={isSearching} style={{ marginRight: '10px' }} />
                     {isSearching ? 'Buscando...' : 'Buscar Mi Registro'}
                   </button>
                 </div>
               </div>
 
-              {userData && (
+              {userData && userData.usuario && userData.usuario.pago_activo_id && userData.usuario.estado_pago === 'PENDIENTE' && (
+                <div style={styles.card}>
+                  <div style={{
+                    background: '#fef3c7',
+                    border: '2px solid #f59e0b',
+                    borderRadius: '12px',
+                    padding: 'clamp(20px, 4vw, 25px)',
+                    marginBottom: '20px'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '15px'
+                    }}>
+                      <FontAwesomeIcon
+                        icon={faExclamationTriangle}
+                        style={{
+                          color: '#f59e0b',
+                          fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                          flexShrink: 0
+                        }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <h5 style={{
+                          color: '#92400e',
+                          marginBottom: '10px',
+                          fontWeight: '600',
+                          fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
+                        }}>
+                          ⏰ Pago Pendiente Detectado
+                        </h5>
+                        <p style={{
+                          color: '#92400e',
+                          marginBottom: '15px',
+                          lineHeight: '1.6',
+                          fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+                        }}>
+                          Tienes un pago pendiente por ${userData.usuario.monto?.toLocaleString()} MXN. 
+                          Puedes completar este pago o seleccionar una nueva opción.
+                        </p>
+                        <div style={{
+                          background: '#f59e0b',
+                          color: 'white',
+                          padding: '8px 16px',
+                          borderRadius: '20px',
+                          fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                          fontWeight: '600',
+                          display: 'inline-block'
+                        }}>
+                          Referencia: SE-{String(userData.usuario.pago_activo_id).padStart(6, '0')}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {userData && userData.usuario && (
                 <div style={styles.card}>
                   <div style={styles.sectionTitle}>
                     <FontAwesomeIcon icon={faGraduationCap} style={{ marginRight: '10px' }} />
-                    Detalles del Programa
+                    Información del Estudiante
                   </div>
 
-                  <div style={{ marginBottom: '20px' }}>
+                  <div style={styles.userInfo}>
                     <h4 style={{ color: '#002868', marginBottom: '10px', fontSize: 'clamp(1rem, 1.8vw, 1.2rem)' }}>
-                      {userData.nombre} {userData.apellido_paterno}
+                      {userData.usuario.nombre} {userData.usuario.apellido_paterno}
+                      {userData.usuario.nivel_conocer_completado > 0 && (
+                        <span style={styles.levelBadge}>
+                          Nivel {userData.usuario.nivel_conocer_completado} completado
+                        </span>
+                      )}
                     </h4>
-                    <p style={{ color: '#6b7280', marginBottom: '15px', fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
+                    <p style={{ color: '#1e40af', marginBottom: '5px', fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
                       <FontAwesomeIcon icon={faEnvelope} style={{ marginRight: '8px' }} />
-                      {userData.email}
+                      {userData.usuario.email}
                     </p>
+                    {userData.usuario.siguiente_nivel_disponible && (
+                      <p style={{ color: '#1e40af', margin: 0, fontSize: 'clamp(0.85rem, 1.4vw, 0.95rem)' }}>
+                        <FontAwesomeIcon icon={faAward} style={{ marginRight: '8px' }} />
+                        Siguiente nivel disponible: {userData.usuario.siguiente_nivel_disponible}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {userData && userData.opciones_pago && userData.opciones_pago.length > 0 && (
+                <div style={styles.card}>
+                  <div style={styles.sectionTitle}>
+                    <FontAwesomeIcon icon={faTag} style={{ marginRight: '10px' }} />
+                    Opciones de Pago Disponibles
                   </div>
 
-                  {programDetails[userData.programa_interes] && (
-                    <div>
-                      <h5 style={{ color: '#002868', marginBottom: '15px', fontSize: 'clamp(1rem, 1.6vw, 1.1rem)' }}>
-                        {programDetails[userData.programa_interes].name}
-                      </h5>
+                  {userData.opciones_pago.map((opcion, index) => (
+                    <div 
+                      key={index}
+                      style={{
+                        ...styles.optionCard,
+                        ...(selectedOption?.codigo === opcion.codigo ? styles.selectedCard : {})
+                      }}
+                      onClick={() => handleSelectOption(opcion)}
+                      onMouseEnter={(e) => {
+                        if (selectedOption?.codigo !== opcion.codigo) {
+                          e.currentTarget.style.borderColor = '#002868';
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (selectedOption?.codigo !== opcion.codigo) {
+                          e.currentTarget.style.borderColor = '#e5e7eb';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                        }
+                      }}
+                    >
+                      {opcion.ahorro && (
+                        <div style={styles.savingsBadge}>
+                          Ahorras ${opcion.ahorro.toLocaleString()}
+                        </div>
+                      )}
                       
                       <div style={styles.priceTag}>
                         <FontAwesomeIcon icon={faDollarSign} style={{ marginRight: '5px' }} />
-                        ${programDetails[userData.programa_interes].price.toLocaleString()} MXN
+                        ${opcion.precio.toLocaleString()} MXN
                       </div>
 
+                      <h5 style={{ color: '#002868', marginBottom: '10px', fontSize: 'clamp(1rem, 1.6vw, 1.1rem)' }}>
+                        {opcion.nombre}
+                      </h5>
+                      
                       <p style={{ color: '#6b7280', marginBottom: '15px', fontSize: 'clamp(0.85rem, 1.4vw, 0.95rem)' }}>
-                        {programDetails[userData.programa_interes].description}
+                        {opcion.descripcion}
                       </p>
 
-                      <div style={{ marginBottom: '20px' }}>
-                        <h6 style={{ color: '#002868', marginBottom: '10px', fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                          Incluye:
-                        </h6>
-                        <ul style={styles.benefitsList}>
-                          {programDetails[userData.programa_interes].benefits.map((benefit, index) => (
-                            <li key={index} style={styles.benefitItem}>
-                              <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#10b981' }} />
-                              {benefit}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      {opcion.categoria === 'CONOCER_INDIVIDUAL' && (
+                        <div style={{ fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', color: '#10b981', fontWeight: '600' }}>
+                          <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '5px' }} />
+                          Nivel {opcion.nivel_inicio} • Duración: {opcion.duracion_meses} mes
+                        </div>
+                      )}
 
-                      <button
-                        onClick={handlePayment}
-                        style={styles.payButton}
-                        onMouseEnter={(e) => {
+                      {opcion.categoria === 'CONOCER_PAQUETE' && (
+                        <div style={{ fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', color: '#10b981', fontWeight: '600' }}>
+                          <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '5px' }} />
+                          Niveles {opcion.nivel_inicio} al {opcion.nivel_fin} • Duración: {opcion.duracion_meses} meses
+                        </div>
+                      )}
+
+                      {opcion.categoria === 'CENNI' && (
+                        <div style={{ fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', color: '#10b981', fontWeight: '600' }}>
+                          <FontAwesomeIcon icon={faCertificate} style={{ marginRight: '5px' }} />
+                          Certificación oficial SEP
+                        </div>
+                      )}
+
+                      {selectedOption?.codigo === opcion.codigo && (
+                        <div style={{
+                          marginTop: '15px',
+                          padding: '10px',
+                          background: '#002868',
+                          color: 'white',
+                          borderRadius: '8px',
+                          textAlign: 'center',
+                          fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                          fontWeight: '600'
+                        }}>
+                          <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '8px' }} />
+                          Opción Seleccionada
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
+                  {selectedOption && (
+                    <button
+                      onClick={handleCreateSubscription}
+                      style={styles.payButton}
+                      disabled={isCreatingSubscription}
+                      onMouseEnter={(e) => {
+                        if (!isCreatingSubscription) {
                           e.currentTarget.style.transform = 'scale(1.02)';
                           e.currentTarget.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.4)';
-                        }}
-                        onMouseLeave={(e) => {
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isCreatingSubscription) {
                           e.currentTarget.style.transform = 'scale(1)';
                           e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faArrowRight} style={{ marginRight: '10px' }} />
-                        Proceder al Pago Seguro
-                      </button>
-                    </div>
+                        }
+                      }}
+                    >
+                      <FontAwesomeIcon 
+                        icon={isCreatingSubscription ? faSpinner : faArrowRight} 
+                        spin={isCreatingSubscription}
+                        style={{ marginRight: '10px' }} 
+                      />
+                      {isCreatingSubscription ? 'Creando Suscripción...' : `Proceder al Pago (${selectedOption.nombre})`}
+                    </button>
                   )}
                 </div>
               )}
@@ -572,6 +780,75 @@ const Pago = () => {
                   Válido Nacionalmente
                 </div>
               </div>
+
+              {/* Información adicional si hay progreso del usuario */}
+              {userData && userData.historial_completado && userData.historial_completado.length > 0 && (
+                <div style={styles.card}>
+                  <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    <FontAwesomeIcon icon={faAward} style={{
+                      fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                      color: '#10b981',
+                      marginBottom: '15px'
+                    }} />
+                    <h5 style={{
+                      color: '#002868',
+                      marginBottom: '10px',
+                      fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
+                    }}>
+                      Tu Progreso
+                    </h5>
+                  </div>
+
+                  <div style={{ marginBottom: '15px' }}>
+                    <h6 style={{
+                      color: '#059669',
+                      marginBottom: '10px',
+                      fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+                    }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '8px' }} />
+                      Completado
+                    </h6>
+                    <ul style={{
+                      paddingLeft: '20px',
+                      color: '#6b7280',
+                      fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                      lineHeight: '1.6',
+                      listStyle: 'none'
+                    }}>
+                      {userData.historial_completado.map((item, index) => (
+                        <li key={index} style={{ marginBottom: '5px' }}>
+                          <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#10b981', marginRight: '8px' }} />
+                          {item.programa_nombre}
+                          {item.nivel_inicio && item.nivel_fin && (
+                            <span style={{ color: '#6b7280', fontSize: '0.9em' }}>
+                              {' '}(Niveles {item.nivel_inicio}-{item.nivel_fin})
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div style={{
+                    background: '#f0fdf4',
+                    border: '1px solid #10b981',
+                    borderRadius: '8px',
+                    padding: 'clamp(10px, 2vw, 12px)',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{
+                      fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                      fontWeight: '600',
+                      color: '#059669'
+                    }}>
+                      ¡Excelente progreso! 
+                      {userData.usuario?.nivel_conocer_completado > 0 && (
+                        <span> Has completado {userData.usuario.nivel_conocer_completado} niveles.</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

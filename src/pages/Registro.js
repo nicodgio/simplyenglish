@@ -4,7 +4,8 @@ import {
   faUserPlus, faGraduationCap, faCertificate, faInfoCircle,
   faUser, faEnvelope, faPhone, faCalendarAlt, faMapMarkerAlt,
   faIdCard, faBookOpen, faLanguage, faClipboardList,
-  faHeadset, faCheckCircle, faExclamationTriangle, faArrowLeft
+  faHeadset, faCheckCircle, faExclamationTriangle, faArrowLeft,
+  faSpinner
 } from '@fortawesome/free-solid-svg-icons';
 
 const Registro = () => {
@@ -22,6 +23,8 @@ const Registro = () => {
     codigoPostal: '',
     programaInteres: '',
     nivelActual: '',
+    nivelConocerActual: 0,
+    nivelConocerCompletado: 0,
     experienciaPrevia: '',
     objetivos: '',
     horarioPreferencia: '',
@@ -32,6 +35,11 @@ const Registro = () => {
   const [alertType, setAlertType] = useState('success');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [registeredUser, setRegisteredUser] = useState(null);
+  
+  // Estados para programas dinámicos
+  const [programasDisponibles, setProgramasDisponibles] = useState([]);
+  const [nivelesIngles, setNivelesIngles] = useState([]);
+  const [loadingProgramas, setLoadingProgramas] = useState(true);
 
   useEffect(() => {
     document.title = 'Registro de Estudiantes - Simply English | Inscríbete Ahora';
@@ -40,7 +48,65 @@ const Registro = () => {
     if (metaDescription) {
       metaDescription.content = 'Regístrate en Simply English. Cursos de inglés desde $1,245/mes. Certificación CENNI disponible. Evaluación gratuita de nivel. Inscripción en línea.';
     }
+
+    // Cargar programas disponibles desde la API
+    cargarProgramas();
   }, []);
+
+  const cargarProgramas = async () => {
+    try {
+      setLoadingProgramas(true);
+      console.log('Cargando programas desde la API...');
+      
+      const response = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/programas.php', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data) {
+          setProgramasDisponibles(result.data.programas || []);
+          setNivelesIngles(result.data.niveles_ingles || []);
+          console.log('Programas cargados exitosamente:', result.data.programas);
+        } else {
+          console.error('Error en la respuesta de programas:', result);
+          usarProgramasPorDefecto();
+        }
+      } else {
+        console.error('Error al cargar programas, usando valores por defecto');
+        usarProgramasPorDefecto();
+      }
+    } catch (error) {
+      console.error('Error al cargar programas:', error);
+      usarProgramasPorDefecto();
+    } finally {
+      setLoadingProgramas(false);
+    }
+  };
+
+  const usarProgramasPorDefecto = () => {
+    console.log('Usando programas por defecto');
+    setProgramasDisponibles([
+      { value: 'CONOCER_INDIVIDUAL', label: 'CONOCER Nivel Individual ($1,245 MXN/nivel)' },
+      { value: 'CONOCER_PAQUETE', label: 'Paquete CONOCER (3 Niveles) ($3,110 MXN)' },
+      { value: 'CENNI_BASICO', label: 'Certificación CENNI Básico ($1,866 MXN)' },
+      { value: 'CENNI_PLUS', label: 'Certificación CENNI Plus ($2,488 MXN)' },
+      { value: 'CENNI_PRO', label: 'Certificación CENNI Pro ($3,420 MXN)' }
+    ]);
+
+    setNivelesIngles([
+      { value: 'principiante', label: 'Principiante (A1) - Empezar desde Nivel 1', conocer_completado: 0, conocer_actual: 1 },
+      { value: 'basico', label: 'Básico (A2) - Empezar desde Nivel 2', conocer_completado: 1, conocer_actual: 2 },
+      { value: 'intermedio-bajo', label: 'Intermedio Bajo (B1) - Empezar desde Nivel 3', conocer_completado: 2, conocer_actual: 3 },
+      { value: 'intermedio', label: 'Intermedio (B2) - Empezar desde Nivel 4', conocer_completado: 3, conocer_actual: 4 },
+      { value: 'avanzado', label: 'Avanzado (C1) - Empezar desde Nivel 6', conocer_completado: 5, conocer_actual: 6 },
+      { value: 'superior', label: 'Superior (C2) - Empezar desde Nivel 8', conocer_completado: 7, conocer_actual: 8 },
+      { value: 'no-se', label: 'No estoy seguro (evaluación requerida)', conocer_completado: 0, conocer_actual: 1 }
+    ]);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,6 +114,20 @@ const Registro = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleNivelChange = (e) => {
+    const { value } = e.target;
+    const nivelSeleccionado = nivelesIngles.find(nivel => nivel.value === value);
+    
+    setFormData(prev => ({
+      ...prev,
+      nivelActual: value,
+      nivelConocerCompletado: nivelSeleccionado ? nivelSeleccionado.conocer_completado : 0,
+      nivelConocerActual: nivelSeleccionado ? nivelSeleccionado.conocer_actual : 1
+    }));
+
+    console.log('Nivel seleccionado:', nivelSeleccionado);
   };
 
   const handleSubmit = async (e) => {
@@ -59,7 +139,7 @@ const Registro = () => {
     try {
       console.log('Enviando datos:', formData);
       
-      const response = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/registro', {
+      const response = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/registro.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +148,6 @@ const Registro = () => {
       });
 
       console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
 
       const result = await response.json();
       console.log('Response data:', result);
@@ -99,6 +178,8 @@ const Registro = () => {
           codigoPostal: '',
           programaInteres: '',
           nivelActual: '',
+          nivelConocerActual: 0,
+          nivelConocerCompletado: 0,
           experienciaPrevia: '',
           objetivos: '',
           horarioPreferencia: '',
@@ -121,24 +202,6 @@ const Registro = () => {
       setIsSubmitting(false);
     }
   };
-
-  const programasDisponibles = [
-    { value: 'simply-mensual', label: 'Simply English - Plan Mensual ($1,245 MXN/mes)' },
-    { value: 'simply-trimestral', label: 'Simply English - Plan Trimestral ($3,110 MXN)' },
-    { value: 'cenni-basico', label: 'Certificación CENNI Básico ($1,866 MXN)' },
-    { value: 'cenni-plus', label: 'Certificación CENNI Plus ($2,488 MXN)' },
-    { value: 'cenni-pro', label: 'Certificación CENNI Pro ($3,420 MXN)' }
-  ];
-
-  const nivelesIngles = [
-    { value: 'principiante', label: 'Principiante (A1)' },
-    { value: 'basico', label: 'Básico (A2)' },
-    { value: 'intermedio-bajo', label: 'Intermedio Bajo (B1)' },
-    { value: 'intermedio', label: 'Intermedio (B2)' },
-    { value: 'avanzado', label: 'Avanzado (C1)' },
-    { value: 'superior', label: 'Superior (C2)' },
-    { value: 'no-se', label: 'No estoy seguro (evaluación requerida)' }
-  ];
 
   const styles = {
     container: {
@@ -270,12 +333,6 @@ const Registro = () => {
       gridTemplateColumns: '1fr',
       gap: 'clamp(20px, 4vw, 40px)'
     },
-    formGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-      gap: 'clamp(15px, 3vw, 20px)',
-      marginBottom: 'clamp(15px, 3vw, 20px)'
-    },
     formGridHalf: {
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -293,6 +350,17 @@ const Registro = () => {
       gap: '15px',
       flexWrap: 'wrap',
       justifyContent: 'flex-start'
+    },
+    loadingBox: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#6b7280',
+      padding: 'clamp(12px, 2vw, 16px)',
+      backgroundColor: '#f8fafc',
+      border: '2px solid #e5e7eb',
+      borderRadius: '8px',
+      marginBottom: 'clamp(15px, 3vw, 20px)'
     }
   };
 
@@ -633,23 +701,30 @@ const Registro = () => {
 
                   <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
                     <label style={styles.formLabel}>Programa de Interés *</label>
-                    <select
-                      name="programaInteres"
-                      value={formData.programaInteres}
-                      onChange={handleInputChange}
-                      style={styles.formControl}
-                      required
-                      disabled={isSubmitting}
-                      onFocus={(e) => e.target.style.borderColor = '#002868'}
-                      onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                    >
-                      <option value="">Selecciona un programa</option>
-                      {programasDisponibles.map((programa) => (
-                        <option key={programa.value} value={programa.value}>
-                          {programa.label}
-                        </option>
-                      ))}
-                    </select>
+                    {loadingProgramas ? (
+                      <div style={styles.loadingBox}>
+                        <FontAwesomeIcon icon={faSpinner} spin style={{ marginRight: '10px' }} />
+                        Cargando programas disponibles...
+                      </div>
+                    ) : (
+                      <select
+                        name="programaInteres"
+                        value={formData.programaInteres}
+                        onChange={handleInputChange}
+                        style={styles.formControl}
+                        required
+                        disabled={isSubmitting}
+                        onFocus={(e) => e.target.style.borderColor = '#002868'}
+                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                      >
+                        <option value="">Selecciona un programa</option>
+                        {programasDisponibles.map((programa) => (
+                          <option key={programa.value} value={programa.value}>
+                            {programa.label}
+                          </option>
+                        ))}
+                      </select>
+                    )}
                   </div>
 
                   <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
@@ -657,10 +732,10 @@ const Registro = () => {
                     <select
                       name="nivelActual"
                       value={formData.nivelActual}
-                      onChange={handleInputChange}
+                      onChange={handleNivelChange}
                       style={styles.formControl}
                       required
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || loadingProgramas}
                       onFocus={(e) => e.target.style.borderColor = '#002868'}
                       onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     >
@@ -672,6 +747,34 @@ const Registro = () => {
                       ))}
                     </select>
                   </div>
+
+                  {/* Mostrar información del nivel CONOCER seleccionado */}
+                  {formData.nivelActual && formData.nivelConocerActual > 0 && (
+                    <div style={{
+                      background: '#f0f9ff',
+                      border: '1px solid #0284c7',
+                      borderRadius: '8px',
+                      padding: 'clamp(12px, 2vw, 15px)',
+                      marginBottom: 'clamp(15px, 3vw, 20px)'
+                    }}>
+                      <div style={{
+                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                        color: '#0284c7',
+                        fontWeight: '600'
+                      }}>
+                        <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: '8px' }} />
+                        Información de Nivel CONOCER
+                      </div>
+                      <div style={{
+                        fontSize: 'clamp(0.8rem, 1.2vw, 0.85rem)',
+                        color: '#1e40af',
+                        marginTop: '5px'
+                      }}>
+                        Nivel completado: {formData.nivelConocerCompletado} | 
+                        Siguiente nivel: {formData.nivelConocerActual}
+                      </div>
+                    </div>
+                  )}
 
                   <div style={styles.formGridHalf}>
                     <div>
@@ -746,15 +849,15 @@ const Registro = () => {
                     <button
                       type="submit"
                       style={styles.officialButton}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || loadingProgramas}
                       onMouseEnter={(e) => {
-                        if (!isSubmitting) {
+                        if (!isSubmitting && !loadingProgramas) {
                           e.currentTarget.style.background = '#001845';
                           e.currentTarget.style.transform = 'scale(1.02)';
                         }
                       }}
                       onMouseLeave={(e) => {
-                        if (!isSubmitting) {
+                        if (!isSubmitting && !loadingProgramas) {
                           e.currentTarget.style.background = '#002868';
                           e.currentTarget.style.transform = 'scale(1)';
                         }
@@ -762,24 +865,24 @@ const Registro = () => {
                       aria-label="Completar registro en Simply English"
                     >
                       <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
-                      {isSubmitting ? 'Procesando...' : 'Completar Registro'}
+                      {isSubmitting ? 'Procesando...' : loadingProgramas ? 'Cargando...' : 'Completar Registro'}
                     </button>
 
                     <a
                       href="/contacto"
                       style={{
                         ...styles.secondaryButton,
-                        opacity: isSubmitting ? 0.5 : 1,
-                        pointerEvents: isSubmitting ? 'none' : 'auto'
+                        opacity: isSubmitting || loadingProgramas ? 0.5 : 1,
+                        pointerEvents: isSubmitting || loadingProgramas ? 'none' : 'auto'
                       }}
                       onMouseEnter={(e) => {
-                        if (!isSubmitting) {
+                        if (!isSubmitting && !loadingProgramas) {
                           e.currentTarget.style.background = '#002868';
                           e.currentTarget.style.color = 'white';
                         }
                       }}
                       onMouseLeave={(e) => {
-                        if (!isSubmitting) {
+                        if (!isSubmitting && !loadingProgramas) {
                           e.currentTarget.style.background = 'transparent';
                           e.currentTarget.style.color = '#002868';
                         }

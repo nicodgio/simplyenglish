@@ -24,6 +24,10 @@ $password = 'SPAdmon2025#';
 
 $jwt_secret = 'simply_english_jwt_secret_2025_very_secure_key';
 
+// Configuración de Telegram
+$bot_token = "8270319060:AAEhvFemccYqqLLveb8X9t8m3NT9YGQaTQM";
+$chat_id = "-4952090570";
+
 // Función para logging de debug
 function logDebug($message) {
     error_log('[SIMPLY_ENGLISH_DEBUG] ' . $message);
@@ -56,6 +60,156 @@ function generateJWT($userId, $email, $secret) {
     $base64Signature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
     
     return $base64Header . "." . $base64Payload . "." . $base64Signature;
+}
+
+// Función para enviar mensaje a Telegram
+function sendTelegramMessage($bot_token, $chat_id, $message) {
+    $telegram_data = [
+        'chat_id' => $chat_id,
+        'text' => $message,
+        'parse_mode' => 'Markdown'
+    ];
+
+    $telegram_url = "https://api.telegram.org/bot$bot_token/sendMessage";
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $telegram_url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($telegram_data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curl_error = curl_error($ch);
+    curl_close($ch);
+
+    if ($curl_error) {
+        logDebug('Error cURL Telegram: ' . $curl_error);
+        return false;
+    }
+
+    $telegram_response = json_decode($response, true);
+    
+    if ($http_code !== 200 || !$telegram_response['ok']) {
+        logDebug('Error respuesta Telegram: ' . $response);
+        return false;
+    }
+
+    logDebug('Mensaje enviado a Telegram exitosamente');
+    return true;
+}
+
+// Función para formatear los datos de registro para Telegram
+function formatRegistrationMessage($data, $userId) {
+    $programas_nombres = [
+        'simply-mensual' => 'Simply English - Plan Mensual',
+        'simply-trimestral' => 'Simply English - Plan Trimestral',
+        'cenni-basico' => 'Certificación CENNI Básico',
+        'cenni-plus' => 'Certificación CENNI Plus',
+        'cenni-pro' => 'Certificación CENNI Pro'
+    ];
+
+    $niveles_nombres = [
+        'principiante' => 'Principiante (A1)',
+        'basico' => 'Básico (A2)',
+        'intermedio-bajo' => 'Intermedio Bajo (B1)',
+        'intermedio' => 'Intermedio (B2)',
+        'avanzado' => 'Avanzado (C1)',
+        'superior' => 'Superior (C2)',
+        'no-se' => 'No está seguro (evaluación requerida)'
+    ];
+
+    $programa_texto = isset($programas_nombres[$data['programaInteres']]) 
+        ? $programas_nombres[$data['programaInteres']] 
+        : $data['programaInteres'];
+
+    $nivel_texto = isset($niveles_nombres[$data['nivelActual']]) 
+        ? $niveles_nombres[$data['nivelActual']] 
+        : $data['nivelActual'];
+
+    $fecha = date('d/m/Y H:i:s');
+
+    $message = "🎉 *NUEVO REGISTRO DE ESTUDIANTE*\n\n";
+    $message .= "👤 *Datos Personales:*\n";
+    $message .= "• *Nombre:* {$data['nombre']} {$data['apellidoPaterno']}";
+    if (!empty($data['apellidoMaterno'])) {
+        $message .= " {$data['apellidoMaterno']}";
+    }
+    $message .= "\n";
+    $message .= "• *Email:* {$data['email']}\n";
+    $message .= "• *Teléfono:* {$data['telefono']}\n";
+    $message .= "• *Fecha Nacimiento:* {$data['fechaNacimiento']}\n";
+    
+    if (!empty($data['genero'])) {
+        $generos = [
+            'masculino' => 'Masculino',
+            'femenino' => 'Femenino',
+            'otro' => 'Otro',
+            'prefiero-no-decir' => 'Prefiere no decir'
+        ];
+        $genero_texto = isset($generos[$data['genero']]) ? $generos[$data['genero']] : $data['genero'];
+        $message .= "• *Género:* $genero_texto\n";
+    }
+
+    $message .= "\n📍 *Ubicación:*\n";
+    $message .= "• *Dirección:* {$data['direccion']}\n";
+    $message .= "• *Ciudad:* {$data['ciudad']}, {$data['estado']}\n";
+    $message .= "• *Código Postal:* {$data['codigoPostal']}\n";
+
+    $message .= "\n🎓 *Información Académica:*\n";
+    $message .= "• *Programa:* $programa_texto\n";
+    $message .= "• *Nivel Actual:* $nivel_texto\n";
+
+    if (!empty($data['horarioPreferencia'])) {
+        $horarios = [
+            '4pm-5pm' => '4:00 PM - 5:00 PM',
+            '5pm-6pm' => '5:00 PM - 6:00 PM',
+            '6pm-7pm' => '6:00 PM - 7:00 PM',
+            '7pm-8pm' => '7:00 PM - 8:00 PM',
+            '8pm-9pm' => '8:00 PM - 9:00 PM',
+            'flexible' => 'Flexible'
+        ];
+        $horario_texto = isset($horarios[$data['horarioPreferencia']]) 
+            ? $horarios[$data['horarioPreferencia']] 
+            : $data['horarioPreferencia'];
+        $message .= "• *Horario Preferido:* $horario_texto\n";
+    }
+
+    if (!empty($data['modalidadPreferencia'])) {
+        $modalidades = [
+            'online' => 'En línea',
+            'presencial' => 'Presencial',
+            'hibrida' => 'Híbrida',
+            'sin-preferencia' => 'Sin preferencia'
+        ];
+        $modalidad_texto = isset($modalidades[$data['modalidadPreferencia']]) 
+            ? $modalidades[$data['modalidadPreferencia']] 
+            : $data['modalidadPreferencia'];
+        $message .= "• *Modalidad:* $modalidad_texto\n";
+    }
+
+    if (!empty($data['experienciaPrevia'])) {
+        $experiencia = strlen($data['experienciaPrevia']) > 100 
+            ? substr($data['experienciaPrevia'], 0, 100) . '...' 
+            : $data['experienciaPrevia'];
+        $message .= "\n📚 *Experiencia Previa:*\n$experiencia\n";
+    }
+
+    if (!empty($data['objetivos'])) {
+        $objetivos = strlen($data['objetivos']) > 100 
+            ? substr($data['objetivos'], 0, 100) . '...' 
+            : $data['objetivos'];
+        $message .= "\n🎯 *Objetivos:*\n$objetivos\n";
+    }
+
+    $message .= "\n🆔 *ID Usuario:* $userId\n";
+    $message .= "🕐 *Fecha Registro:* $fecha\n";
+    $message .= "━━━━━━━━━━━━━━━━━━━━\n";
+    $message .= "⏰ *Acción requerida:* Contactar en 24 horas para evaluación inicial";
+
+    return $message;
 }
 
 logDebug('Script iniciado');
@@ -230,6 +384,15 @@ try {
             $token = generateJWT($userId, $data['email'], $jwt_secret);
             
             logDebug('Usuario insertado exitosamente con ID: ' . $userId);
+            
+            // Enviar notificación a Telegram
+            logDebug('Enviando notificación a Telegram...');
+            $telegram_message = formatRegistrationMessage($data, $userId);
+            $telegram_sent = sendTelegramMessage($bot_token, $chat_id, $telegram_message);
+            
+            if (!$telegram_sent) {
+                logDebug('Advertencia: No se pudo enviar notificación a Telegram');
+            }
             
             http_response_code(201);
             echo json_encode([
