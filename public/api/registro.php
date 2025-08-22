@@ -26,7 +26,7 @@ $jwt_secret = 'simply_english_jwt_secret_2025_very_secure_key';
 
 // Configuración de Telegram
 $bot_token = "8270319060:AAEhvFemccYqqLLveb8X9t8m3NT9YGQaTQM";
-$chat_id = "-4952090570";
+$chat_id = "-4831902561";
 
 // Función para logging de debug
 function logDebug($message) {

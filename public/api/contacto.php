@@ -33,7 +33,7 @@ foreach ($required_fields as $field) {
 }
 
 $bot_token = "8270319060:AAEhvFemccYqqLLveb8X9t8m3NT9YGQaTQM";
-$chat_id = "-4952090570";
+$chat_id = "-4831902561";
 
 $nombre = htmlspecialchars($input['nombre']);
 $email = htmlspecialchars($input['email']);
