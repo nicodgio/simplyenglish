@@ -1,12 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCreditCard, faUserCheck, faGraduationCap, faInfoCircle,
-  faEnvelope, faCalendarAlt, faDollarSign, faCheckCircle,
-  faExclamationTriangle, faShieldAlt, faArrowRight, faSearch,
-  faCertificate, faBookOpen, faClock, faUsers, faSpinner,
-  faTag, faAward
-} from '@fortawesome/free-solid-svg-icons';
 
 const Pago = () => {
   const [email, setEmail] = useState('');
@@ -17,13 +9,40 @@ const Pago = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
   const [isCreatingSubscription, setIsCreatingSubscription] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [currentSubscriptionId, setCurrentSubscriptionId] = useState(null);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  
+  const [cardData, setCardData] = useState({
+    holder_name: '',
+    card_number: '',
+    expiration_month: '',
+    expiration_year: '',
+    cvv2: ''
+  });
+  
+  const OPENPAY_ID = 'mzkvkma3reuzgzjf1ysj';
+  const OPENPAY_PUBLIC_KEY = 'pk_1e324f7fb9904ac3985253f3247b4cb2';
+  const OPENPAY_SANDBOX = true;
 
   useEffect(() => {
-    document.title = 'Realizar Pago - Simply English | Inscripción y Certificaciones';
+    if (!document.querySelector('link[href*="bootstrap"]')) {
+      const bootstrapCSS = document.createElement('link');
+      bootstrapCSS.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css';
+      bootstrapCSS.rel = 'stylesheet';
+      document.head.appendChild(bootstrapCSS);
+    }
 
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.content = 'Completa tu pago para Simply English. Inscríbete a cursos desde $1,245/mes o obtén tu certificación CENNI. Proceso seguro con OpenPay.';
+    if (!window.OpenPay) {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/gh/open-pay/openpay-js@latest/lib/openpay.v1.min.js';
+      script.onload = () => {
+        window.OpenPay.setId(OPENPAY_ID);
+        window.OpenPay.setApiKey(OPENPAY_PUBLIC_KEY);
+        window.OpenPay.setSandboxMode(OPENPAY_SANDBOX);
+      };
+      document.head.appendChild(script);
     }
   }, []);
 
@@ -35,44 +54,33 @@ const Pago = () => {
     setSelectedOption(null);
 
     try {
-      console.log('Buscando usuario con email:', email);
-      
       const response = await fetch(`https://mediumpurple-horse-686620.hostingersite.com/api/usuario.php?email=${encodeURIComponent(email)}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: { 'Content-Type': 'application/json' }
       });
 
-      console.log('Response status:', response.status);
       const result = await response.json();
-      console.log('Response data:', result);
 
       if (response.ok && result.success && result.data) {
         setUserData(result.data);
         
-        // Verificar si tiene pago pendiente
         if (result.data.usuario?.pago_activo_id && result.data.usuario?.estado_pago === 'PENDIENTE') {
           setAlertType('warning');
           setAlertMessage('Tienes un pago pendiente. Completa tu pago para activar tu suscripción.');
         } else if (result.data.puede_pagar && result.data.opciones_pago?.length > 0) {
           setAlertType('success');
           setAlertMessage(result.data.mensaje_estado);
-        } else if (result.data.usuario?.estado_suscripcion === 'ACTIVA') {
-          setAlertType('info');
-          setAlertMessage('Tu suscripción está activa. Si deseas continuar con el siguiente nivel, contacta soporte.');
         } else {
-          setAlertType('warning');
-          setAlertMessage('No hay opciones de pago disponibles en este momento. Contacta a un asesor.');
+          setAlertType('info');
+          setAlertMessage('Tu suscripción está activa o no hay opciones disponibles.');
         }
       } else {
-        setAlertType('error');
+        setAlertType('danger');
         setAlertMessage('No se encontró ningún usuario registrado con este email.');
         setUserData(null);
       }
     } catch (error) {
-      console.error('Error al buscar usuario:', error);
-      setAlertType('error');
+      setAlertType('danger');
       setAlertMessage('Error al buscar el usuario. Por favor, intenta nuevamente.');
       setUserData(null);
     } finally {
@@ -82,19 +90,12 @@ const Pago = () => {
     }
   };
 
-  const handleSelectOption = (option) => {
-    setSelectedOption(option);
-    console.log('Opción seleccionada:', option);
-  };
-
   const handleCreateSubscription = async () => {
     if (!selectedOption || !userData?.usuario) return;
 
     setIsCreatingSubscription(true);
     
     try {
-      console.log('Creando suscripción:', selectedOption);
-
       const subscriptionData = {
         action: 'crear_suscripcion',
         usuario_id: userData.usuario.usuario_id,
@@ -105,755 +106,484 @@ const Pago = () => {
 
       const response = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/usuario.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(subscriptionData)
       });
 
-      console.log('Subscription response status:', response.status);
       const result = await response.json();
-      console.log('Subscription response:', result);
 
       if (response.ok && result.success) {
+        setCurrentSubscriptionId(result.data.pago_id);
+        setShowPaymentForm(true);
         setAlertType('success');
-        if (result.data.accion === 'reemplazada') {
-          setAlertMessage(`¡Suscripción actualizada! Se canceló la anterior y se creó una nueva. Referencia: SE-${String(result.data.pago_id).padStart(6, '0')}`);
-        } else {
-          setAlertMessage(`¡Suscripción creada! Referencia: SE-${String(result.data.pago_id).padStart(6, '0')}. Procede con el pago.`);
-        }
-        
-        // Aquí se integrará con OpenPay
-        console.log('Datos del pago:', result.data);
-        
-        const mensaje_openpay = result.data.accion === 'reemplazada' 
-          ? `¡Suscripción actualizada exitosamente!\n\nSe canceló automáticamente la suscripción pendiente anterior y se creó una nueva.\n\n`
-          : `¡Suscripción creada exitosamente!\n\n`;
-          
-        alert(`${mensaje_openpay}Referencia: SE-${String(result.data.pago_id).padStart(6, '0')}\nMonto: ${selectedOption.precio.toLocaleString()} MXN\n\nPróximamente se abrirá la pasarela de OpenPay.`);
-        
-        // Limpiar selección
-        setSelectedOption(null);
-        // Recargar datos del usuario
-        handleEmailSearch({ preventDefault: () => {} });
-        
+        setAlertMessage(`Suscripción creada. Referencia: SE-${String(result.data.pago_id).padStart(6, '0')}`);
       } else {
-        setAlertType('error');
+        setAlertType('danger');
         setAlertMessage(`Error al crear suscripción: ${result.error || 'Error desconocido'}`);
       }
     } catch (error) {
-      console.error('Error al crear suscripción:', error);
-      setAlertType('error');
+      setAlertType('danger');
       setAlertMessage('Error de conexión. Por favor intenta nuevamente.');
     } finally {
       setIsCreatingSubscription(false);
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 8000);
     }
   };
 
-  const styles = {
-    container: {
-      maxWidth: '1200px',
-      margin: '0 auto',
-      padding: '0 15px',
-      width: '100%',
-      boxSizing: 'border-box'
-    },
-    header: {
-      background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
-      color: 'white',
-      padding: 'clamp(60px, 10vw, 100px) 0 clamp(40px, 8vw, 80px)',
-      position: 'relative',
-      overflow: 'hidden'
-    },
-    headerPattern: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      opacity: 0.03,
-      backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
-      backgroundSize: '40px 40px'
-    },
-    badge: {
-      background: 'rgba(255, 255, 255, 0.1)',
-      color: 'white',
-      padding: 'clamp(8px, 1.5vw, 12px) clamp(16px, 3vw, 24px)',
-      borderRadius: '25px',
-      display: 'inline-block',
-      marginBottom: 'clamp(20px, 4vw, 30px)',
-      border: '1px solid rgba(255, 255, 255, 0.3)',
-      fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)'
-    },
-    card: {
-      background: 'white',
-      border: '1px solid #e5e7eb',
-      borderRadius: '12px',
-      padding: 'clamp(25px, 4vw, 40px)',
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-      marginBottom: 'clamp(20px, 4vw, 30px)'
-    },
-    formControl: {
-      border: '2px solid #e5e7eb',
-      borderRadius: '8px',
-      padding: 'clamp(12px, 2vw, 16px)',
-      fontSize: 'clamp(0.9rem, 1.5vw, 1rem)',
-      transition: 'all 0.3s ease',
-      backgroundColor: '#f8fafc',
-      width: '100%',
-      boxSizing: 'border-box'
-    },
-    formLabel: {
-      fontWeight: '600',
-      color: '#002868',
-      marginBottom: 'clamp(8px, 1vw, 12px)',
-      display: 'block',
-      fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
-    },
-    primaryButton: {
-      background: isSearching ? '#6b7280' : '#002868',
-      color: 'white',
-      border: 'none',
-      padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)',
-      fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)',
-      fontWeight: '600',
-      borderRadius: '8px',
-      transition: 'all 0.3s ease',
-      cursor: isSearching ? 'not-allowed' : 'pointer',
-      textDecoration: 'none',
-      display: 'inline-block',
-      textAlign: 'center',
-      opacity: isSearching ? 0.7 : 1
-    },
-    optionCard: {
-      background: 'white',
-      border: '2px solid #e5e7eb',
-      borderRadius: '12px',
-      padding: 'clamp(20px, 3vw, 25px)',
-      marginBottom: '20px',
-      cursor: 'pointer',
-      transition: 'all 0.3s ease',
-      position: 'relative'
-    },
-    selectedCard: {
-      borderColor: '#002868',
-      background: '#f8fafc'
-    },
-    priceTag: {
-      background: 'linear-gradient(135deg, #BF0A30 0%, #8B0000 100%)',
-      color: 'white',
-      padding: '8px 16px',
-      borderRadius: '25px',
-      fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
-      fontWeight: '700',
-      display: 'inline-block',
-      marginBottom: '15px'
-    },
-    payButton: {
-      background: isCreatingSubscription ? '#6b7280' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-      color: 'white',
-      border: 'none',
-      padding: 'clamp(16px, 3vw, 20px) clamp(32px, 6vw, 48px)',
-      fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-      fontWeight: '600',
-      borderRadius: '12px',
-      transition: 'all 0.3s ease',
-      cursor: isCreatingSubscription ? 'not-allowed' : 'pointer',
-      textDecoration: 'none',
-      display: 'inline-block',
-      textAlign: 'center',
-      width: '100%',
-      marginTop: '20px',
-      boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
-      opacity: isCreatingSubscription ? 0.7 : 1
-    },
-    alert: {
-      borderRadius: '8px',
-      padding: 'clamp(12px, 2vw, 16px)',
-      marginBottom: '20px',
-      fontSize: 'clamp(0.9rem, 1.5vw, 1rem)',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '10px'
-    },
-    sectionTitle: {
-      color: '#002868',
-      fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
-      fontWeight: '600',
-      marginBottom: 'clamp(20px, 4vw, 25px)',
-      paddingBottom: '10px',
-      borderBottom: '2px solid #e5e7eb'
-    },
-    mainGrid: {
-      display: 'grid',
-      gridTemplateColumns: '1fr',
-      gap: 'clamp(20px, 4vw, 40px)'
-    },
-    sectionPadding: {
-      padding: 'clamp(40px, 8vw, 80px) 0'
-    },
-    userInfo: {
-      background: '#f0f9ff',
-      border: '1px solid #0284c7',
-      borderRadius: '8px',
-      padding: 'clamp(15px, 3vw, 20px)',
-      marginBottom: '20px'
-    },
-    levelBadge: {
-      background: '#10b981',
-      color: 'white',
-      padding: '4px 12px',
-      borderRadius: '15px',
-      fontSize: 'clamp(0.7rem, 1.2vw, 0.8rem)',
-      fontWeight: '600',
-      display: 'inline-block',
-      marginLeft: '10px'
-    },
-    savingsBadge: {
-      background: '#059669',
-      color: 'white',
-      padding: '4px 8px',
-      borderRadius: '12px',
-      fontSize: 'clamp(0.7rem, 1.1vw, 0.75rem)',
-      fontWeight: '600',
-      position: 'absolute',
-      top: '15px',
-      right: '15px'
+  const processCardPayment = async () => {
+    if (!window.OpenPay) {
+      setAlertType('danger');
+      setAlertMessage('Error: OpenPay no está cargado. Recarga la página.');
+      setShowAlert(true);
+      return;
+    }
+
+    if (!window.OpenPay.card.validateCardNumber(cardData.card_number)) {
+      setAlertType('danger');
+      setAlertMessage('Número de tarjeta inválido');
+      setShowAlert(true);
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    
+    try {
+      window.OpenPay.token.create({
+        card_number: cardData.card_number.replace(/\s/g, ''),
+        holder_name: cardData.holder_name.toUpperCase(),
+        expiration_year: cardData.expiration_year,
+        expiration_month: cardData.expiration_month.padStart(2, '0'),
+        cvv2: cardData.cvv2
+      }, 
+      async (response) => {
+        console.log('Token creado:', response.data);
+        
+        const paymentData = {
+          action: 'procesar_pago',
+          pago_id: currentSubscriptionId,
+          metodo_pago: 'card',
+          token_id: response.data.id,
+          device_session_id: window.OpenPay.deviceData?.setup?.() || 'web_session'
+        };
+
+        try {
+          const paymentResponse = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/pago.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(paymentData)
+          });
+
+          const paymentResult = await paymentResponse.json();
+          
+          if (paymentResult.success) {
+            setAlertType('success');
+            setAlertMessage('¡Pago procesado exitosamente! Tu suscripción está activa.');
+            setShowPaymentForm(false);
+            resetPaymentForm();
+            handleEmailSearch({ preventDefault: () => {} });
+          } else {
+            setAlertType('danger');
+            setAlertMessage(`Error en el pago: ${paymentResult.error || 'Error desconocido'}`);
+          }
+        } catch (fetchError) {
+          setAlertType('danger');
+          setAlertMessage('Error al procesar el pago en el servidor');
+        }
+        
+        setIsProcessingPayment(false);
+        setShowAlert(true);
+      },
+      (error) => {
+        console.error('Error al crear token:', error);
+        setAlertType('danger');
+        setAlertMessage(`Error al procesar tarjeta: ${error.data?.description || 'Error desconocido'}`);
+        setIsProcessingPayment(false);
+        setShowAlert(true);
+      });
+      
+    } catch (error) {
+      setAlertType('danger');
+      setAlertMessage('Error al procesar el pago. Intenta nuevamente.');
+      setIsProcessingPayment(false);
+      setShowAlert(true);
     }
   };
 
-  if (typeof window !== 'undefined' && window.innerWidth > 768) {
-    styles.mainGrid.gridTemplateColumns = userData ? '2fr 1fr' : '1fr 1fr';
-  }
+  const generateStorePayment = async () => {
+    setIsProcessingPayment(true);
+    
+    try {
+      const paymentData = {
+        action: 'generar_ficha_pago',
+        pago_id: currentSubscriptionId,
+        metodo_pago: 'store'
+      };
 
-  const alertStyles = {
-    success: {
-      background: '#d1fae5',
-      border: '1px solid #10b981',
-      color: '#065f46'
-    },
-    error: {
-      background: '#fee2e2',
-      border: '1px solid #ef4444',
-      color: '#991b1b'
-    },
-    info: {
-      background: '#dbeafe',
-      border: '1px solid #3b82f6',
-      color: '#1e40af'
-    },
-    warning: {
-      background: '#fef3c7',
-      border: '1px solid #f59e0b',
-      color: '#92400e'
+      const response = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/pago.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(paymentData)
+      });
+
+      const result = await response.json();
+      
+      if (result.success && result.data.payment_reference) {
+        alert(`Ficha de pago generada!\n\nReferencia: ${result.data.payment_reference}\nMonto: ${selectedOption.precio.toLocaleString()} MXN\n\nPuedes pagar en OXXO, 7-Eleven, etc.`);
+        
+        if (result.data.pdf_url) {
+          window.open(result.data.pdf_url, '_blank');
+        }
+        
+        setShowPaymentForm(false);
+        resetPaymentForm();
+      } else {
+        setAlertType('danger');
+        setAlertMessage('Error al generar ficha de pago');
+        setShowAlert(true);
+      }
+    } catch (error) {
+      setAlertType('danger');
+      setAlertMessage('Error al generar ficha de pago');
+      setShowAlert(true);
+    } finally {
+      setIsProcessingPayment(false);
     }
+  };
+
+  const resetPaymentForm = () => {
+    setCardData({
+      holder_name: '',
+      card_number: '',
+      expiration_month: '',
+      expiration_year: '',
+      cvv2: ''
+    });
+    setPaymentMethod('card');
+    setSelectedOption(null);
+  };
+
+  const formatCardNumber = (value) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = (matches && matches[0]) || '';
+    const parts = [];
+    
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    
+    return parts.length ? parts.join(' ') : value;
   };
 
   return (
-    <main style={{ background: '#f8fafc', minHeight: '100vh', overflowX: 'hidden', width: '100%' }}>
-      <section style={styles.header} aria-label="Realizar pago">
-        <div style={styles.headerPattern} />
-        <div style={styles.container}>
-          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={styles.badge}>
-              <FontAwesomeIcon icon={faCreditCard} style={{ marginRight: '10px' }} />
-              Realizar Pago
-            </div>
-            <h1 style={{
-              fontSize: 'clamp(2rem, 6vw, 3.5rem)',
-              fontWeight: '700',
-              marginBottom: '24px',
-              color: 'white',
-              lineHeight: '1.2'
-            }}>
-              Completa tu Inscripción<br />
-              <span style={{ color: '#f8fafc' }}>Pago Seguro con OpenPay</span>
-            </h1>
-            <p style={{
-              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
-              opacity: 0.9,
-              marginBottom: '0',
-              maxWidth: '600px',
-              margin: '0 auto',
-              color: 'white',
-              padding: '0 15px'
-            }}>
-              Ingresa tu email para verificar tu registro y proceder con el pago
-            </p>
+    <div className="container-fluid bg-light min-vh-100">
+      <div className="container py-5">
+        <div className="row">
+          <div className="col-12 text-center mb-5">
+            <h1 className="display-4 fw-bold text-primary">Simply English - Pago</h1>
+            <p className="lead text-muted">Completa tu inscripción de forma segura</p>
           </div>
         </div>
-      </section>
 
-      <section style={{ ...styles.sectionPadding, marginTop: 'clamp(-30px, -5vw, -40px)' }} aria-label="Buscar usuario y realizar pago">
-        <div style={styles.container}>
+        {showAlert && (
+          <div className={`alert alert-${alertType} alert-dismissible fade show`} role="alert">
+            {alertMessage}
+            <button type="button" className="btn-close" onClick={() => setShowAlert(false)}></button>
+          </div>
+        )}
 
-          {showAlert && (
-            <div style={{
-              ...styles.alert,
-              ...alertStyles[alertType]
-            }}>
-              <FontAwesomeIcon
-                icon={alertType === 'success' ? faCheckCircle : alertType === 'error' ? faExclamationTriangle : alertType === 'warning' ? faExclamationTriangle : faInfoCircle}
-              />
-              {alertMessage}
-            </div>
-          )}
-
-          <div style={styles.mainGrid}>
-            
-            <div>
-              <div style={styles.card}>
-                <div style={styles.sectionTitle}>
-                  <FontAwesomeIcon icon={faUserCheck} style={{ marginRight: '10px' }} />
-                  Verificar Registro
+        <div className="row">
+          <div className="col-lg-8">
+            <div className="card shadow-sm mb-4">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">Verificar Registro</h5>
+              </div>
+              <div className="card-body">
+                <div className="mb-3">
+                  <label className="form-label">Email de Registro *</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="tu@email.com"
+                    required
+                    disabled={isSearching}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleEmailSearch(e);
+                      }
+                    }}
+                  />
                 </div>
+                <button
+                  onClick={handleEmailSearch}
+                  className="btn btn-primary"
+                  disabled={isSearching || !email}
+                >
+                  {isSearching ? 'Buscando...' : 'Buscar Mi Registro'}
+                </button>
+              </div>
+            </div>
 
-                <div>
-                  <div>
-                    <label style={styles.formLabel}>Email de Registro *</label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      style={styles.formControl}
-                      placeholder="tu@email.com"
-                      required
-                      disabled={isSearching}
-                      onFocus={(e) => e.target.style.borderColor = '#002868'}
-                      onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          handleEmailSearch(e);
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <button
-                    onClick={handleEmailSearch}
-                    style={styles.primaryButton}
-                    disabled={isSearching || !email}
-                    onMouseEnter={(e) => {
-                      if (!isSearching && email) {
-                        e.currentTarget.style.background = '#001845';
-                        e.currentTarget.style.transform = 'scale(1.02)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isSearching && email) {
-                        e.currentTarget.style.background = '#002868';
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }
-                    }}
-                  >
-                    <FontAwesomeIcon icon={isSearching ? faSpinner : faSearch} spin={isSearching} style={{ marginRight: '10px' }} />
-                    {isSearching ? 'Buscando...' : 'Buscar Mi Registro'}
-                  </button>
+            {userData && userData.usuario && (
+              <div className="card shadow-sm mb-4">
+                <div className="card-header bg-success text-white">
+                  <h5 className="mb-0">Información del Estudiante</h5>
+                </div>
+                <div className="card-body">
+                  <h6>{userData.usuario.nombre} {userData.usuario.apellido_paterno}</h6>
+                  <p className="text-muted mb-1">{userData.usuario.email}</p>
+                  {userData.usuario.nivel_conocer_completado > 0 && (
+                    <span className="badge bg-success">
+                      Nivel {userData.usuario.nivel_conocer_completado} completado
+                    </span>
+                  )}
                 </div>
               </div>
+            )}
 
-              {userData && userData.usuario && userData.usuario.pago_activo_id && userData.usuario.estado_pago === 'PENDIENTE' && (
-                <div style={styles.card}>
-                  <div style={{
-                    background: '#fef3c7',
-                    border: '2px solid #f59e0b',
-                    borderRadius: '12px',
-                    padding: 'clamp(20px, 4vw, 25px)',
-                    marginBottom: '20px'
-                  }}>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '15px'
-                    }}>
-                      <FontAwesomeIcon
-                        icon={faExclamationTriangle}
-                        style={{
-                          color: '#f59e0b',
-                          fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-                          flexShrink: 0
-                        }}
-                      />
-                      <div style={{ flex: 1 }}>
-                        <h5 style={{
-                          color: '#92400e',
-                          marginBottom: '10px',
-                          fontWeight: '600',
-                          fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
-                        }}>
-                          ⏰ Pago Pendiente Detectado
-                        </h5>
-                        <p style={{
-                          color: '#92400e',
-                          marginBottom: '15px',
-                          lineHeight: '1.6',
-                          fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
-                        }}>
-                          Tienes un pago pendiente por ${userData.usuario.monto?.toLocaleString()} MXN. 
-                          Puedes completar este pago o seleccionar una nueva opción.
-                        </p>
-                        <div style={{
-                          background: '#f59e0b',
-                          color: 'white',
-                          padding: '8px 16px',
-                          borderRadius: '20px',
-                          fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                          fontWeight: '600',
-                          display: 'inline-block'
-                        }}>
-                          Referencia: SE-{String(userData.usuario.pago_activo_id).padStart(6, '0')}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+            {userData && userData.opciones_pago && userData.opciones_pago.length > 0 && !showPaymentForm && (
+              <div className="card shadow-sm mb-4">
+                <div className="card-header bg-info text-white">
+                  <h5 className="mb-0">Opciones de Pago Disponibles</h5>
                 </div>
-              )}
-
-              {userData && userData.usuario && (
-                <div style={styles.card}>
-                  <div style={styles.sectionTitle}>
-                    <FontAwesomeIcon icon={faGraduationCap} style={{ marginRight: '10px' }} />
-                    Información del Estudiante
-                  </div>
-
-                  <div style={styles.userInfo}>
-                    <h4 style={{ color: '#002868', marginBottom: '10px', fontSize: 'clamp(1rem, 1.8vw, 1.2rem)' }}>
-                      {userData.usuario.nombre} {userData.usuario.apellido_paterno}
-                      {userData.usuario.nivel_conocer_completado > 0 && (
-                        <span style={styles.levelBadge}>
-                          Nivel {userData.usuario.nivel_conocer_completado} completado
-                        </span>
-                      )}
-                    </h4>
-                    <p style={{ color: '#1e40af', marginBottom: '5px', fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                      <FontAwesomeIcon icon={faEnvelope} style={{ marginRight: '8px' }} />
-                      {userData.usuario.email}
-                    </p>
-                    {userData.usuario.siguiente_nivel_disponible && (
-                      <p style={{ color: '#1e40af', margin: 0, fontSize: 'clamp(0.85rem, 1.4vw, 0.95rem)' }}>
-                        <FontAwesomeIcon icon={faAward} style={{ marginRight: '8px' }} />
-                        Siguiente nivel disponible: {userData.usuario.siguiente_nivel_disponible}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {userData && userData.opciones_pago && userData.opciones_pago.length > 0 && (
-                <div style={styles.card}>
-                  <div style={styles.sectionTitle}>
-                    <FontAwesomeIcon icon={faTag} style={{ marginRight: '10px' }} />
-                    Opciones de Pago Disponibles
-                  </div>
-
+                <div className="card-body">
                   {userData.opciones_pago.map((opcion, index) => (
                     <div 
                       key={index}
-                      style={{
-                        ...styles.optionCard,
-                        ...(selectedOption?.codigo === opcion.codigo ? styles.selectedCard : {})
-                      }}
-                      onClick={() => handleSelectOption(opcion)}
-                      onMouseEnter={(e) => {
-                        if (selectedOption?.codigo !== opcion.codigo) {
-                          e.currentTarget.style.borderColor = '#002868';
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (selectedOption?.codigo !== opcion.codigo) {
-                          e.currentTarget.style.borderColor = '#e5e7eb';
-                          e.currentTarget.style.transform = 'translateY(0)';
-                        }
-                      }}
+                      className={`card mb-3 ${selectedOption?.codigo === opcion.codigo ? 'border-primary' : ''}`}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setSelectedOption(opcion)}
                     >
-                      {opcion.ahorro && (
-                        <div style={styles.savingsBadge}>
-                          Ahorras ${opcion.ahorro.toLocaleString()}
+                      <div className="card-body">
+                        <div className="d-flex justify-content-between align-items-start">
+                          <div>
+                            <h6 className="card-title text-primary">
+                              ${opcion.precio.toLocaleString()} MXN
+                            </h6>
+                            <p className="card-text">{opcion.nombre}</p>
+                            <small className="text-muted">{opcion.descripcion}</small>
+                          </div>
+                          {selectedOption?.codigo === opcion.codigo && (
+                            <span className="badge bg-primary">Seleccionado</span>
+                          )}
                         </div>
-                      )}
-                      
-                      <div style={styles.priceTag}>
-                        <FontAwesomeIcon icon={faDollarSign} style={{ marginRight: '5px' }} />
-                        ${opcion.precio.toLocaleString()} MXN
                       </div>
-
-                      <h5 style={{ color: '#002868', marginBottom: '10px', fontSize: 'clamp(1rem, 1.6vw, 1.1rem)' }}>
-                        {opcion.nombre}
-                      </h5>
-                      
-                      <p style={{ color: '#6b7280', marginBottom: '15px', fontSize: 'clamp(0.85rem, 1.4vw, 0.95rem)' }}>
-                        {opcion.descripcion}
-                      </p>
-
-                      {opcion.categoria === 'CONOCER_INDIVIDUAL' && (
-                        <div style={{ fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', color: '#10b981', fontWeight: '600' }}>
-                          <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '5px' }} />
-                          Nivel {opcion.nivel_inicio} • Duración: {opcion.duracion_meses} mes
-                        </div>
-                      )}
-
-                      {opcion.categoria === 'CONOCER_PAQUETE' && (
-                        <div style={{ fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', color: '#10b981', fontWeight: '600' }}>
-                          <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '5px' }} />
-                          Niveles {opcion.nivel_inicio} al {opcion.nivel_fin} • Duración: {opcion.duracion_meses} meses
-                        </div>
-                      )}
-
-                      {opcion.categoria === 'CENNI' && (
-                        <div style={{ fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', color: '#10b981', fontWeight: '600' }}>
-                          <FontAwesomeIcon icon={faCertificate} style={{ marginRight: '5px' }} />
-                          Certificación oficial SEP
-                        </div>
-                      )}
-
-                      {selectedOption?.codigo === opcion.codigo && (
-                        <div style={{
-                          marginTop: '15px',
-                          padding: '10px',
-                          background: '#002868',
-                          color: 'white',
-                          borderRadius: '8px',
-                          textAlign: 'center',
-                          fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                          fontWeight: '600'
-                        }}>
-                          <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '8px' }} />
-                          Opción Seleccionada
-                        </div>
-                      )}
                     </div>
                   ))}
 
                   {selectedOption && (
                     <button
                       onClick={handleCreateSubscription}
-                      style={styles.payButton}
+                      className="btn btn-success btn-lg w-100"
                       disabled={isCreatingSubscription}
-                      onMouseEnter={(e) => {
-                        if (!isCreatingSubscription) {
-                          e.currentTarget.style.transform = 'scale(1.02)';
-                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.4)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isCreatingSubscription) {
-                          e.currentTarget.style.transform = 'scale(1)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
-                        }
-                      }}
                     >
-                      <FontAwesomeIcon 
-                        icon={isCreatingSubscription ? faSpinner : faArrowRight} 
-                        spin={isCreatingSubscription}
-                        style={{ marginRight: '10px' }} 
-                      />
-                      {isCreatingSubscription ? 'Creando Suscripción...' : `Proceder al Pago (${selectedOption.nombre})`}
+                      {isCreatingSubscription ? 'Creando...' : `Proceder al Pago (${selectedOption.nombre})`}
                     </button>
                   )}
                 </div>
-              )}
-            </div>
-
-            <div>
-              <div style={styles.card}>
-                <div style={{ textAlign: 'center', marginBottom: '25px' }}>
-                  <FontAwesomeIcon icon={faShieldAlt} style={{
-                    fontSize: 'clamp(2rem, 4vw, 3rem)',
-                    color: '#10b981',
-                    marginBottom: '20px'
-                  }} />
-                  <h4 style={{
-                    color: '#002868',
-                    marginBottom: '15px',
-                    fontSize: 'clamp(1.1rem, 2vw, 1.3rem)'
-                  }}>
-                    Pago 100% Seguro
-                  </h4>
-                </div>
-
-                <div style={{ marginBottom: '25px' }}>
-                  <h6 style={{
-                    color: '#BF0A30',
-                    marginBottom: '10px',
-                    fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
-                  }}>
-                    <FontAwesomeIcon icon={faCreditCard} style={{ marginRight: '8px' }} />
-                    Métodos de Pago
-                  </h6>
-                  <ul style={{
-                    paddingLeft: '20px',
-                    color: '#6b7280',
-                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                    lineHeight: '1.6'
-                  }}>
-                    <li>Tarjetas de crédito y débito</li>
-                    <li>Transferencia bancaria</li>
-                    <li>Pago en tiendas de conveniencia</li>
-                    <li>PayPal</li>
-                  </ul>
-                </div>
-
-                <div style={{ marginBottom: '25px' }}>
-                  <h6 style={{
-                    color: '#BF0A30',
-                    marginBottom: '10px',
-                    fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
-                  }}>
-                    <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: '8px' }} />
-                    Información Importante
-                  </h6>
-                  <ul style={{
-                    paddingLeft: '20px',
-                    color: '#6b7280',
-                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                    lineHeight: '1.6'
-                  }}>
-                    <li>Confirmación inmediata por email</li>
-                    <li>Acceso al curso en 24 horas</li>
-                    <li>Soporte técnico incluido</li>
-                    <li>Garantía de satisfacción</li>
-                  </ul>
-                </div>
-
-                <div style={{
-                  background: '#f0f9ff',
-                  border: '1px solid #0284c7',
-                  borderRadius: '8px',
-                  padding: 'clamp(12px, 2vw, 15px)',
-                  textAlign: 'center'
-                }}>
-                  <FontAwesomeIcon icon={faCheckCircle} style={{
-                    color: '#0284c7',
-                    fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-                    marginBottom: '8px'
-                  }} />
-                  <div style={{
-                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                    fontWeight: '600',
-                    color: '#0284c7'
-                  }}>
-                    Procesado por OpenPay
-                  </div>
-                </div>
               </div>
+            )}
 
-              <div style={{
-                background: 'white',
-                border: '2px solid #002868',
-                borderRadius: '12px',
-                padding: 'clamp(20px, 4vw, 25px)',
-                textAlign: 'center'
-              }}>
-                <FontAwesomeIcon icon={faCertificate} style={{
-                  fontSize: 'clamp(2rem, 4vw, 2.5rem)',
-                  color: '#BF0A30',
-                  marginBottom: '15px'
-                }} />
-                <h5 style={{
-                  color: '#002868',
-                  marginBottom: '10px',
-                  fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
-                }}>
-                  Certificación Oficial
-                </h5>
-                <p style={{
-                  color: '#6b7280',
-                  fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                  marginBottom: '15px'
-                }}>
-                  Centro evaluador CENNI autorizado por la SEP
-                </p>
-                <div style={{
-                  background: '#10b981',
-                  color: 'white',
-                  padding: '8px 16px',
-                  borderRadius: '20px',
-                  fontSize: 'clamp(0.7rem, 1.2vw, 0.85rem)',
-                  fontWeight: '600',
-                  display: 'inline-block'
-                }}>
-                  <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '5px' }} />
-                  Válido Nacionalmente
+            {showPaymentForm && selectedOption && (
+              <div className="card shadow-sm mb-4">
+                <div className="card-header bg-warning">
+                  <h5 className="mb-0">Realizar Pago</h5>
                 </div>
-              </div>
-
-              {/* Información adicional si hay progreso del usuario */}
-              {userData && userData.historial_completado && userData.historial_completado.length > 0 && (
-                <div style={styles.card}>
-                  <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                    <FontAwesomeIcon icon={faAward} style={{
-                      fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-                      color: '#10b981',
-                      marginBottom: '15px'
-                    }} />
-                    <h5 style={{
-                      color: '#002868',
-                      marginBottom: '10px',
-                      fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
-                    }}>
-                      Tu Progreso
-                    </h5>
+                <div className="card-body">
+                  <div className="alert alert-info">
+                    <strong>{selectedOption.nombre}</strong><br/>
+                    Monto: <strong>${selectedOption.precio.toLocaleString()} MXN</strong><br/>
+                    Referencia: <strong>SE-{String(currentSubscriptionId).padStart(6, '0')}</strong>
                   </div>
 
-                  <div style={{ marginBottom: '15px' }}>
-                    <h6 style={{
-                      color: '#059669',
-                      marginBottom: '10px',
-                      fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
-                    }}>
-                      <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '8px' }} />
-                      Completado
-                    </h6>
-                    <ul style={{
-                      paddingLeft: '20px',
-                      color: '#6b7280',
-                      fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                      lineHeight: '1.6',
-                      listStyle: 'none'
-                    }}>
-                      {userData.historial_completado.map((item, index) => (
-                        <li key={index} style={{ marginBottom: '5px' }}>
-                          <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#10b981', marginRight: '8px' }} />
-                          {item.programa_nombre}
-                          {item.nivel_inicio && item.nivel_fin && (
-                            <span style={{ color: '#6b7280', fontSize: '0.9em' }}>
-                              {' '}(Niveles {item.nivel_inicio}-{item.nivel_fin})
-                            </span>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <div className="mb-4">
+                    <div className="btn-group w-100" role="group">
+                      <input
+                        type="radio"
+                        className="btn-check"
+                        name="paymentMethod"
+                        id="card"
+                        checked={paymentMethod === 'card'}
+                        onChange={() => setPaymentMethod('card')}
+                      />
+                      <label className="btn btn-outline-primary" htmlFor="card">
+                        Tarjeta
+                      </label>
 
-                  <div style={{
-                    background: '#f0fdf4',
-                    border: '1px solid #10b981',
-                    borderRadius: '8px',
-                    padding: 'clamp(10px, 2vw, 12px)',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{
-                      fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                      fontWeight: '600',
-                      color: '#059669'
-                    }}>
-                      ¡Excelente progreso! 
-                      {userData.usuario?.nivel_conocer_completado > 0 && (
-                        <span> Has completado {userData.usuario.nivel_conocer_completado} niveles.</span>
-                      )}
+                      <input
+                        type="radio"
+                        className="btn-check"
+                        name="paymentMethod"
+                        id="store"
+                        checked={paymentMethod === 'store'}
+                        onChange={() => setPaymentMethod('store')}
+                      />
+                      <label className="btn btn-outline-primary" htmlFor="store">
+                        Tienda
+                      </label>
                     </div>
                   </div>
+
+                  {paymentMethod === 'card' && (
+                    <div>
+                      <div className="row mb-3">
+                        <div className="col-12">
+                          <label className="form-label">Nombre del Titular</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={cardData.holder_name}
+                            onChange={(e) => setCardData({...cardData, holder_name: e.target.value.toUpperCase()})}
+                            placeholder="JUAN PÉREZ"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="row mb-3">
+                        <div className="col-12">
+                          <label className="form-label">Número de Tarjeta</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={cardData.card_number}
+                            onChange={(e) => setCardData({...cardData, card_number: formatCardNumber(e.target.value)})}
+                            placeholder="1234 5678 9012 3456"
+                            maxLength="19"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="row mb-3">
+                        <div className="col-4">
+                          <label className="form-label">Mes</label>
+                          <select
+                            className="form-control"
+                            value={cardData.expiration_month}
+                            onChange={(e) => setCardData({...cardData, expiration_month: e.target.value})}
+                            required
+                          >
+                            <option value="">MM</option>
+                            {[...Array(12)].map((_, i) => (
+                              <option key={i} value={String(i + 1).padStart(2, '0')}>
+                                {String(i + 1).padStart(2, '0')}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="col-4">
+                          <label className="form-label">Año</label>
+                          <select
+                            className="form-control"
+                            value={cardData.expiration_year}
+                            onChange={(e) => setCardData({...cardData, expiration_year: e.target.value})}
+                            required
+                          >
+                            <option value="">AA</option>
+                            {[...Array(10)].map((_, i) => {
+                              const year = new Date().getFullYear() + i;
+                              return (
+                                <option key={i} value={String(year).slice(-2)}>
+                                  {year}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </div>
+                        <div className="col-4">
+                          <label className="form-label">CVV</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={cardData.cvv2}
+                            onChange={(e) => setCardData({...cardData, cvv2: e.target.value.replace(/\D/g, '')})}
+                            placeholder="123"
+                            maxLength="4"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={processCardPayment}
+                        className="btn btn-success btn-lg w-100"
+                        disabled={isProcessingPayment}
+                      >
+                        {isProcessingPayment ? 'Procesando...' : `Pagar ${selectedOption.precio.toLocaleString()} MXN`}
+                      </button>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'store' && (
+                    <div>
+                      <div className="alert alert-info">
+                        <h6>Cómo funciona:</h6>
+                        <ol className="mb-0">
+                          <li>Genera tu ficha de pago</li>
+                          <li>Acude a OXXO, 7-Eleven, etc.</li>
+                          <li>Presenta el código de barras</li>
+                          <li>Tu suscripción se activará automáticamente</li>
+                        </ol>
+                      </div>
+
+                      <button
+                        onClick={generateStorePayment}
+                        className="btn btn-success btn-lg w-100"
+                        disabled={isProcessingPayment}
+                      >
+                        {isProcessingPayment ? 'Generando...' : 'Generar Ficha de Pago'}
+                      </button>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      setShowPaymentForm(false);
+                      resetPaymentForm();
+                    }}
+                    className="btn btn-secondary mt-3 w-100"
+                  >
+                    Cancelar
+                  </button>
                 </div>
-              )}
+              </div>
+            )}
+          </div>
+
+          <div className="col-lg-4">
+            <div className="card shadow-sm">
+              <div className="card-header bg-secondary text-white">
+                <h5 className="mb-0">Pago Seguro</h5>
+              </div>
+              <div className="card-body">
+                <h6 className="text-primary">Métodos de Pago</h6>
+                <ul className="list-unstyled">
+                  <li>Tarjetas de crédito y débito</li>
+                  <li>Pago en tiendas de conveniencia</li>
+                  <li>Procesado por OpenPay</li>
+                </ul>
+
+                <h6 className="text-primary mt-3">Información</h6>
+                <ul className="list-unstyled">
+                  <li>Confirmación por email</li>
+                  <li>Acceso en 24 horas</li>
+                  <li>Soporte técnico incluido</li>
+                  <li>Garantía de satisfacción</li>
+                </ul>
+
+                <div className="alert alert-success mt-3">
+                  <small className="fw-bold">Procesado por OpenPay</small>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
   );
 };
 
