@@ -76,7 +76,7 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <title>Simply English - Aprende Inglés en Línea con Certificación SEP | Clases en Vivo</title>
+        <title>Simply English - Aprende Inglés en Línea</title>
         <meta name="description" content="Aprende inglés desde casa con Simply English. Certificación SEP CONOCER, clases en vivo, horarios flexibles. ¡Empieza gratis hoy! +300 estudiantes satisfechos." />
         <meta name="keywords" content="inglés en línea, certificación SEP, CONOCER, clases de inglés, curso inglés México, aprender inglés, Simply English, inglés certificado" />
         <meta property="og:title" content="Simply English - Aprende Inglés en Línea con Certificación SEP" />

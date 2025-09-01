@@ -1045,9 +1045,8 @@ const Precios = () => {
                 fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)', 
                 marginBottom: '30px' 
               }}>
-                Simply English es un centro evaluador autorizado por la Secretaría de Educación Pública 
-                para la aplicación del examen CENNI. Nuestro registro oficial nos permite ofrecer 
-                certificaciones con validez nacional e internacional.
+                Simply English es un centro evaluador autorizado para la aplicación del examen CENNI. Nuestro registro oficial nos permite 
+                ofrecer certificaciones con validez nacional e internacional.
               </p>
               
               <div style={{

@@ -26,6 +26,7 @@ const NavigationBar = () => {
             <Nav.Link as={Link} to="/clases">Clases</Nav.Link>
             <Nav.Link as={Link} to="/horarios">Horarios</Nav.Link>
             <Nav.Link as={Link} to="/precios">Precios</Nav.Link>
+            <Nav.Link as={Link} to="/usuarios">Registrate</Nav.Link>
             <Nav.Link as={Link} to="/contacto">Contacto</Nav.Link>
           </Nav>
         </Navbar.Collapse>

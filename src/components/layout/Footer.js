@@ -39,7 +39,7 @@ const Footer = () => {
                 Centro Evaluador Oficial
               </div>
               <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>
-                Autorizado por SEP para CENNI
+                Autorizado para CENNI
               </div>
             </div>
           </Col>
@@ -193,7 +193,7 @@ const Footer = () => {
           textAlign: 'center'
         }}>
           <p style={{ margin: 0, color: '#6b7280', fontSize: '0.95rem' }}>
-            © {currentYear} Simply English. Todos los derechos reservados. | Centro Evaluador CENNI Autorizado por SEP
+            © {currentYear} Simply English. Todos los derechos reservados. | Centro Evaluador CENNI Autorizado
           </p>
         </div>
       </Container>
