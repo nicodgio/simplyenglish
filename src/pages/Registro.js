@@ -4,8 +4,8 @@ import {
   faUserPlus, faGraduationCap, faCertificate, faInfoCircle,
   faUser, faEnvelope, faPhone, faCalendarAlt, faMapMarkerAlt,
   faIdCard, faBookOpen, faLanguage, faClipboardList,
-  faHeadset, faCheckCircle, faExclamationTriangle, faArrowLeft,
-  faSpinner
+  faHeadset, faCheckCircle, faArrowLeft,
+  faSpinner, faLightbulb
 } from '@fortawesome/free-solid-svg-icons';
 
 const Registro = () => {
@@ -28,15 +28,14 @@ const Registro = () => {
     experienciaPrevia: '',
     objetivos: '',
     horarioPreferencia: '',
-    modalidadPreferencia: ''
+    modalidadPreferencia: 'online'
   });
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState('success');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [registeredUser, setRegisteredUser] = useState(null);
-  
-  // Estados para programas dinámicos
+
   const [programasDisponibles, setProgramasDisponibles] = useState([]);
   const [nivelesIngles, setNivelesIngles] = useState([]);
   const [loadingProgramas, setLoadingProgramas] = useState(true);
@@ -49,7 +48,6 @@ const Registro = () => {
       metaDescription.content = 'Regístrate en Simply English. Cursos de inglés desde $1,245/mes. Certificación CENNI disponible. Evaluación gratuita de nivel. Inscripción en línea.';
     }
 
-    // Cargar programas disponibles desde la API
     cargarProgramas();
   }, []);
 
@@ -57,8 +55,8 @@ const Registro = () => {
     try {
       setLoadingProgramas(true);
       console.log('Cargando programas desde la API...');
-      
-      const response = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/programas.php', {
+
+      const response = await fetch('https://simplyenglish.com.mx/api/programas.php', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +117,7 @@ const Registro = () => {
   const handleNivelChange = (e) => {
     const { value } = e.target;
     const nivelSeleccionado = nivelesIngles.find(nivel => nivel.value === value);
-    
+
     setFormData(prev => ({
       ...prev,
       nivelActual: value,
@@ -138,8 +136,8 @@ const Registro = () => {
 
     try {
       console.log('Enviando datos:', formData);
-      
-      const response = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/registro.php', {
+
+      const response = await fetch('https://simplyenglish.com.mx/api/registro.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -155,15 +153,13 @@ const Registro = () => {
       if (response.ok && result.success) {
         setAlertType('success');
         setShowAlert(true);
-        
-        // Guardar información del usuario registrado en el estado
+
         setRegisteredUser({
           userId: result.data?.userId,
           token: result.data?.token,
           usuario: result.data?.usuario
         });
 
-        // Limpiar formulario
         setFormData({
           nombre: '',
           apellidoPaterno: '',
@@ -183,7 +179,7 @@ const Registro = () => {
           experienciaPrevia: '',
           objetivos: '',
           horarioPreferencia: '',
-          modalidadPreferencia: ''
+          modalidadPreferencia: 'online'
         });
 
         setTimeout(() => setShowAlert(false), 10000);
@@ -207,172 +203,175 @@ const Registro = () => {
     container: {
       maxWidth: '1200px',
       margin: '0 auto',
-      padding: '0 15px',
-      width: '100%',
-      boxSizing: 'border-box'
+      padding: '0 20px',
+      width: '100%'
     },
     header: {
-      background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
+      background: 'linear-gradient(135deg, #1e3a5f 0%, #0f2540 100%)',
       color: 'white',
-      padding: 'clamp(60px, 10vw, 100px) 0 clamp(40px, 8vw, 80px)',
+      padding: '80px 0 60px',
       position: 'relative',
       overflow: 'hidden'
     },
-    headerPattern: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      opacity: 0.03,
-      backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
-      backgroundSize: '40px 40px'
+    headerContent: {
+      position: 'relative',
+      zIndex: 2,
+      textAlign: 'center'
+    },
+    title: {
+      fontSize: '2.5rem',
+      fontWeight: '700',
+      marginBottom: '20px',
+      lineHeight: '1.2'
+    },
+    subtitle: {
+      fontSize: '1.125rem',
+      opacity: 0.95,
+      maxWidth: '600px',
+      margin: '0 auto'
     },
     badge: {
-      background: 'rgba(255, 255, 255, 0.1)',
+      background: 'rgba(255, 255, 255, 0.15)',
       color: 'white',
-      padding: 'clamp(8px, 1.5vw, 12px) clamp(16px, 3vw, 24px)',
-      borderRadius: '25px',
+      padding: '10px 20px',
+      borderRadius: '20px',
       display: 'inline-block',
-      marginBottom: 'clamp(20px, 4vw, 30px)',
-      border: '1px solid rgba(255, 255, 255, 0.3)',
-      fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)'
+      marginBottom: '25px',
+      border: '1px solid rgba(255, 255, 255, 0.25)',
+      fontSize: '0.875rem',
+      fontWeight: '500'
     },
-    academicCard: {
+    sectionPadding: {
+      padding: '60px 0'
+    },
+    recommendationBox: {
+      background: 'linear-gradient(135deg, #e0f2fe 0%, #cffafe 100%)',
+      border: '2px solid #0ea5e9',
+      borderRadius: '12px',
+      padding: '25px',
+      marginBottom: '30px',
+      position: 'relative',
+      overflow: 'hidden'
+    },
+    recommendationContent: {
+      position: 'relative',
+      zIndex: 1
+    },
+    card: {
       background: 'white',
       border: '1px solid #e5e7eb',
       borderRadius: '12px',
-      padding: 'clamp(25px, 4vw, 40px)',
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-      marginBottom: 'clamp(20px, 4vw, 30px)'
+      padding: '35px',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+      marginBottom: '25px'
     },
-    formControl: {
-      border: '2px solid #e5e7eb',
-      borderRadius: '8px',
-      padding: 'clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 16px)',
-      fontSize: 'clamp(0.9rem, 1.5vw, 1rem)',
-      transition: 'all 0.3s ease',
-      backgroundColor: '#f8fafc',
-      width: '100%',
-      marginBottom: 'clamp(15px, 3vw, 20px)',
-      boxSizing: 'border-box'
-    },
-    formLabel: {
-      fontWeight: '600',
-      color: '#002868',
-      marginBottom: 'clamp(6px, 1vw, 8px)',
-      display: 'block',
-      fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
-    },
-    officialButton: {
-      background: isSubmitting ? '#6b7280' : '#002868',
-      color: 'white',
-      border: 'none',
-      padding: 'clamp(12px, 2vw, 16px) clamp(20px, 4vw, 32px)',
-      fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)',
-      fontWeight: '600',
-      borderRadius: '8px',
-      transition: 'all 0.3s ease',
-      cursor: isSubmitting ? 'not-allowed' : 'pointer',
-      textDecoration: 'none',
-      display: 'inline-block',
-      textAlign: 'center',
-      marginBottom: '15px',
-      marginRight: '15px',
-      opacity: isSubmitting ? 0.7 : 1
-    },
-    secondaryButton: {
-      background: 'transparent',
-      color: '#002868',
-      border: '2px solid #002868',
-      padding: 'clamp(12px, 2vw, 16px) clamp(20px, 4vw, 32px)',
-      fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)',
-      fontWeight: '600',
-      borderRadius: '8px',
-      transition: 'all 0.3s ease',
-      cursor: 'pointer',
-      textDecoration: 'none',
-      display: 'inline-block',
-      textAlign: 'center',
-      marginBottom: '15px'
-    },
-    warningBox: {
-      background: '#fef3c7',
-      border: '2px solid #f59e0b',
+    sideCard: {
+      background: 'white',
+      border: '1px solid #e5e7eb',
       borderRadius: '12px',
-      padding: 'clamp(20px, 4vw, 25px)',
-      marginBottom: 'clamp(20px, 4vw, 30px)'
-    },
-    successAlert: {
-      background: '#d1fae5',
-      border: '1px solid #10b981',
-      borderRadius: '8px',
-      padding: 'clamp(12px, 2vw, 16px)',
-      marginBottom: '20px',
-      color: '#065f46',
-      fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+      padding: '25px',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+      marginBottom: '20px'
     },
     sectionTitle: {
-      color: '#002868',
-      fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
+      color: '#1e3a5f',
+      fontSize: '1.375rem',
       fontWeight: '600',
-      marginBottom: 'clamp(20px, 4vw, 25px)',
-      paddingBottom: '10px',
+      marginBottom: '25px',
+      paddingBottom: '12px',
       borderBottom: '2px solid #e5e7eb'
     },
+    formGroup: {
+      marginBottom: '20px'
+    },
+    formLabel: {
+      fontWeight: '500',
+      color: '#374151',
+      marginBottom: '8px',
+      display: 'block',
+      fontSize: '0.95rem'
+    },
+    formControl: {
+      width: '100%',
+      padding: '10px 14px',
+      border: '1px solid #d1d5db',
+      borderRadius: '6px',
+      fontSize: '0.95rem',
+      transition: 'border-color 0.2s',
+      backgroundColor: '#ffffff',
+      boxSizing: 'border-box'
+    },
     textArea: {
-      minHeight: 'clamp(80px, 15vw, 100px)',
+      minHeight: '100px',
       resize: 'vertical',
       fontFamily: 'inherit'
     },
-    sectionPadding: {
-      padding: 'clamp(40px, 8vw, 80px) 0'
+    button: {
+      background: '#1e3a5f',
+      color: 'white',
+      border: 'none',
+      padding: '12px 28px',
+      fontSize: '1rem',
+      fontWeight: '500',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      transition: 'background 0.2s',
+      display: 'inline-block'
     },
-    mainGrid: {
+    secondaryButton: {
+      background: 'transparent',
+      color: '#1e3a5f',
+      border: '2px solid #1e3a5f',
+      padding: '12px 28px',
+      fontSize: '1rem',
+      fontWeight: '500',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      transition: 'all 0.2s',
+      display: 'inline-block'
+    },
+    grid: {
+      display: 'grid',
+      gap: '20px'
+    },
+    gridTwo: {
       display: 'grid',
       gridTemplateColumns: '1fr',
-      gap: 'clamp(20px, 4vw, 40px)'
+      gap: '20px'
     },
-    formGridHalf: {
+    gridThree: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-      gap: 'clamp(15px, 3vw, 20px)',
-      marginBottom: 'clamp(15px, 3vw, 20px)'
+      gridTemplateColumns: '1fr',
+      gap: '20px'
     },
-    formGridThird: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-      gap: 'clamp(15px, 3vw, 20px)',
-      marginBottom: 'clamp(15px, 3vw, 20px)'
-    },
-    buttonGroup: {
-      display: 'flex',
-      gap: '15px',
-      flexWrap: 'wrap',
-      justifyContent: 'flex-start'
-    },
-    loadingBox: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: '#6b7280',
-      padding: 'clamp(12px, 2vw, 16px)',
-      backgroundColor: '#f8fafc',
-      border: '2px solid #e5e7eb',
+    alert: {
+      padding: '15px 20px',
       borderRadius: '8px',
-      marginBottom: 'clamp(15px, 3vw, 20px)'
+      marginBottom: '25px',
+      fontSize: '0.95rem'
+    },
+    infoBox: {
+      background: '#eff6ff',
+      border: '1px solid #2563eb',
+      borderRadius: '8px',
+      padding: '12px 16px',
+      marginBottom: '20px',
+      fontSize: '0.875rem'
+    },
+    certificationBox: {
+      background: 'linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)',
+      border: '2px solid #1e3a5f',
+      borderRadius: '12px',
+      padding: '25px',
+      textAlign: 'center'
     }
   };
 
-  if (typeof window !== 'undefined' && window.innerWidth > 768) {
-    styles.mainGrid.gridTemplateColumns = '2fr 1fr';
-  }
-
   const alertMessages = {
-    success: registeredUser 
+    success: registeredUser
       ? `¡Registro completado exitosamente! Tu ID de usuario es: ${registeredUser.userId}. Nos pondremos en contacto contigo en las próximas 24 horas para confirmar tu inscripción y coordinar tu evaluación inicial.`
       : '¡Registro completado exitosamente! Nos pondremos en contacto contigo en las próximas 24 horas para confirmar tu inscripción y coordinar tu evaluación inicial.',
-    error: 'Hubo un error al procesar tu registro. Por favor, verifica tus datos e intenta nuevamente. Si el problema persiste, contacta soporte.',
+    error: 'Hubo un error al procesar tu registro. Por favor, verifica tus datos e intenta nuevamente.',
     info: 'Procesando tu registro, por favor espera...'
   };
 
@@ -395,127 +394,91 @@ const Registro = () => {
   };
 
   return (
-    <main style={{ background: '#f8fafc', minHeight: '100vh', overflowX: 'hidden', width: '100%' }}>
-      <section style={styles.header} aria-label="Registro de estudiantes">
-        <div style={styles.headerPattern} />
+    <main style={{ background: '#f9fafb', minHeight: '100vh' }}>
+      <section style={styles.header}>
         <div style={styles.container}>
-          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+          <div style={styles.headerContent}>
             <div style={styles.badge}>
-              <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
-              Registro de Estudiantes
+              <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '8px' }} />
+              Registro Oficial de Estudiantes
             </div>
-            <h1 style={{
-              fontSize: 'clamp(2rem, 6vw, 3.5rem)',
-              fontWeight: '700',
-              marginBottom: '24px',
-              color: 'white',
-              lineHeight: '1.2'
-            }}>
-              Únete a Simply English<br />
-              <span style={{ color: '#f8fafc' }}>Comienza tu camino al éxito</span>
+            <h1 style={{ ...styles.title, color: 'white' }}>
+              Inscripción a Programas Académicos
             </h1>
-            <p style={{
-              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
-              opacity: 0.9,
-              marginBottom: '0',
-              maxWidth: '600px',
-              margin: '0 auto',
-              color: 'white',
-              padding: '0 15px'
-            }}>
-              Regístrate en nuestros programas académicos y certificaciones oficiales
+            <p style={styles.subtitle}>
+              Complete el formulario de registro para iniciar su proceso de inscripción en los programas certificados de Simply English
             </p>
           </div>
         </div>
       </section>
 
-      <section style={{ ...styles.sectionPadding, marginTop: 'clamp(-30px, -5vw, -40px)' }} aria-label="Formulario de registro">
+      <section style={styles.sectionPadding}>
         <div style={styles.container}>
-
-          <div style={styles.warningBox}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              flexDirection: window.innerWidth < 480 ? 'column' : 'row',
-              gap: '15px'
-            }}>
-              <FontAwesomeIcon
-                icon={faExclamationTriangle}
-                style={{
-                  color: '#f59e0b',
-                  fontSize: 'clamp(1.2rem, 2vw, 1.5rem)',
-                  marginTop: '3px',
-                  flexShrink: 0
-                }}
-              />
-              <div style={{ flex: 1 }}>
-                <h5 style={{
-                  color: '#92400e',
-                  marginBottom: '10px',
-                  fontWeight: '600',
-                  fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
-                }}>
-                  ¡Recomendación importante!
-                </h5>
-                <p style={{
-                  color: '#92400e',
-                  marginBottom: '20px',
-                  lineHeight: '1.6',
-                  fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
-                }}>
-                  Antes de completar tu registro, te recomendamos hablar con uno de nuestros
-                  asesores académicos para que te ayude a elegir el programa que mejor se adapte
-                  a tu nivel actual y objetivos de aprendizaje.
-                </p>
-                <a
-                  href="/contacto"
+          <div style={styles.recommendationBox}>
+            <div style={styles.recommendationContent}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+                <FontAwesomeIcon
+                  icon={faLightbulb}
                   style={{
-                    ...styles.secondaryButton,
-                    background: '#f59e0b',
-                    color: 'white',
-                    border: 'none',
-                    marginRight: '0'
+                    color: '#0284c7',
+                    fontSize: '1.75rem',
+                    flexShrink: 0
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#d97706';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#f59e0b';
-                  }}
-                  aria-label="Contactar con asesor académico"
-                >
-                  <FontAwesomeIcon icon={faHeadset} style={{ marginRight: '10px' }} />
-                  Hablar con un asesor
-                </a>
+                />
+                <div style={{ flex: 1, minWidth: '250px' }}>
+                  <h3 style={{ color: '#0c4a6e', marginBottom: '10px', fontSize: '1.25rem', fontWeight: '600' }}>
+                    Recomendación Académica
+                  </h3>
+                  <p style={{ color: '#0c4a6e', marginBottom: '20px', lineHeight: '1.6' }}>
+                    Para asegurar la mejor experiencia educativa, le sugerimos contactar con nuestro equipo de asesores académicos antes de completar su registro. Ellos le ayudarán a seleccionar el programa más adecuado según su nivel actual y objetivos de aprendizaje.
+                  </p>
+                  <a
+                    href="/contacto"
+                    style={{
+                      ...styles.button,
+                      background: '#0284c7',
+                      marginBottom: '0'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#0369a1'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#0284c7'}
+                  >
+                    <FontAwesomeIcon icon={faHeadset} style={{ marginRight: '10px' }} />
+                    Solicitar Asesoría Académica
+                  </a>
+                </div>
               </div>
             </div>
           </div>
 
           {showAlert && (
-            <div style={{
-              ...styles.successAlert,
-              ...alertStyles[alertType]
-            }}>
+            <div style={{ ...styles.alert, ...alertStyles[alertType] }}>
               <FontAwesomeIcon
-                icon={alertType === 'success' ? faCheckCircle : alertType === 'error' ? faExclamationTriangle : faInfoCircle}
+                icon={alertType === 'success' ? faCheckCircle : alertType === 'error' ? faInfoCircle : faSpinner}
                 style={{ marginRight: '10px' }}
+                spin={alertType === 'info'}
               />
               {alertMessages[alertType]}
             </div>
           )}
 
-          <div style={styles.mainGrid}>
+          <div style={{
+            ...styles.grid,
+            gridTemplateColumns: window.innerWidth > 992 ? '2fr 1fr' : '1fr',
+            gap: '30px'
+          }}>
             <div>
-              <div style={styles.academicCard}>
+              <div style={styles.card}>
                 <form onSubmit={handleSubmit}>
-
                   <div style={styles.sectionTitle}>
                     <FontAwesomeIcon icon={faUser} style={{ marginRight: '10px' }} />
-                    Datos Personales
+                    Información Personal
                   </div>
 
-                  <div style={styles.formGridHalf}>
-                    <div>
+                  <div style={{
+                    ...styles.gridTwo,
+                    gridTemplateColumns: window.innerWidth > 576 ? 'repeat(2, 1fr)' : '1fr'
+                  }}>
+                    <div style={styles.formGroup}>
                       <label style={styles.formLabel}>Nombre *</label>
                       <input
                         type="text"
@@ -523,14 +486,11 @@ const Registro = () => {
                         value={formData.nombre}
                         onChange={handleInputChange}
                         style={styles.formControl}
-                        placeholder="Tu nombre"
                         required
                         disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
-                    <div>
+                    <div style={styles.formGroup}>
                       <label style={styles.formLabel}>Apellido Paterno *</label>
                       <input
                         type="text"
@@ -538,17 +498,17 @@ const Registro = () => {
                         value={formData.apellidoPaterno}
                         onChange={handleInputChange}
                         style={styles.formControl}
-                        placeholder="Apellido paterno"
                         required
                         disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
                   </div>
 
-                  <div style={styles.formGridHalf}>
-                    <div>
+                  <div style={{
+                    ...styles.gridTwo,
+                    gridTemplateColumns: window.innerWidth > 576 ? 'repeat(2, 1fr)' : '1fr'
+                  }}>
+                    <div style={styles.formGroup}>
                       <label style={styles.formLabel}>Apellido Materno</label>
                       <input
                         type="text"
@@ -556,13 +516,10 @@ const Registro = () => {
                         value={formData.apellidoMaterno}
                         onChange={handleInputChange}
                         style={styles.formControl}
-                        placeholder="Apellido materno"
                         disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
-                    <div>
+                    <div style={styles.formGroup}>
                       <label style={styles.formLabel}>Fecha de Nacimiento *</label>
                       <input
                         type="date"
@@ -572,29 +529,27 @@ const Registro = () => {
                         style={styles.formControl}
                         required
                         disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
                   </div>
 
-                  <div style={styles.formGridHalf}>
-                    <div>
-                      <label style={styles.formLabel}>Email *</label>
+                  <div style={{
+                    ...styles.gridTwo,
+                    gridTemplateColumns: window.innerWidth > 576 ? 'repeat(2, 1fr)' : '1fr'
+                  }}>
+                    <div style={styles.formGroup}>
+                      <label style={styles.formLabel}>Correo Electrónico *</label>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
                         style={styles.formControl}
-                        placeholder="tu@email.com"
                         required
                         disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
-                    <div>
+                    <div style={styles.formGroup}>
                       <label style={styles.formLabel}>Teléfono *</label>
                       <input
                         type="tel"
@@ -602,16 +557,13 @@ const Registro = () => {
                         value={formData.telefono}
                         onChange={handleInputChange}
                         style={styles.formControl}
-                        placeholder="+52 (33) 1234-5678"
                         required
                         disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
                   </div>
 
-                  <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
+                  <div style={styles.formGroup}>
                     <label style={styles.formLabel}>Género</label>
                     <select
                       name="genero"
@@ -619,19 +571,17 @@ const Registro = () => {
                       onChange={handleInputChange}
                       style={styles.formControl}
                       disabled={isSubmitting}
-                      onFocus={(e) => e.target.style.borderColor = '#002868'}
-                      onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     >
-                      <option value="">Selecciona una opción</option>
+                      <option value="">Seleccione una opción</option>
                       <option value="masculino">Masculino</option>
                       <option value="femenino">Femenino</option>
                       <option value="otro">Otro</option>
-                      <option value="prefiero-no-decir">Prefiero no decir</option>
+                      <option value="prefiero-no-decir">Prefiero no especificar</option>
                     </select>
                   </div>
 
-                  <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
-                    <label style={styles.formLabel}>Dirección *</label>
+                  <div style={styles.formGroup}>
+                    <label style={styles.formLabel}>Dirección Completa *</label>
                     <input
                       type="text"
                       name="direccion"
@@ -641,13 +591,14 @@ const Registro = () => {
                       placeholder="Calle, número, colonia"
                       required
                       disabled={isSubmitting}
-                      onFocus={(e) => e.target.style.borderColor = '#002868'}
-                      onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     />
                   </div>
 
-                  <div style={styles.formGridThird}>
-                    <div>
+                  <div style={{
+                    ...styles.gridThree,
+                    gridTemplateColumns: window.innerWidth > 768 ? 'repeat(3, 1fr)' : window.innerWidth > 576 ? 'repeat(2, 1fr)' : '1fr'
+                  }}>
+                    <div style={styles.formGroup}>
                       <label style={styles.formLabel}>Ciudad *</label>
                       <input
                         type="text"
@@ -655,14 +606,11 @@ const Registro = () => {
                         value={formData.ciudad}
                         onChange={handleInputChange}
                         style={styles.formControl}
-                        placeholder="Ciudad"
                         required
                         disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
-                    <div>
+                    <div style={styles.formGroup}>
                       <label style={styles.formLabel}>Estado *</label>
                       <input
                         type="text"
@@ -670,14 +618,11 @@ const Registro = () => {
                         value={formData.estado}
                         onChange={handleInputChange}
                         style={styles.formControl}
-                        placeholder="Estado"
                         required
                         disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
-                    <div>
+                    <div style={styles.formGroup}>
                       <label style={styles.formLabel}>Código Postal *</label>
                       <input
                         type="text"
@@ -685,25 +630,22 @@ const Registro = () => {
                         value={formData.codigoPostal}
                         onChange={handleInputChange}
                         style={styles.formControl}
-                        placeholder="C.P."
                         required
                         disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </div>
                   </div>
 
-                  <div style={{ ...styles.sectionTitle, marginTop: 'clamp(30px, 6vw, 40px)' }}>
+                  <div style={{ ...styles.sectionTitle, marginTop: '40px' }}>
                     <FontAwesomeIcon icon={faGraduationCap} style={{ marginRight: '10px' }} />
                     Información Académica
                   </div>
 
-                  <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
+                  <div style={styles.formGroup}>
                     <label style={styles.formLabel}>Programa de Interés *</label>
                     {loadingProgramas ? (
-                      <div style={styles.loadingBox}>
-                        <FontAwesomeIcon icon={faSpinner} spin style={{ marginRight: '10px' }} />
+                      <div style={{ padding: '12px', background: '#f3f4f6', borderRadius: '6px', textAlign: 'center', color: '#6b7280' }}>
+                        <FontAwesomeIcon icon={faSpinner} spin style={{ marginRight: '8px' }} />
                         Cargando programas disponibles...
                       </div>
                     ) : (
@@ -714,10 +656,8 @@ const Registro = () => {
                         style={styles.formControl}
                         required
                         disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                       >
-                        <option value="">Selecciona un programa</option>
+                        <option value="">Seleccione un programa</option>
                         {programasDisponibles.map((programa) => (
                           <option key={programa.value} value={programa.value}>
                             {programa.label}
@@ -727,7 +667,7 @@ const Registro = () => {
                     )}
                   </div>
 
-                  <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
+                  <div style={styles.formGroup}>
                     <label style={styles.formLabel}>Nivel Actual de Inglés *</label>
                     <select
                       name="nivelActual"
@@ -736,10 +676,8 @@ const Registro = () => {
                       style={styles.formControl}
                       required
                       disabled={isSubmitting || loadingProgramas}
-                      onFocus={(e) => e.target.style.borderColor = '#002868'}
-                      onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     >
-                      <option value="">Selecciona tu nivel</option>
+                      <option value="">Seleccione su nivel</option>
                       {nivelesIngles.map((nivel) => (
                         <option key={nivel.value} value={nivel.value}>
                           {nivel.label}
@@ -748,121 +686,75 @@ const Registro = () => {
                     </select>
                   </div>
 
-                  {/* Mostrar información del nivel CONOCER seleccionado */}
                   {formData.nivelActual && formData.nivelConocerActual > 0 && (
-                    <div style={{
-                      background: '#f0f9ff',
-                      border: '1px solid #0284c7',
-                      borderRadius: '8px',
-                      padding: 'clamp(12px, 2vw, 15px)',
-                      marginBottom: 'clamp(15px, 3vw, 20px)'
-                    }}>
-                      <div style={{
-                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                        color: '#0284c7',
-                        fontWeight: '600'
-                      }}>
-                        <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: '8px' }} />
-                        Información de Nivel CONOCER
-                      </div>
-                      <div style={{
-                        fontSize: 'clamp(0.8rem, 1.2vw, 0.85rem)',
-                        color: '#1e40af',
-                        marginTop: '5px'
-                      }}>
-                        Nivel completado: {formData.nivelConocerCompletado} | 
-                        Siguiente nivel: {formData.nivelConocerActual}
-                      </div>
+                    <div style={styles.infoBox}>
+                      <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: '8px' }} />
+                      <strong>Nivel CONOCER:</strong> Completado: {formData.nivelConocerCompletado} | Siguiente: {formData.nivelConocerActual}
                     </div>
                   )}
 
-                  <div style={styles.formGridHalf}>
-                    <div>
-                      <label style={styles.formLabel}>Horario de Preferencia</label>
-                      <select
-                        name="horarioPreferencia"
-                        value={formData.horarioPreferencia}
-                        onChange={handleInputChange}
-                        style={styles.formControl}
-                        disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                      >
-                        <option value="">Selecciona un horario</option>
-                        <option value="4pm-5pm">4:00 PM - 5:00 PM</option>
-                        <option value="5pm-6pm">5:00 PM - 6:00 PM</option>
-                        <option value="6pm-7pm">6:00 PM - 7:00 PM</option>
-                        <option value="7pm-8pm">7:00 PM - 8:00 PM</option>
-                        <option value="8pm-9pm">8:00 PM - 9:00 PM</option>
-                        <option value="flexible">Flexible</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label style={styles.formLabel}>Modalidad de Preferencia</label>
-                      <select
-                        name="modalidadPreferencia"
-                        value={formData.modalidadPreferencia}
-                        onChange={handleInputChange}
-                        style={styles.formControl}
-                        disabled={isSubmitting}
-                        onFocus={(e) => e.target.style.borderColor = '#002868'}
-                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                      >
-                        <option value="">Selecciona modalidad</option>
-                        <option value="online">En línea (recomendado)</option>
-                        <option value="presencial">Presencial</option>
-                        <option value="hibrida">Híbrida</option>
-                        <option value="sin-preferencia">Sin preferencia</option>
-                      </select>
-                    </div>
+                  <input type="hidden" name="modalidadPreferencia" value="online" />
+
+                  <div style={styles.formGroup}>
+                    <label style={styles.formLabel}>Horario de Preferencia</label>
+                    <select
+                      name="horarioPreferencia"
+                      value={formData.horarioPreferencia}
+                      onChange={handleInputChange}
+                      style={styles.formControl}
+                      disabled={isSubmitting}
+                    >
+                      <option value="">Seleccione un horario</option>
+                      <option value="4pm-5pm">4:00 PM - 5:00 PM</option>
+                      <option value="5pm-6pm">5:00 PM - 6:00 PM</option>
+                      <option value="6pm-7pm">6:00 PM - 7:00 PM</option>
+                      <option value="7pm-8pm">7:00 PM - 8:00 PM</option>
+                      <option value="8pm-9pm">8:00 PM - 9:00 PM</option>
+                      <option value="flexible">Horario Flexible</option>
+                    </select>
                   </div>
 
-                  <div style={{ marginBottom: 'clamp(15px, 3vw, 20px)' }}>
+                  <div style={styles.formGroup}>
                     <label style={styles.formLabel}>Experiencia Previa en Inglés</label>
                     <textarea
                       name="experienciaPrevia"
                       value={formData.experienciaPrevia}
                       onChange={handleInputChange}
                       style={{ ...styles.formControl, ...styles.textArea }}
-                      placeholder="Describe brevemente tu experiencia estudiando inglés (cursos previos, certificaciones, tiempo de estudio, etc.)"
+                      placeholder="Describa brevemente su experiencia previa con el idioma inglés"
                       disabled={isSubmitting}
-                      onFocus={(e) => e.target.style.borderColor = '#002868'}
-                      onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     />
                   </div>
 
-                  <div style={{ marginBottom: 'clamp(20px, 4vw, 30px)' }}>
+                  <div style={styles.formGroup}>
                     <label style={styles.formLabel}>Objetivos de Aprendizaje</label>
                     <textarea
                       name="objetivos"
                       value={formData.objetivos}
                       onChange={handleInputChange}
                       style={{ ...styles.formControl, ...styles.textArea }}
-                      placeholder="¿Cuáles son tus objetivos al estudiar inglés? (trabajo, estudios, viajes, certificación, etc.)"
+                      placeholder="¿Cuáles son sus objetivos al estudiar inglés?"
                       disabled={isSubmitting}
-                      onFocus={(e) => e.target.style.borderColor = '#002868'}
-                      onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     />
                   </div>
 
-                  <div style={styles.buttonGroup}>
+                  <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', marginTop: '30px' }}>
                     <button
                       type="submit"
-                      style={styles.officialButton}
+                      style={{
+                        ...styles.button,
+                        opacity: isSubmitting || loadingProgramas ? 0.6 : 1,
+                        cursor: isSubmitting || loadingProgramas ? 'not-allowed' : 'pointer'
+                      }}
                       disabled={isSubmitting || loadingProgramas}
                       onMouseEnter={(e) => {
                         if (!isSubmitting && !loadingProgramas) {
-                          e.currentTarget.style.background = '#001845';
-                          e.currentTarget.style.transform = 'scale(1.02)';
+                          e.currentTarget.style.background = '#0f2540';
                         }
                       }}
                       onMouseLeave={(e) => {
-                        if (!isSubmitting && !loadingProgramas) {
-                          e.currentTarget.style.background = '#002868';
-                          e.currentTarget.style.transform = 'scale(1)';
-                        }
+                        e.currentTarget.style.background = '#1e3a5f';
                       }}
-                      aria-label="Completar registro en Simply English"
                     >
                       <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
                       {isSubmitting ? 'Procesando...' : loadingProgramas ? 'Cargando...' : 'Completar Registro'}
@@ -877,20 +769,19 @@ const Registro = () => {
                       }}
                       onMouseEnter={(e) => {
                         if (!isSubmitting && !loadingProgramas) {
-                          e.currentTarget.style.background = '#002868';
+                          e.currentTarget.style.background = '#1e3a5f';
                           e.currentTarget.style.color = 'white';
                         }
                       }}
                       onMouseLeave={(e) => {
                         if (!isSubmitting && !loadingProgramas) {
                           e.currentTarget.style.background = 'transparent';
-                          e.currentTarget.style.color = '#002868';
+                          e.currentTarget.style.color = '#1e3a5f';
                         }
                       }}
-                      aria-label="Contactar con asesor antes del registro"
                     >
                       <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '10px' }} />
-                      Hablar primero con asesor
+                      Consultar con Asesor
                     </a>
                   </div>
                 </form>
@@ -898,125 +789,129 @@ const Registro = () => {
             </div>
 
             <div>
-              <div style={styles.academicCard}>
+              <div style={styles.sideCard}>
                 <div style={{ textAlign: 'center', marginBottom: '25px' }}>
                   <FontAwesomeIcon icon={faInfoCircle} style={{
-                    fontSize: 'clamp(2rem, 4vw, 3rem)',
-                    color: '#002868',
-                    marginBottom: '20px'
+                    fontSize: '2.5rem',
+                    color: '#1e3a5f',
+                    marginBottom: '15px'
                   }} />
-                  <h4 style={{
-                    color: '#002868',
+                  <h3 style={{
+                    color: '#1e3a5f',
                     marginBottom: '15px',
-                    fontSize: 'clamp(1.1rem, 2vw, 1.3rem)'
+                    fontSize: '1.25rem'
                   }}>
-                    Información Importante
-                  </h4>
+                    Información del Proceso
+                  </h3>
                 </div>
 
                 <div style={{ marginBottom: '25px' }}>
-                  <h6 style={{
-                    color: '#BF0A30',
-                    marginBottom: '10px',
-                    fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+                  <h4 style={{
+                    color: '#374151',
+                    marginBottom: '12px',
+                    fontSize: '1rem',
+                    fontWeight: '600'
                   }}>
-                    <FontAwesomeIcon icon={faClipboardList} style={{ marginRight: '8px' }} />
-                    Proceso de Inscripción
-                  </h6>
+                    <FontAwesomeIcon icon={faClipboardList} style={{ marginRight: '8px', color: '#1e3a5f' }} />
+                    Pasos del Proceso
+                  </h4>
                   <ul style={{
-                    paddingLeft: '20px',
+                    paddingLeft: '25px',
                     color: '#6b7280',
-                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                    lineHeight: '1.6'
+                    fontSize: '0.9rem',
+                    lineHeight: '1.8'
                   }}>
-                    <li>Evaluación de nivel inicial</li>
-                    <li>Confirmación de disponibilidad</li>
-                    <li>Proceso de pago</li>
-                    <li>Inicio de clases</li>
+                    <li>Evaluación diagnóstica inicial</li>
+                    <li>Verificación de disponibilidad</li>
+                    <li>Proceso de pago institucional</li>
+                    <li>Inicio del programa académico</li>
                   </ul>
                 </div>
 
                 <div style={{ marginBottom: '25px' }}>
-                  <h6 style={{
-                    color: '#BF0A30',
-                    marginBottom: '10px',
-                    fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+                  <h4 style={{
+                    color: '#374151',
+                    marginBottom: '12px',
+                    fontSize: '1rem',
+                    fontWeight: '600'
                   }}>
-                    <FontAwesomeIcon icon={faBookOpen} style={{ marginRight: '8px' }} />
-                    Documentos Requeridos
-                  </h6>
+                    <FontAwesomeIcon icon={faBookOpen} style={{ marginRight: '8px', color: '#1e3a5f' }} />
+                    Documentación Requerida
+                  </h4>
                   <ul style={{
-                    paddingLeft: '20px',
+                    paddingLeft: '25px',
                     color: '#6b7280',
-                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                    lineHeight: '1.6'
+                    fontSize: '0.9rem',
+                    lineHeight: '1.8'
                   }}>
-                    <li>Identificación oficial</li>
-                    <li>Comprobante de domicilio</li>
+                    <li>Identificación oficial vigente</li>
+                    <li>Comprobante de domicilio reciente</li>
                     <li>Fotografía tamaño infantil</li>
                     <li>Certificaciones previas (opcional)</li>
                   </ul>
                 </div>
 
                 <div style={{
-                  background: '#f0f9ff',
-                  border: '1px solid #0284c7',
+                  background: '#eff6ff',
+                  border: '1px solid #2563eb',
                   borderRadius: '8px',
-                  padding: 'clamp(12px, 2vw, 15px)',
+                  padding: '15px',
                   textAlign: 'center'
                 }}>
                   <FontAwesomeIcon icon={faCheckCircle} style={{
-                    color: '#0284c7',
-                    fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+                    color: '#2563eb',
+                    fontSize: '1.25rem',
                     marginBottom: '8px'
                   }} />
                   <div style={{
-                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                    fontSize: '0.9rem',
                     fontWeight: '600',
-                    color: '#0284c7'
+                    color: '#1e40af'
                   }}>
-                    Respuesta en 24 horas
+                    Respuesta Garantizada
+                  </div>
+                  <div style={{
+                    fontSize: '0.85rem',
+                    color: '#3b82f6',
+                    marginTop: '4px'
+                  }}>
+                    En 24 horas hábiles
                   </div>
                 </div>
               </div>
 
-              <div style={{
-                background: 'white',
-                border: '2px solid #002868',
-                borderRadius: '12px',
-                padding: 'clamp(20px, 4vw, 25px)',
-                textAlign: 'center'
-              }}>
+              <div style={styles.certificationBox}>
                 <FontAwesomeIcon icon={faCertificate} style={{
-                  fontSize: 'clamp(2rem, 4vw, 2.5rem)',
-                  color: '#BF0A30',
+                  fontSize: '2.25rem',
+                  color: '#1e3a5f',
                   marginBottom: '15px'
                 }} />
-                <h5 style={{
-                  color: '#002868',
+                <h4 style={{
+                  color: '#1e3a5f',
                   marginBottom: '10px',
-                  fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
+                  fontSize: '1.125rem'
                 }}>
-                  Centro Autorizado
-                </h5>
+                  Centro Evaluador Autorizado
+                </h4>
                 <p style={{
                   color: '#6b7280',
-                  fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
-                  marginBottom: '15px'
+                  fontSize: '0.9rem',
+                  marginBottom: '15px',
+                  lineHeight: '1.5'
                 }}>
-                  Evaluador oficial CENNI reconocido por la Secretaría de Educación Pública
+                  Institución certificada para evaluaciones CENNI
                 </p>
                 <div style={{
-                  background: '#10b981',
+                  background: '#059669',
                   color: 'white',
                   padding: '8px 16px',
                   borderRadius: '20px',
-                  fontSize: 'clamp(0.7rem, 1.2vw, 0.85rem)',
+                  fontSize: '0.85rem',
                   fontWeight: '600',
                   display: 'inline-block'
                 }}>
-                  <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '5px' }} />
-                  Certificación Válida
+                  <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '6px' }} />
+                  Validez Oficial SEP
                 </div>
               </div>
             </div>

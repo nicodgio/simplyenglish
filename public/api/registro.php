@@ -16,11 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Configuración de la base de datos
 $host = 'localhost';
-$dbname = 'u624785608_simplyenglish';
-$username = 'u624785608_spenglish';
-$password = 'SPAdmon2025#';
+$dbname = 'simplyen_simplyenglish';
+$username = 'simplyen_admon';
+$password = 'corsu5-Munkyg-xaxpyc';
 
 $jwt_secret = 'simply_english_jwt_secret_2025_very_secure_key';
 

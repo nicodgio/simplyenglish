@@ -24,7 +24,6 @@ const Pago = () => {
     dataScriptUrl: 'https://js.openpay.mx/openpay-data.v1.min.js'
   };
 
-  // Función para cargar scripts de manera más robusta
   const loadScript = (src, id = null) => {
     return new Promise((resolve, reject) => {
       if (id && document.getElementById(id)) {
@@ -39,7 +38,6 @@ const Pago = () => {
       script.onload = () => resolve();
       script.onerror = () => reject(new Error(`Error cargando script: ${src}`));
       
-      // Timeout de 10 segundos
       const timeout = setTimeout(() => {
         reject(new Error(`Timeout cargando script: ${src}`));
       }, 10000);
@@ -53,31 +51,19 @@ const Pago = () => {
     });
   };
 
-  // Inicialización mejorada de OpenPay
   const initializeOpenPay = async () => {
     if (window.OpenPay && openPayLoaded) return true;
     
     setLoadingOpenPay(true);
     
     try {
-      // Cargar Bootstrap si no existe
-      if (!document.querySelector('link[href*="bootstrap"]')) {
-        const bootstrapCSS = document.createElement('link');
-        bootstrapCSS.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css';
-        bootstrapCSS.rel = 'stylesheet';
-        document.head.appendChild(bootstrapCSS);
-      }
-
-      // Cargar scripts de OpenPay
       await loadScript(OPENPAY_CONFIG.scriptUrl, 'openpay-main-script');
       await loadScript(OPENPAY_CONFIG.dataScriptUrl, 'openpay-data-script');
       
-      // Verificar que OpenPay se cargó
       if (!window.OpenPay) {
         throw new Error('OpenPay no se cargó correctamente');
       }
       
-      // Configurar OpenPay
       window.OpenPay.setId(OPENPAY_CONFIG.id);
       window.OpenPay.setApiKey(OPENPAY_CONFIG.publicKey);
       window.OpenPay.setSandboxMode(OPENPAY_CONFIG.sandbox);
@@ -88,7 +74,7 @@ const Pago = () => {
     } catch (error) {
       console.error('Error inicializando OpenPay:', error);
       setAlertType('danger');
-      setAlertMessage(`Error cargando OpenPay: ${error.message}`);
+      setAlertMessage(`Error en la inicialización del sistema de pagos: ${error.message}`);
       setShowAlert(true);
       return false;
     } finally {
@@ -108,7 +94,7 @@ const Pago = () => {
     setSelectedOption(null);
 
     try {
-      const response = await fetch(`https://mediumpurple-horse-686620.hostingersite.com/api/usuario.php?email=${encodeURIComponent(email)}`, {
+      const response = await fetch(`https://simplyenglish.com.mx/api/usuario.php?email=${encodeURIComponent(email)}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -120,36 +106,35 @@ const Pago = () => {
         
         if (result.data.usuario?.pago_activo_id && result.data.usuario?.estado_pago === 'PENDIENTE') {
           setAlertType('warning');
-          setAlertMessage('Tienes un pago pendiente. Completa tu pago para activar tu suscripción.');
+          setAlertMessage('Se ha identificado un proceso de pago pendiente. Complete la transacción para activar su suscripción académica.');
         } else if (result.data.puede_pagar && result.data.opciones_pago?.length > 0) {
           setAlertType('success');
           setAlertMessage(result.data.mensaje_estado);
         } else {
-          // Verificar si tiene suscripción activa
           const tieneSubscripcionActiva = result.data.usuario?.estado_pago === 'COMPLETADO' || 
                                          result.data.suscripciones?.some(s => s.estado === 'ACTIVA');
           
           if (tieneSubscripcionActiva) {
             setAlertType('success');
-            setAlertMessage('✅ ¡Tu suscripción está ACTIVA! No necesitas realizar más pagos.');
+            setAlertMessage('Su suscripción académica se encuentra ACTIVA. No requiere procesamiento de pagos adicionales.');
           } else {
             setAlertType('info');
-            setAlertMessage('No hay opciones de pago disponibles en este momento.');
+            setAlertMessage('No se encontraron opciones de pago disponibles para este usuario en el sistema.');
           }
         }
       } else {
         setAlertType('danger');
-        setAlertMessage('No se encontró ningún usuario registrado con este email.');
+        setAlertMessage('No se encontró registro de usuario con el correo electrónico proporcionado.');
         setUserData(null);
       }
     } catch (error) {
       setAlertType('danger');
-      setAlertMessage('Error al buscar el usuario. Por favor, intenta nuevamente.');
+      setAlertMessage('Error en la consulta del sistema. Verifique su conexión e intente nuevamente.');
       setUserData(null);
     } finally {
       setIsSearching(false);
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 8000);
+      setTimeout(() => setShowAlert(false), 10000);
     }
   };
 
@@ -161,13 +146,14 @@ const Pago = () => {
     try {
       const subscriptionData = {
         action: 'crear_suscripcion',
-        usuario_id: userData.usuario.usuario_id,
+        usuario_id: userData.usuario.id || userData.usuario.usuario_id,
+        email: userData.usuario.email, // Enviar email como backup
         tipo_programa: selectedOption.codigo,
         nivel_inicio: selectedOption.nivel_inicio,
         nivel_fin: selectedOption.nivel_fin || selectedOption.nivel_inicio
       };
 
-      const response = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/usuario.php', {
+      const response = await fetch('https://simplyenglish.com.mx/api/usuario.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(subscriptionData)
@@ -179,21 +165,20 @@ const Pago = () => {
         setCurrentSubscriptionId(result.data.pago_id);
         setShowPaymentForm(true);
         setAlertType('success');
-        setAlertMessage(`Suscripción creada. Referencia: SE-${String(result.data.pago_id).padStart(6, '0')}`);
+        setAlertMessage(`Suscripción generada exitosamente. Número de referencia: SE-${String(result.data.pago_id).padStart(6, '0')}`);
       } else {
         setAlertType('danger');
-        setAlertMessage(`Error al crear suscripción: ${result.error || 'Error desconocido'}`);
+        setAlertMessage(`Error en la creación de suscripción: ${result.error || 'Error del sistema'}`);
       }
     } catch (error) {
       setAlertType('danger');
-      setAlertMessage('Error de conexión. Por favor intenta nuevamente.');
+      setAlertMessage('Error de conectividad. Verifique su conexión e intente nuevamente.');
     } finally {
       setIsCreatingSubscription(false);
       setShowAlert(true);
     }
   };
 
-  const [showModal, setShowModal] = useState(false);
   const [cardData, setCardData] = useState({
     holder_name: '',
     card_number: '',
@@ -202,85 +187,85 @@ const Pago = () => {
     cvv2: ''
   });
 
-  // Función alternativa sin modal - pago directo
-  const processDirectPayment = async () => {
-    if (!openPayLoaded) {
-      const loaded = await initializeOpenPay();
-      if (!loaded) return;
-    }
+const processDirectPayment = async () => {
+  if (!openPayLoaded) {
+    const loaded = await initializeOpenPay();
+    if (!loaded) return;
+  }
 
-    if (!window.OpenPay?.card?.validateCardNumber(cardData.card_number)) {
-      setAlertType('danger');
-      setAlertMessage('Número de tarjeta inválido');
-      setShowAlert(true);
-      return;
-    }
+  if (!window.OpenPay?.card?.validateCardNumber(cardData.card_number)) {
+    setAlertType('danger');
+    setAlertMessage('El número de tarjeta proporcionado no es válido');
+    setShowAlert(true);
+    return;
+  }
 
-    setIsProcessingPayment(true);
-    
-    try {
-      const tokenData = {
-        card_number: cardData.card_number.replace(/\s/g, ''),
-        holder_name: cardData.holder_name.toUpperCase(),
-        expiration_year: cardData.expiration_year,
-        expiration_month: cardData.expiration_month.padStart(2, '0'),
-        cvv2: cardData.cvv2
-      };
+  setIsProcessingPayment(true);
+  
+  try {
+    const tokenData = {
+      card_number: cardData.card_number.replace(/\s/g, ''),
+      holder_name: cardData.holder_name.toUpperCase(),
+      expiration_year: cardData.expiration_year,
+      expiration_month: cardData.expiration_month.padStart(2, '0'),
+      cvv2: cardData.cvv2
+    };
 
-      // Crear token con manejo de errores mejorado
-      await new Promise((resolve, reject) => {
-        window.OpenPay.token.create(tokenData, 
-          async (response) => {
-            try {
-              const paymentData = {
-                action: 'procesar_pago',
-                pago_id: currentSubscriptionId,
-                metodo_pago: 'card',
-                token_id: response.data.id,
-                device_session_id: window.OpenPayData?.getDeviceSessionId?.() || 'web_session_' + Date.now()
-              };
+    await new Promise((resolve, reject) => {
+      window.OpenPay.token.create(tokenData, 
+        async (response) => {
+          try {
+            const paymentData = {
+              action: 'procesar_pago',
+              pago_id: currentSubscriptionId,
+              metodo_pago: 'card',
+              token_id: response.data.id,
+              device_session_id: window.OpenPayData?.getDeviceSessionId?.() || 'web_session_' + Date.now()
+            };
 
-              const paymentResponse = await fetch('https://mediumpurple-horse-686620.hostingersite.com/api/pago.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(paymentData)
-              });
+            const paymentResponse = await fetch('https://simplyenglish.com.mx/api/pago.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(paymentData)
+            });
 
-              const paymentResult = await paymentResponse.json();
+            const paymentResult = await paymentResponse.json();
+            
+            if (paymentResult.success) {
+              setAlertType('success');
+              setAlertMessage('¡Pago procesado exitosamente! Su suscripción académica ha sido activada.');
+              setShowPaymentForm(false);
+              resetPaymentForm();
               
-              if (paymentResult.success) {
-                setAlertType('success');
-                setAlertMessage('¡Pago procesado exitosamente! Tu suscripción está activa.');
-                setShowPaymentForm(false);
-                resetPaymentForm();
-                handleEmailSearch({ preventDefault: () => {} });
-              } else {
-                setAlertType('danger');
-                setAlertMessage(`Error en el pago: ${paymentResult.error || 'Error desconocido'}`);
-              }
+              // NO llamar handleEmailSearch aquí para evitar sobreescribir el mensaje
               
-              resolve();
-            } catch (error) {
+            } else {
               setAlertType('danger');
-              setAlertMessage('Error al procesar el pago: ' + error.message);
-              reject(error);
+              setAlertMessage(`Error en el procesamiento del pago: ${paymentResult.error || 'Error del sistema'}`);
             }
-          },
-          (error) => {
+            
+            resolve();
+          } catch (error) {
             setAlertType('danger');
-            setAlertMessage(`Error de OpenPay: ${error.data?.description || error.message || 'Error desconocido'}`);
+            setAlertMessage('Error en el procesamiento del pago: ' + error.message);
             reject(error);
           }
-        );
-      });
+        },
+        (error) => {
+          setAlertType('danger');
+          setAlertMessage(`Error del procesador de pagos: ${error.data?.description || error.message || 'Error del sistema'}`);
+          reject(error);
+        }
+      );
+    });
 
-    } catch (error) {
-      console.error('Error en pago directo:', error);
-    } finally {
-      setIsProcessingPayment(false);
-      setShowAlert(true);
-    }
-  };
+  } catch (error) {
+    console.error('Error en procesamiento de pago:', error);
+  } finally {
+    setIsProcessingPayment(false);
+    setShowAlert(true);
+  }
+};
 
   const formatCardNumber = (value) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -301,7 +286,7 @@ const Pago = () => {
     try {
       setTimeout(() => {
         const paymentReference = `SE${Math.floor(Math.random() * 10000000000000)}`;
-        alert(`Ficha de pago generada!\n\nReferencia: ${paymentReference}\nMonto: ${selectedOption.precio.toLocaleString()} MXN\n\nPuedes pagar en OXXO, 7-Eleven, etc.`);
+        alert(`Ficha de pago generada exitosamente.\n\nReferencia de pago: ${paymentReference}\nMonto total: ${selectedOption.precio.toLocaleString()} MXN\n\nPuede realizar el pago en establecimientos autorizados (OXXO, 7-Eleven, etc.)`);
         
         setShowPaymentForm(false);
         resetPaymentForm();
@@ -310,7 +295,7 @@ const Pago = () => {
 
     } catch (error) {
       setAlertType('danger');
-      setAlertMessage('Error al generar ficha de pago');
+      setAlertMessage('Error en la generación de la ficha de pago');
       setShowAlert(true);
       setIsProcessingPayment(false);
     }
@@ -326,62 +311,223 @@ const Pago = () => {
       expiration_year: '',
       cvv2: ''
     });
-    setShowModal(false);
+  };
+
+  const styles = {
+    container: {
+      maxWidth: '1200px',
+      margin: '0 auto',
+      padding: '0 20px',
+      width: '100%',
+      boxSizing: 'border-box'
+    },
+    hero: {
+      background: 'linear-gradient(135deg, #f8fafc 0%, #e8f0fc 100%)',
+      color: '#002868',
+      padding: 'clamp(60px, 10vw, 80px) 0',
+      position: 'relative',
+      overflow: 'hidden'
+    },
+    heroPattern: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      opacity: 0.03,
+      backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23002868'%3E%3Cpath d='M30 30c0 16.569-13.431 30-30 30v-60c16.569 0 30 13.431 30 30zM0 0h60v60H0z'/%3E%3C/g%3E%3C/svg%3E")`,
+      backgroundSize: '60px 60px'
+    },
+    heroContent: {
+      position: 'relative',
+      zIndex: 2,
+      textAlign: 'center',
+      maxWidth: '800px',
+      margin: '0 auto'
+    },
+    badge: {
+      background: '#002868',
+      color: 'white',
+      padding: 'clamp(12px, 2.5vw, 16px) clamp(24px, 4vw, 32px)',
+      borderRadius: '8px',
+      display: 'inline-block',
+      marginBottom: 'clamp(25px, 4vw, 35px)',
+      fontSize: 'clamp(0.9rem, 1.4vw, 1rem)',
+      fontWeight: '600',
+      letterSpacing: '0.5px'
+    },
+    heroTitle: {
+      fontSize: 'clamp(2rem, 5vw, 2.8rem)',
+      fontWeight: '700',
+      marginBottom: 'clamp(20px, 3vw, 25px)',
+      lineHeight: '1.2',
+      color: '#002868',
+      letterSpacing: '-0.02em'
+    },
+    heroSubtitle: {
+      fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+      color: '#6b7280',
+      marginBottom: 'clamp(40px, 6vw, 50px)',
+      maxWidth: '600px',
+      margin: '0 auto clamp(40px, 6vw, 50px)',
+      lineHeight: '1.6',
+      fontWeight: '400'
+    }
   };
 
   return (
-    <div className="container-fluid bg-light min-vh-100">
-      <div className="container py-5">
-        <div className="row">
-          <div className="col-12 text-center mb-5">
-            <h1 className="display-4 fw-bold text-primary">Sistema de Pago - Demo</h1>
-            <p className="lead text-muted">Completa tu pago de forma segura con OpenPay</p>
+    <div style={{ background: '#ffffff', minHeight: '100vh' }}>
+      
+      <section style={styles.hero}>
+        <div style={styles.heroPattern} />
+        <div style={styles.container}>
+          <div style={styles.heroContent}>
+            <div style={styles.badge}>
+              Sistema de Pagos Académicos
+            </div>
             
-            {loadingOpenPay && (
-              <div className="alert alert-info">
-                <div className="spinner-border spinner-border-sm me-2"></div>
-                Cargando sistema de pagos...
-              </div>
-            )}
+            <h1 style={styles.heroTitle}>
+              Gestión de Pagos Institucionales
+            </h1>
             
-            {!openPayLoaded && !loadingOpenPay && (
-              <div className="alert alert-warning">
-                <div className="d-flex align-items-center">
-                  <span className="me-2">⚠️ Sistema de pagos no disponible</span>
-                  <button 
-                    onClick={initializeOpenPay} 
-                    className="btn btn-sm btn-warning"
-                  >
-                    Reintentar carga
-                  </button>
-                </div>
-              </div>
-            )}
+            <p style={styles.heroSubtitle}>
+              Procesamiento seguro de matrículas y suscripciones académicas<br />
+              Plataforma certificada con tecnología OpenPay
+            </p>
           </div>
         </div>
+      </section>
 
-        {showAlert && (
-          <div className={`alert alert-${alertType} alert-dismissible fade show`} role="alert">
-            {alertMessage}
-            <button type="button" className="btn-close" onClick={() => setShowAlert(false)}></button>
-          </div>
-        )}
-
-        <div className="row">
-          <div className="col-lg-8">
-            <div className="card shadow-sm mb-4">
-              <div className="card-header bg-primary text-white">
-                <h5 className="mb-0">Verificar Usuario</h5>
+      <div style={styles.container}>
+        <div style={{ padding: 'clamp(40px, 8vw, 60px) 0' }}>
+          
+          {loadingOpenPay && (
+            <div style={{
+              background: '#e3f2fd',
+              border: '1px solid #1976d2',
+              borderRadius: '8px',
+              padding: '20px',
+              marginBottom: '30px',
+              textAlign: 'center',
+              color: '#002868'
+            }}>
+              <div style={{ display: 'inline-block', marginRight: '12px' }}>
+                <div style={{
+                  width: '20px',
+                  height: '20px',
+                  border: '2px solid #002868',
+                  borderTop: '2px solid transparent',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }}></div>
               </div>
-              <div className="card-body">
-                <div className="mb-3">
-                  <label className="form-label">Email *</label>
+              Inicializando sistema de pagos...
+            </div>
+          )}
+          
+          {!openPayLoaded && !loadingOpenPay && (
+            <div style={{
+              background: '#fff3cd',
+              border: '1px solid #ffc107',
+              borderRadius: '8px',
+              padding: '20px',
+              marginBottom: '30px',
+              color: '#856404'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span>Sistema de pagos no disponible</span>
+                <button 
+                  onClick={initializeOpenPay}
+                  style={{
+                    background: '#ffc107',
+                    color: '#212529',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Reintentar
+                </button>
+              </div>
+            </div>
+          )}
+
+          {showAlert && (
+            <div style={{
+              background: alertType === 'success' ? '#d4edda' : 
+                         alertType === 'danger' ? '#f8d7da' : 
+                         alertType === 'warning' ? '#fff3cd' : '#d1ecf1',
+              border: `1px solid ${alertType === 'success' ? '#c3e6cb' : 
+                                   alertType === 'danger' ? '#f5c6cb' : 
+                                   alertType === 'warning' ? '#ffeaa7' : '#bee5eb'}`,
+              color: alertType === 'success' ? '#155724' : 
+                     alertType === 'danger' ? '#721c24' : 
+                     alertType === 'warning' ? '#856404' : '#0c5460',
+              padding: '15px 20px',
+              borderRadius: '8px',
+              marginBottom: '30px',
+              position: 'relative'
+            }}>
+              {alertMessage}
+              <button 
+                onClick={() => setShowAlert(false)}
+                style={{
+                  position: 'absolute',
+                  right: '15px',
+                  top: '15px',
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '18px',
+                  cursor: 'pointer',
+                  color: 'inherit'
+                }}
+              >
+                ×
+              </button>
+            </div>
+          )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '40px', alignItems: 'start' }}>
+            
+            <div>
+              
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '30px',
+                marginBottom: '30px',
+                border: '1px solid #e5e7eb',
+                boxShadow: '0 4px 20px rgba(0, 40, 104, 0.08)'
+              }}>
+                <div style={{
+                  background: '#002868',
+                  color: 'white',
+                  padding: '15px 20px',
+                  margin: '-30px -30px 25px -30px',
+                  borderRadius: '12px 12px 0 0',
+                  fontSize: '1.1rem',
+                  fontWeight: '600'
+                }}>
+                  Verificación de Usuario
+                </div>
+                
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontWeight: '600',
+                    color: '#374151'
+                  }}>
+                    Correo Electrónico Institucional *
+                  </label>
                   <input
                     type="email"
-                    className="form-control"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="tu@email.com"
+                    placeholder="usuario@correo.com"
                     required
                     disabled={isSearching}
                     onKeyPress={(e) => {
@@ -390,59 +536,160 @@ const Pago = () => {
                         handleEmailSearch(e);
                       }
                     }}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      boxSizing: 'border-box'
+                    }}
                   />
                 </div>
+                
                 <button
                   onClick={handleEmailSearch}
-                  className="btn btn-primary"
                   disabled={isSearching || !email}
+                  style={{
+                    background: isSearching || !email ? '#9ca3af' : '#002868',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: isSearching || !email ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
                 >
-                  {isSearching ? 'Buscando...' : 'Buscar Usuario'}
+                  {isSearching ? 'Consultando sistema...' : 'Verificar Usuario'}
                 </button>
               </div>
-            </div>
 
-            {userData && userData.usuario && (
-              <div className="card shadow-sm mb-4">
-                <div className="card-header bg-success text-white">
-                  <h5 className="mb-0">Información del Usuario</h5>
-                </div>
-                <div className="card-body">
-                  <h6>{userData.usuario.nombre} {userData.usuario.apellido_paterno}</h6>
-                  <p className="text-muted mb-1">{userData.usuario.email}</p>
-                  <span className="badge bg-success">
+              {userData && userData.usuario && (
+                <div style={{
+                  background: 'white',
+                  borderRadius: '12px',
+                  padding: '25px',
+                  marginBottom: '30px',
+                  border: '1px solid #10b981',
+                  boxShadow: '0 4px 20px rgba(16, 185, 129, 0.1)'
+                }}>
+                  <div style={{
+                    background: '#10b981',
+                    color: 'white',
+                    padding: '12px 20px',
+                    margin: '-25px -25px 20px -25px',
+                    borderRadius: '12px 12px 0 0',
+                    fontSize: '1.1rem',
+                    fontWeight: '600'
+                  }}>
+                    Información del Usuario
+                  </div>
+                  
+                  <h3 style={{
+                    margin: '0 0 8px 0',
+                    color: '#002868',
+                    fontSize: '1.2rem',
+                    fontWeight: '600'
+                  }}>
+                    {userData.usuario.nombre} {userData.usuario.apellido_paterno}
+                  </h3>
+                  
+                  <p style={{
+                    margin: '0 0 12px 0',
+                    color: '#6b7280',
+                    fontSize: '1rem'
+                  }}>
+                    {userData.usuario.email}
+                  </p>
+                  
+                  <span style={{
+                    background: '#10b981',
+                    color: 'white',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
+                    fontWeight: '600'
+                  }}>
                     Nivel {userData.usuario.nivel_conocer_completado} completado
                   </span>
                 </div>
-              </div>
-            )}
+              )}
 
-            {userData && userData.opciones_pago && userData.opciones_pago.length > 0 && !showPaymentForm && (
-              <div className="card shadow-sm mb-4">
-                <div className="card-header bg-info text-white">
-                  <h5 className="mb-0">Opciones de Pago Disponibles</h5>
-                </div>
-                <div className="card-body">
+              {userData && userData.opciones_pago && userData.opciones_pago.length > 0 && !showPaymentForm && (
+                <div style={{
+                  background: 'white',
+                  borderRadius: '12px',
+                  padding: '30px',
+                  marginBottom: '30px',
+                  border: '1px solid #e5e7eb',
+                  boxShadow: '0 4px 20px rgba(0, 40, 104, 0.08)'
+                }}>
+                  <div style={{
+                    background: '#1e40af',
+                    color: 'white',
+                    padding: '15px 20px',
+                    margin: '-30px -30px 25px -30px',
+                    borderRadius: '12px 12px 0 0',
+                    fontSize: '1.1rem',
+                    fontWeight: '600'
+                  }}>
+                    Opciones de Pago Disponibles
+                  </div>
+                  
                   {userData.opciones_pago.map((opcion, index) => (
                     <div 
                       key={index}
-                      className={`card mb-3 ${selectedOption?.codigo === opcion.codigo ? 'border-primary' : ''}`}
-                      style={{ cursor: 'pointer' }}
                       onClick={() => setSelectedOption(opcion)}
+                      style={{
+                        background: selectedOption?.codigo === opcion.codigo ? '#f0f9ff' : '#f9fafb',
+                        border: selectedOption?.codigo === opcion.codigo ? '2px solid #002868' : '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        padding: '20px',
+                        marginBottom: '15px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
                     >
-                      <div className="card-body">
-                        <div className="d-flex justify-content-between align-items-start">
-                          <div>
-                            <h6 className="card-title text-primary">
-                              ${opcion.precio.toLocaleString()} MXN
-                            </h6>
-                            <p className="card-text">{opcion.nombre}</p>
-                            <small className="text-muted">{opcion.descripcion}</small>
-                          </div>
-                          {selectedOption?.codigo === opcion.codigo && (
-                            <span className="badge bg-primary">Seleccionado</span>
-                          )}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                        <div>
+                          <h4 style={{
+                            margin: '0 0 8px 0',
+                            color: '#002868',
+                            fontSize: '1.3rem',
+                            fontWeight: '700'
+                          }}>
+                            ${opcion.precio.toLocaleString()} MXN
+                          </h4>
+                          <p style={{
+                            margin: '0 0 6px 0',
+                            color: '#374151',
+                            fontSize: '1rem',
+                            fontWeight: '600'
+                          }}>
+                            {opcion.nombre}
+                          </p>
+                          <p style={{
+                            margin: '0',
+                            color: '#6b7280',
+                            fontSize: '0.9rem'
+                          }}>
+                            {opcion.descripcion}
+                          </p>
                         </div>
+                        {selectedOption?.codigo === opcion.codigo && (
+                          <span style={{
+                            background: '#002868',
+                            color: 'white',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '0.8rem',
+                            fontWeight: '600'
+                          }}>
+                            Seleccionado
+                          </span>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -450,109 +697,224 @@ const Pago = () => {
                   {selectedOption && (
                     <button
                       onClick={handleCreateSubscription}
-                      className="btn btn-success btn-lg w-100"
                       disabled={isCreatingSubscription}
+                      style={{
+                        background: isCreatingSubscription ? '#9ca3af' : '#10b981',
+                        color: 'white',
+                        border: 'none',
+                        padding: '16px 32px',
+                        borderRadius: '8px',
+                        fontSize: '1.1rem',
+                        fontWeight: '600',
+                        cursor: isCreatingSubscription ? 'not-allowed' : 'pointer',
+                        width: '100%',
+                        marginTop: '15px',
+                        transition: 'all 0.3s ease'
+                      }}
                     >
-                      {isCreatingSubscription ? 'Creando...' : `Proceder al Pago (${selectedOption.nombre})`}
+                      {isCreatingSubscription ? 'Procesando...' : `Proceder al Pago - ${selectedOption.nombre}`}
                     </button>
                   )}
                 </div>
-              </div>
-            )}
+              )}
 
-            {showPaymentForm && selectedOption && (
-              <div className="card shadow-sm mb-4">
-                <div className="card-header bg-warning">
-                  <h5 className="mb-0">Realizar Pago</h5>
-                </div>
-                <div className="card-body">
-                  <div className="alert alert-info">
-                    <strong>{selectedOption.nombre}</strong><br/>
-                    Monto: <strong>${selectedOption.precio.toLocaleString()} MXN</strong><br/>
-                    Referencia: <strong>SE-{String(currentSubscriptionId).padStart(6, '0')}</strong>
+              {showPaymentForm && selectedOption && (
+                <div style={{
+                  background: 'white',
+                  borderRadius: '12px',
+                  padding: '30px',
+                  marginBottom: '30px',
+                  border: '1px solid #e5e7eb',
+                  boxShadow: '0 4px 20px rgba(0, 40, 104, 0.08)'
+                }}>
+                  <div style={{
+                    background: '#dc2626',
+                    color: 'white',
+                    padding: '15px 20px',
+                    margin: '-30px -30px 25px -30px',
+                    borderRadius: '12px 12px 0 0',
+                    fontSize: '1.1rem',
+                    fontWeight: '600'
+                  }}>
+                    Procesamiento de Pago
+                  </div>
+                  
+                  <div style={{
+                    background: '#e0f2fe',
+                    border: '1px solid #0288d1',
+                    borderRadius: '8px',
+                    padding: '20px',
+                    marginBottom: '25px',
+                    color: '#01579b'
+                  }}>
+                    <div style={{ marginBottom: '8px' }}>
+                      <strong>Programa:</strong> {selectedOption.nombre}
+                    </div>
+                    <div style={{ marginBottom: '8px' }}>
+                      <strong>Monto total:</strong> ${selectedOption.precio.toLocaleString()} MXN
+                    </div>
+                    <div>
+                      <strong>Referencia:</strong> SE-{String(currentSubscriptionId).padStart(6, '0')}
+                    </div>
                   </div>
 
-                  <div className="mb-4">
-                    <div className="btn-group w-100" role="group">
-                      <input
-                        type="radio"
-                        className="btn-check"
-                        name="paymentMethod"
-                        id="card"
-                        checked={paymentMethod === 'card'}
-                        onChange={() => setPaymentMethod('card')}
-                      />
-                      <label className="btn btn-outline-primary" htmlFor="card">
-                        Tarjeta
+                  <div style={{ marginBottom: '25px' }}>
+                    <div style={{
+                      display: 'flex',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      overflow: 'hidden'
+                    }}>
+                      <label style={{
+                        flex: 1,
+                        background: paymentMethod === 'card' ? '#002868' : 'white',
+                        color: paymentMethod === 'card' ? 'white' : '#374151',
+                        padding: '12px',
+                        textAlign: 'center',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          checked={paymentMethod === 'card'}
+                          onChange={() => setPaymentMethod('card')}
+                          style={{ display: 'none' }}
+                        />
+                        Tarjeta de Crédito/Débito
                       </label>
 
-                      <input
-                        type="radio"
-                        className="btn-check"
-                        name="paymentMethod"
-                        id="store"
-                        checked={paymentMethod === 'store'}
-                        onChange={() => setPaymentMethod('store')}
-                      />
-                      <label className="btn btn-outline-primary" htmlFor="store">
-                        Tienda
+                      <label style={{
+                        flex: 1,
+                        background: paymentMethod === 'store' ? '#002868' : 'white',
+                        color: paymentMethod === 'store' ? 'white' : '#374151',
+                        padding: '12px',
+                        textAlign: 'center',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          checked={paymentMethod === 'store'}
+                          onChange={() => setPaymentMethod('store')}
+                          style={{ display: 'none' }}
+                        />
+                        Pago en Tienda
                       </label>
                     </div>
                   </div>
 
                   {paymentMethod === 'card' && (
                     <div>
-                      <div className={`alert ${openPayLoaded ? 'alert-success' : 'alert-warning'}`}>
-                        <h6>
-                          {openPayLoaded ? '✅ Pago Directo con OpenPay' : '⚠️ OpenPay no disponible'}
+                      <div style={{
+                        background: openPayLoaded ? '#d4edda' : '#fff3cd',
+                        border: `1px solid ${openPayLoaded ? '#c3e6cb' : '#ffeaa7'}`,
+                        color: openPayLoaded ? '#155724' : '#856404',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        marginBottom: '25px'
+                      }}>
+                        <h6 style={{
+                          margin: '0 0 8px 0',
+                          fontWeight: '600',
+                          fontSize: '1rem'
+                        }}>
+                          {openPayLoaded ? 'Sistema de Pagos Disponible' : 'Sistema de Pagos No Disponible'}
                         </h6>
-                        <p className="mb-0">
+                        <p style={{ margin: '0', fontSize: '0.9rem' }}>
                           {openPayLoaded 
-                            ? 'Ingresa los datos de tu tarjeta para procesar el pago de forma segura.'
-                            : 'Reintenta cargar el sistema de pagos.'
+                            ? 'Ingrese los datos de su tarjeta para procesar el pago de forma segura a través de OpenPay.'
+                            : 'Reintente la carga del sistema de pagos para continuar.'
                           }
                         </p>
                       </div>
 
                       {openPayLoaded ? (
                         <div>
-                          <div className="row mb-3">
-                            <div className="col-12">
-                              <label className="form-label">Nombre del Titular</label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={cardData.holder_name}
-                                onChange={(e) => setCardData({...cardData, holder_name: e.target.value.toUpperCase()})}
-                                placeholder="JUAN PÉREZ"
-                                required
-                              />
-                            </div>
+                          <div style={{ marginBottom: '20px' }}>
+                            <label style={{
+                              display: 'block',
+                              marginBottom: '8px',
+                              fontWeight: '600',
+                              color: '#374151'
+                            }}>
+                              Nombre del Titular de la Tarjeta
+                            </label>
+                            <input
+                              type="text"
+                              value={cardData.holder_name}
+                              onChange={(e) => setCardData({...cardData, holder_name: e.target.value.toUpperCase()})}
+                              placeholder="JUAN PÉREZ GARCÍA"
+                              required
+                              style={{
+                                width: '100%',
+                                padding: '12px 16px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '8px',
+                                fontSize: '1rem',
+                                boxSizing: 'border-box',
+                                textTransform: 'uppercase'
+                              }}
+                            />
                           </div>
 
-                          <div className="row mb-3">
-                            <div className="col-12">
-                              <label className="form-label">Número de Tarjeta</label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={cardData.card_number}
-                                onChange={(e) => setCardData({...cardData, card_number: formatCardNumber(e.target.value)})}
-                                placeholder="4111 1111 1111 1111"
-                                maxLength="19"
-                                required
-                              />
-                            </div>
+                          <div style={{ marginBottom: '20px' }}>
+                            <label style={{
+                              display: 'block',
+                              marginBottom: '8px',
+                              fontWeight: '600',
+                              color: '#374151'
+                            }}>
+                              Número de Tarjeta
+                            </label>
+                            <input
+                              type="text"
+                              value={cardData.card_number}
+                              onChange={(e) => setCardData({...cardData, card_number: formatCardNumber(e.target.value)})}
+                              placeholder="4111 1111 1111 1111"
+                              maxLength="19"
+                              required
+                              style={{
+                                width: '100%',
+                                padding: '12px 16px',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '8px',
+                                fontSize: '1rem',
+                                boxSizing: 'border-box'
+                              }}
+                            />
                           </div>
 
-                          <div className="row mb-3">
-                            <div className="col-4">
-                              <label className="form-label">Mes</label>
+                          <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr 1fr',
+                            gap: '15px',
+                            marginBottom: '25px'
+                          }}>
+                            <div>
+                              <label style={{
+                                display: 'block',
+                                marginBottom: '8px',
+                                fontWeight: '600',
+                                color: '#374151'
+                              }}>
+                                Mes
+                              </label>
                               <select
-                                className="form-control"
                                 value={cardData.expiration_month}
                                 onChange={(e) => setCardData({...cardData, expiration_month: e.target.value})}
                                 required
+                                style={{
+                                  width: '100%',
+                                  padding: '12px 16px',
+                                  border: '1px solid #d1d5db',
+                                  borderRadius: '8px',
+                                  fontSize: '1rem',
+                                  boxSizing: 'border-box'
+                                }}
                               >
                                 <option value="">MM</option>
                                 {[...Array(12)].map((_, i) => (
@@ -562,13 +924,28 @@ const Pago = () => {
                                 ))}
                               </select>
                             </div>
-                            <div className="col-4">
-                              <label className="form-label">Año</label>
+                            
+                            <div>
+                              <label style={{
+                                display: 'block',
+                                marginBottom: '8px',
+                                fontWeight: '600',
+                                color: '#374151'
+                              }}>
+                                Año
+                              </label>
                               <select
-                                className="form-control"
                                 value={cardData.expiration_year}
                                 onChange={(e) => setCardData({...cardData, expiration_year: e.target.value})}
                                 required
+                                style={{
+                                  width: '100%',
+                                  padding: '12px 16px',
+                                  border: '1px solid #d1d5db',
+                                  borderRadius: '8px',
+                                  fontSize: '1rem',
+                                  boxSizing: 'border-box'
+                                }}
                               >
                                 <option value="">AA</option>
                                 {[...Array(10)].map((_, i) => {
@@ -581,35 +958,71 @@ const Pago = () => {
                                 })}
                               </select>
                             </div>
-                            <div className="col-4">
-                              <label className="form-label">CVV</label>
+                            
+                            <div>
+                              <label style={{
+                                display: 'block',
+                                marginBottom: '8px',
+                                fontWeight: '600',
+                                color: '#374151'
+                              }}>
+                                CVV
+                              </label>
                               <input
                                 type="text"
-                                className="form-control"
                                 value={cardData.cvv2}
                                 onChange={(e) => setCardData({...cardData, cvv2: e.target.value.replace(/\D/g, '')})}
                                 placeholder="123"
                                 maxLength="4"
                                 required
+                                style={{
+                                  width: '100%',
+                                  padding: '12px 16px',
+                                  border: '1px solid #d1d5db',
+                                  borderRadius: '8px',
+                                  fontSize: '1rem',
+                                  boxSizing: 'border-box'
+                                }}
                               />
                             </div>
                           </div>
 
                           <button
                             onClick={processDirectPayment}
-                            className="btn btn-success btn-lg w-100"
                             disabled={isProcessingPayment}
+                            style={{
+                              background: isProcessingPayment ? '#9ca3af' : '#10b981',
+                              color: 'white',
+                              border: 'none',
+                              padding: '16px 32px',
+                              borderRadius: '8px',
+                              fontSize: '1.1rem',
+                              fontWeight: '600',
+                              cursor: isProcessingPayment ? 'not-allowed' : 'pointer',
+                              width: '100%',
+                              transition: 'all 0.3s ease'
+                            }}
                           >
-                            {isProcessingPayment ? 'Procesando...' : `Pagar ${selectedOption.precio.toLocaleString()} MXN`}
+                            {isProcessingPayment ? 'Procesando pago...' : `Procesar Pago - ${selectedOption.precio.toLocaleString()} MXN`}
                           </button>
                         </div>
                       ) : (
                         <button
                           onClick={initializeOpenPay}
-                          className="btn btn-warning btn-lg w-100"
                           disabled={loadingOpenPay}
+                          style={{
+                            background: loadingOpenPay ? '#9ca3af' : '#ffc107',
+                            color: '#212529',
+                            border: 'none',
+                            padding: '16px 32px',
+                            borderRadius: '8px',
+                            fontSize: '1.1rem',
+                            fontWeight: '600',
+                            cursor: loadingOpenPay ? 'not-allowed' : 'pointer',
+                            width: '100%'
+                          }}
                         >
-                          {loadingOpenPay ? 'Cargando...' : 'Reintentar Carga de OpenPay'}
+                          {loadingOpenPay ? 'Cargando...' : 'Reintentar Carga del Sistema'}
                         </button>
                       )}
                     </div>
@@ -617,22 +1030,52 @@ const Pago = () => {
 
                   {paymentMethod === 'store' && (
                     <div>
-                      <div className="alert alert-info">
-                        <h6>Cómo funciona:</h6>
-                        <ol className="mb-0">
-                          <li>Genera tu ficha de pago</li>
-                          <li>Acude a OXXO, 7-Eleven, etc.</li>
-                          <li>Presenta el código de barras</li>
-                          <li>Tu suscripción se activará automáticamente</li>
+                      <div style={{
+                        background: '#e3f2fd',
+                        border: '1px solid #1976d2',
+                        borderRadius: '8px',
+                        padding: '20px',
+                        marginBottom: '25px',
+                        color: '#0d47a1'
+                      }}>
+                        <h6 style={{
+                          margin: '0 0 12px 0',
+                          fontWeight: '600',
+                          fontSize: '1rem'
+                        }}>
+                          Procedimiento de Pago en Tienda:
+                        </h6>
+                        <ol style={{
+                          margin: '0',
+                          paddingLeft: '20px',
+                          fontSize: '0.9rem',
+                          lineHeight: '1.6'
+                        }}>
+                          <li>Genere su ficha de pago electrónica</li>
+                          <li>Acuda a establecimientos autorizados (OXXO, 7-Eleven, etc.)</li>
+                          <li>Presente el código de barras al cajero</li>
+                          <li>Su suscripción se activará automáticamente tras confirmación</li>
                         </ol>
                       </div>
 
                       <button
                         onClick={generateStorePayment}
-                        className="btn btn-success btn-lg w-100"
                         disabled={isProcessingPayment}
+                        style={{
+                          background: isProcessingPayment ? '#9ca3af' : '#10b981',
+                          color: 'white',
+                          border: 'none',
+                          padding: '16px 32px',
+                          borderRadius: '8px',
+                          fontSize: '1.1rem',
+                          fontWeight: '600',
+                          cursor: isProcessingPayment ? 'not-allowed' : 'pointer',
+                          width: '100%',
+                          marginBottom: '15px',
+                          transition: 'all 0.3s ease'
+                        }}
                       >
-                        {isProcessingPayment ? 'Generando...' : 'Generar Ficha de Pago'}
+                        {isProcessingPayment ? 'Generando ficha...' : 'Generar Ficha de Pago'}
                       </button>
                     </div>
                   )}
@@ -642,52 +1085,139 @@ const Pago = () => {
                       setShowPaymentForm(false);
                       resetPaymentForm();
                     }}
-                    className="btn btn-secondary mt-3 w-100"
+                    style={{
+                      background: '#6b7280',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      width: '100%',
+                      transition: 'all 0.3s ease'
+                    }}
                   >
-                    Cancelar
+                    Cancelar Operación
                   </button>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <div className="col-lg-4">
-            <div className="card shadow-sm">
-              <div className="card-header bg-secondary text-white">
-                <h5 className="mb-0">Pago Seguro</h5>
-              </div>
-              <div className="card-body">
-                <h6 className="text-primary">Estado del Sistema</h6>
-                <div className="mb-3">
-                  <div className={`badge ${openPayLoaded ? 'bg-success' : 'bg-warning'}`}>
-                    {openPayLoaded ? '✅ OpenPay Listo' : '⏳ Cargando OpenPay...'}
-                  </div>
+            <div style={{ position: 'sticky', top: '20px' }}>
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '25px',
+                border: '1px solid #e5e7eb',
+                boxShadow: '0 4px 20px rgba(0, 40, 104, 0.08)'
+              }}>
+                <div style={{
+                  background: '#374151',
+                  color: 'white',
+                  padding: '12px 20px',
+                  margin: '-25px -25px 20px -25px',
+                  borderRadius: '12px 12px 0 0',
+                  fontSize: '1.1rem',
+                  fontWeight: '600'
+                }}>
+                  Seguridad de Pagos
                 </div>
 
-                <h6 className="text-primary">Métodos de Pago</h6>
-                <ul className="list-unstyled">
-                  <li>✓ Tarjetas de crédito y débito</li>
-                  <li>✓ Pago en tiendas de conveniencia</li>
-                  <li>✓ Procesado por OpenPay</li>
-                </ul>
-
-                <h6 className="text-primary mt-3">Seguridad</h6>
-                <ul className="list-unstyled">
-                  <li>✓ Encriptación SSL</li>
-                  <li>✓ PCI DSS Compliant</li>
-                  <li>✓ Datos seguros</li>
-                </ul>
-
-                <div className="alert alert-success mt-3">
-                  <small className="fw-bold">🔒 Procesado por OpenPay</small>
+                <h6 style={{
+                  color: '#002868',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  marginBottom: '12px'
+                }}>
+                  Estado del Sistema
+                </h6>
+                <div style={{ marginBottom: '20px' }}>
+                  <span style={{
+                    background: openPayLoaded ? '#10b981' : '#ffc107',
+                    color: openPayLoaded ? 'white' : '#212529',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
+                    fontWeight: '600'
+                  }}>
+                    {openPayLoaded ? 'OpenPay Operativo' : 'Inicializando OpenPay...'}
+                  </span>
                 </div>
 
-                <div className="mt-3">
-                  <small className="text-muted">
-                    <strong>Tarjeta de prueba:</strong><br/>
-                    4111 1111 1111 1111<br/>
-                    CVV: 123<br/>
-                    Exp: 12/25
+                <h6 style={{
+                  color: '#002868',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  marginBottom: '12px'
+                }}>
+                  Métodos de Pago Aceptados
+                </h6>
+                <ul style={{
+                  listStyle: 'none',
+                  padding: '0',
+                  margin: '0 0 20px 0',
+                  fontSize: '0.9rem',
+                  color: '#374151'
+                }}>
+                  <li style={{ marginBottom: '6px' }}>• Tarjetas de crédito y débito</li>
+                  <li style={{ marginBottom: '6px' }}>• Pago en tiendas de conveniencia</li>
+                  <li style={{ marginBottom: '6px' }}>• Procesamiento vía OpenPay</li>
+                </ul>
+
+                <h6 style={{
+                  color: '#002868',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  marginBottom: '12px'
+                }}>
+                  Certificaciones de Seguridad
+                </h6>
+                <ul style={{
+                  listStyle: 'none',
+                  padding: '0',
+                  margin: '0 0 20px 0',
+                  fontSize: '0.9rem',
+                  color: '#374151'
+                }}>
+                  <li style={{ marginBottom: '6px' }}>• Encriptación SSL/TLS</li>
+                  <li style={{ marginBottom: '6px' }}>• Certificación PCI DSS</li>
+                  <li style={{ marginBottom: '6px' }}>• Protección de datos bancarios</li>
+                </ul>
+
+                <div style={{
+                  background: '#d4edda',
+                  border: '1px solid #c3e6cb',
+                  borderRadius: '6px',
+                  padding: '12px',
+                  marginBottom: '20px',
+                  textAlign: 'center'
+                }}>
+                  <small style={{
+                    fontWeight: '600',
+                    color: '#155724',
+                    fontSize: '0.85rem'
+                  }}>
+                    Procesamiento Seguro por OpenPay
+                  </small>
+                </div>
+
+                <div style={{
+                  background: '#f8f9fa',
+                  border: '1px solid #e9ecef',
+                  borderRadius: '6px',
+                  padding: '15px'
+                }}>
+                  <small style={{
+                    color: '#6c757d',
+                    fontSize: '0.8rem',
+                    lineHeight: '1.4'
+                  }}>
+                    <strong>Datos de Prueba (Sandbox):</strong><br />
+                    Tarjeta: 4111 1111 1111 1111<br />
+                    CVV: 123<br />
+                    Vencimiento: 12/25<br />
+                    <em>Solo para propósitos de demostración</em>
                   </small>
                 </div>
               </div>
@@ -695,6 +1225,30 @@ const Pago = () => {
           </div>
         </div>
       </div>
+
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          
+          @media (max-width: 768px) {
+            .container {
+              padding: 0 15px !important;
+            }
+            
+            div[style*="grid-template-columns: 1fr 300px"] {
+              grid-template-columns: 1fr !important;
+              gap: 20px !important;
+            }
+            
+            div[style*="position: sticky"] {
+              position: static !important;
+            }
+          }
+        `}
+      </style>
     </div>
   );
 };

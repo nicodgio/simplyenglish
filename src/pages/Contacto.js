@@ -56,7 +56,7 @@ const Contacto = () => {
       console.log("Enviando datos:", formData);
 
       const response = await fetch(
-        "https://mediumpurple-horse-686620.hostingersite.com/api/contacto.php",
+        "https://simplyenglish.com.mx/api/contacto.php",
         {
           method: "POST",
           headers: {
