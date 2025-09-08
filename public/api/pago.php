@@ -492,10 +492,14 @@ try {
         sendCleanResponse(['success' => false, 'error' => 'Método HTTP no permitido']);
     }
 
-    // Webhook de OpenPay (POST sin action)
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['action'])) {
-        $input_data = file_get_contents('php://input');
-        if (!empty($input_data)) {
+    $input_raw = file_get_contents('php://input');
+    
+    // Detectar webhook de OpenPay
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($input_raw)) {
+        $decoded = json_decode($input_raw, true);
+        
+        // Un webhook de OpenPay tiene estructura específica
+        if (isset($decoded['type']) && isset($decoded['transaction']) && !isset($decoded['action'])) {
             $conn = new mysqli($host, $username, $password, $dbname);
             if ($conn->connect_error) {
                 sendCleanResponse(['success' => false, 'error' => 'Error de conexión']);
@@ -507,7 +511,7 @@ try {
         }
     }
 
-    $input = json_decode(file_get_contents('php://input'), true);
+    $input = json_decode($input_raw, true);
     
     if (!$input || !isset($input['action'])) {
         sendCleanResponse(['success' => false, 'error' => 'Acción requerida']);
