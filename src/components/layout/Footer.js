@@ -1,12 +1,14 @@
-import React from 'react';
-import { Container, Row, Col, Nav } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Row, Col, Nav, Modal, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUniversity, faShieldAlt, faPhone, faEnvelope, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  
+  const [showTerms, setShowTerms] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
+
   return (
     <footer style={{ 
       background: '#f8fafc',
@@ -195,8 +197,184 @@ const Footer = () => {
           <p style={{ margin: 0, color: '#6b7280', fontSize: '0.95rem' }}>
             © {currentYear} Simply English. Todos los derechos reservados. | Centro Evaluador CENNI Autorizado
           </p>
+          <div style={{ marginTop: '10px' }}>
+            <button
+              onClick={() => setShowTerms(true)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#002868',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                marginRight: '20px'
+              }}
+            >
+              Términos y Condiciones
+            </button>
+            <button
+              onClick={() => setShowPrivacy(true)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#002868',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                fontSize: '0.9rem'
+              }}
+            >
+              Aviso de Privacidad
+            </button>
+          </div>
         </div>
       </Container>
+
+      <Modal show={showTerms} onHide={() => setShowTerms(false)} size="lg" scrollable>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ color: '#002868' }}>Términos y Condiciones</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+          <div style={{ lineHeight: '1.6', color: '#4b5563' }}>
+            <p><strong>Fecha de última actualización:</strong> {new Date().toLocaleDateString('es-MX')}</p>
+            
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>1. Aceptación de los Términos</h5>
+            <p>Al utilizar los servicios de Simply English, usted acepta estos términos y condiciones en su totalidad.</p>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>2. Descripción de los Servicios</h5>
+            <p>Simply English es un centro educativo autorizado que ofrece:</p>
+            <ul>
+              <li>Enseñanza del idioma inglés</li>
+              <li>Aplicación de exámenes CENNI como centro evaluador oficial autorizado por PEARSON (avalada por SEP)</li>
+              <li>Certificaciones CONOCER expedidas por SEP</li>
+            </ul>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>3. Registro y Datos Requeridos</h5>
+            <p>Para registrarse en nuestros servicios, se requiere proporcionar:</p>
+            <ul>
+              <li>Nombre completo (nombre y apellidos)</li>
+              <li>Fecha de nacimiento</li>
+              <li>Correo electrónico</li>
+              <li>Número de teléfono</li>
+              <li>Género</li>
+              <li>Dirección completa (calle, ciudad, estado, código postal)</li>
+            </ul>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>4. Pagos y Facturación</h5>
+            <p>Los pagos se procesan de manera segura a través de OpenPay. Al realizar un pago, usted acepta los términos y condiciones de OpenPay.</p>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>5. Certificaciones</h5>
+            <p>Ofrecemos dos tipos de certificaciones:</p>
+            <ul>
+              <li><strong>CENNI:</strong> Certificación emitida por PEARSON y avalada por SEP. Simply English actúa como centro evaluador oficial autorizado.</li>
+              <li><strong>CONOCER:</strong> Certificación expedida directamente por SEP (Secretaría de Educación Pública).</li>
+            </ul>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>6. Responsabilidades del Usuario</h5>
+            <p>El usuario se compromete a:</p>
+            <ul>
+              <li>Proporcionar información veraz y actualizada</li>
+              <li>Cumplir con los horarios y fechas establecidas</li>
+              <li>Respetar las políticas del centro educativo</li>
+            </ul>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>7. Política de Cancelación</h5>
+            <p>Las cancelaciones deben realizarse con al menos 24 horas de anticipación. Las políticas específicas de reembolso se establecen según el tipo de servicio contratado.</p>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>8. Limitación de Responsabilidad</h5>
+            <p>Simply English no se hace responsable por interrupciones del servicio debido a causas de fuerza mayor o circunstancias fuera de nuestro control.</p>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>9. Modificaciones</h5>
+            <p>Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios serán notificados a través de nuestros canales oficiales.</p>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>10. Contacto</h5>
+            <p>Para cualquier consulta sobre estos términos, contacte a: info@simplyenglish.mx</p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowTerms(false)}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showPrivacy} onHide={() => setShowPrivacy(false)} size="lg" scrollable>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ color: '#002868' }}>Aviso de Privacidad</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+          <div style={{ lineHeight: '1.6', color: '#4b5563' }}>
+            <p><strong>Fecha de última actualización:</strong> {new Date().toLocaleDateString('es-MX')}</p>
+            
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>Responsable del Tratamiento</h5>
+            <p><strong>Simply English</strong><br />
+            Playa Destiladeras 89, Palma Real<br />
+            Bahía de Banderas, Nayarit, México<br />
+            Correo: info@simplyenglish.mx<br />
+            Teléfono: +52 (33) 1234-5678</p>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>Datos Personales Recabados</h5>
+            <p>Recabamos los siguientes datos personales necesarios para brindar nuestros servicios:</p>
+            <ul>
+              <li><strong>Nombre completo (nombre y apellidos):</strong> Para identificación y emisión de certificados</li>
+              <li><strong>Fecha de nacimiento:</strong> Para verificación de identidad y requisitos de certificación</li>
+              <li><strong>Correo electrónico:</strong> Para comunicación oficial y envío de información</li>
+              <li><strong>Número de teléfono:</strong> Para contacto directo y confirmación de servicios</li>
+              <li><strong>Género:</strong> Para fines estadísticos y requisitos de certificación</li>
+              <li><strong>Dirección completa:</strong> Para envío de documentos y certificados</li>
+            </ul>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>Finalidades del Tratamiento</h5>
+            <p>Sus datos personales serán utilizados para:</p>
+            <ul>
+              <li>Registro en nuestros cursos y servicios educativos</li>
+              <li>Comunicación sobre el progreso académico</li>
+              <li>Emisión de certificados y constancias</li>
+              <li>Programación de exámenes CENNI</li>
+              <li>Procesamiento de pagos (a través de OpenPay)</li>
+              <li>Envío de información relevante sobre nuestros servicios</li>
+            </ul>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>Compartición de Datos</h5>
+            <p>Sus datos personales pueden ser compartidos con:</p>
+            <ul>
+              <li><strong>OpenPay:</strong> Para el procesamiento seguro de pagos</li>
+              <li><strong>PEARSON:</strong> Para la emisión de certificaciones CENNI</li>
+              <li><strong>SEP (Secretaría de Educación Pública):</strong> Para la expedición de certificaciones CONOCER y el aval de certificaciones CENNI</li>
+            </ul>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>Derechos ARCO</h5>
+            <p>Usted tiene derecho a ejercer los siguientes derechos mediante solicitud dirigida a Simply English:</p>
+            <ul>
+              <li><strong>Acceder</strong> a sus datos personales</li>
+              <li><strong>Rectificar</strong> datos inexactos o incompletos</li>
+              <li><strong>Cancelar</strong> el uso de sus datos</li>
+              <li><strong>Oponerse</strong> al tratamiento de sus datos</li>
+            </ul>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>Medidas de Seguridad</h5>
+            <p>Implementamos medidas de seguridad físicas, técnicas y administrativas para proteger sus datos personales contra acceso no autorizado, alteración, divulgación o destrucción.</p>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>Conservación de Datos</h5>
+            <p>Sus datos personales serán conservados durante el tiempo necesario para cumplir con las finalidades establecidas y las obligaciones legales aplicables.</p>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>Transferencias Internacionales</h5>
+            <p>No realizamos transferencias internacionales de datos personales fuera de México, excepto las necesarias para el procesamiento de pagos a través de OpenPay.</p>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>Modificaciones al Aviso</h5>
+            <p>Nos reservamos el derecho de modificar este aviso de privacidad. Las modificaciones serán publicadas en nuestro sitio web y comunicadas a través de nuestros canales oficiales.</p>
+
+            <h5 style={{ color: '#002868', marginTop: '20px' }}>Ejercicio de Derechos</h5>
+            <p>Para ejercer sus derechos ARCO o realizar consultas sobre este aviso, contacte a:<br />
+            <strong>Email:</strong> info@simplyenglish.mx<br />
+            <strong>Teléfono:</strong> +52 (33) 1234-5678</p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowPrivacy(false)}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </footer>
   );
 };

@@ -16,11 +16,12 @@ $dbname = 'simplyen_simplyenglish';
 $username = 'simplyen_admon';
 $password = 'corsu5-Munkyg-xaxpyc';
 
-// Configuración sandbox de OpenPay
 $OPENPAY_CONFIG = [
     'id' => 'mzkvkma3reuzgzjf1ysj',
-    'private_key' => 'sk_1e324f7fb9904ac3985253f3247b4cb2', // Clave privada para sandbox
-    'sandbox' => true
+    'private_key' => 'sk_7e7f366c059a41de8f9f95ed10382024',
+    'public_key' => 'pk_1e324f7fb9904ac3985253f3247b4cb2',
+    'sandbox' => true,
+    'api_url' => 'https://sandbox-api.openpay.mx/v1/'
 ];
 
 function sendCleanResponse($data) {
@@ -29,9 +30,52 @@ function sendCleanResponse($data) {
     exit;
 }
 
+function callOpenPayAPI($endpoint, $data = null, $method = 'POST') {
+    global $OPENPAY_CONFIG;
+    
+    $url = $OPENPAY_CONFIG['api_url'] . $OPENPAY_CONFIG['id'] . '/' . $endpoint;
+    
+    error_log("OpenPay URL: " . $url);
+    error_log("OpenPay Method: " . $method);
+    if ($data) {
+        error_log("OpenPay Data: " . json_encode($data, JSON_PRETTY_PRINT));
+    }
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Basic ' . base64_encode($OPENPAY_CONFIG['private_key'] . ':')
+    ]);
+    
+    if ($method === 'POST' && $data) {
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    } elseif ($method === 'GET') {
+        curl_setopt($ch, CURLOPT_HTTPGET, true);
+    }
+    
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    
+    error_log("OpenPay HTTP Code: " . $httpCode);
+    error_log("OpenPay Response: " . $response);
+    
+    curl_close($ch);
+    
+    return [
+        'success' => $httpCode >= 200 && $httpCode < 300,
+        'data' => json_decode($response, true),
+        'http_code' => $httpCode
+    ];
+}
+
 function procesarPago($conn, $data) {
     try {
-        // Validar datos requeridos
         if (!isset($data['pago_id']) || !isset($data['token_id'])) {
             throw new Exception("Datos de pago incompletos");
         }
@@ -40,7 +84,6 @@ function procesarPago($conn, $data) {
         $token_id = $data['token_id'];
         $device_session_id = $data['device_session_id'] ?? 'web_session_' . time();
 
-        // Verificar que el pago existe y está pendiente
         $stmt = $conn->prepare("SELECT p.*, u.nombre, u.apellido_paterno, u.email, u.id as usuario_id
                                FROM pagos p
                                JOIN usuarios u ON p.usuario_id = u.id
@@ -55,82 +98,183 @@ function procesarPago($conn, $data) {
 
         $pago = $result->fetch_assoc();
 
-        // En sandbox, simular pago exitoso directamente
-        // En producción, aquí harías la llamada real a OpenPay API
-        if (true) { // Sandbox mode - siempre exitoso
-            $charge_id = 'sandbox_charge_' . uniqid();
-            $transaction_id = 'txn_' . time() . '_' . rand(1000, 9999);
+        $chargeData = [
+            'source_id' => $token_id,
+            'method' => 'card',
+            'amount' => floatval($pago['monto']),
+            'currency' => 'MXN',
+            'description' => 'Suscripción SimplyEnglish - Pago #' . $pago_id,
+            'order_id' => 'SE-' . str_pad($pago_id, 6, '0', STR_PAD_LEFT),
+            'device_session_id' => $device_session_id,
+            'customer' => [
+                'name' => $pago['nombre'],
+                'last_name' => $pago['apellido_paterno'],
+                'email' => $pago['email'],
+                'requires_account' => false
+            ],
+            'use_3d_secure' => true,
+            'redirect_url' => 'https://simplyenglish.com.mx/pago-resultado?pago_id=' . $pago_id
+        ];
+
+        error_log("Enviando cargo a OpenPay: " . json_encode($chargeData, JSON_PRETTY_PRINT));
+
+        $response = callOpenPayAPI('charges', $chargeData);
+
+        if (!$response['success']) {
+            $error_msg = 'Error de OpenPay';
+            if (isset($response['data']['description'])) {
+                $error_msg = $response['data']['description'];
+            } elseif (isset($response['data']['error_code'])) {
+                $error_msg = $response['data']['error_code'] . ': ' . ($response['data']['description'] ?? 'Error desconocido');
+            }
+            error_log("Error en OpenPay: " . json_encode($response['data'], JSON_PRETTY_PRINT));
+            throw new Exception($error_msg);
+        }
+
+        $charge_result = $response['data'];
+        $charge_id = $charge_result['id'];
+        $status = $charge_result['status'];
+        
+        // Manejar 3D Secure según documentación
+        if (isset($charge_result['payment_method']['type']) && $charge_result['payment_method']['type'] === '3d_secure') {
+            $redirect_url = $charge_result['payment_method']['url'];
             
-            // Crear estructura de datos de OpenPay para almacenar en JSON
             $datos_openpay = [
                 'charge_id' => $charge_id,
-                'transaction_id' => $transaction_id,
                 'token_id' => $token_id,
                 'device_session_id' => $device_session_id,
-                'sandbox' => true,
-                'fecha_proceso' => date('Y-m-d H:i:s')
+                'requires_3ds' => true,
+                'redirect_url' => $redirect_url,
+                'status' => $status,
+                'fecha_proceso' => date('Y-m-d H:i:s'),
+                'charge_data' => $charge_result
             ];
             
-            // Convertir a JSON para almacenar en la columna datos_openpay
-            $datos_openpay_json = json_encode($datos_openpay);
-            
-            // Actualizar el pago como completado usando las columnas existentes
             $stmt = $conn->prepare("UPDATE pagos SET
-                                   estado = 'COMPLETADO',
-                                   fecha_pago = NOW(),
+                                   estado = 'EN_PROCESO',
+                                   metodo_pago = 'card',
                                    referencia_externa = ?,
-                                   autorizacion = ?,
+                                   device_session_id = ?,
+                                   redirect_url = ?,
+                                   three_d_secure_url = ?,
+                                   requires_3ds = ?,
                                    datos_openpay = ?,
-                                   metodo_pago = 'tarjeta'
+                                   fecha_actualizacion = NOW()
                                    WHERE id = ?");
-            $stmt->bind_param("sssi", $charge_id, $transaction_id, $datos_openpay_json, $pago_id);
+            
+            $datos_openpay_json = json_encode($datos_openpay);
+            $requires_3ds = 1;
+            
+            $stmt->bind_param("ssssssi", 
+                $charge_id, 
+                $device_session_id,
+                $redirect_url,
+                $redirect_url,
+                $requires_3ds,
+                $datos_openpay_json,
+                $pago_id
+            );
             
             if (!$stmt->execute()) {
-                throw new Exception("Error al actualizar el estado del pago");
+                throw new Exception("Error al actualizar el pago para 3D Secure");
             }
-
-            // Activar suscripción si existe
-            if (!empty($pago['suscripcion_id'])) {
-                $stmt = $conn->prepare("UPDATE suscripciones SET 
-                                       estado = 'ACTIVA',
-                                       fecha_inicio = NOW()
-                                       WHERE id = ?");
-                $stmt->bind_param("i", $pago['suscripcion_id']);
-                $stmt->execute();
-            }
-
-            // Si tienes tabla de logs, puedes registrar aquí
-            // Comentado porque no sé si tienes tabla logs_pagos
-            /*
-            $stmt = $conn->prepare("INSERT INTO logs_pagos (pago_id, usuario_id, evento, detalles, fecha_evento) 
-                                   VALUES (?, ?, 'PAGO_COMPLETADO', ?, NOW())");
-            $evento_detalles = json_encode([
-                'charge_id' => $charge_id,
-                'transaction_id' => $transaction_id,
-                'modo' => 'sandbox',
-                'metodo_pago' => 'tarjeta'
-            ]);
-            $stmt->bind_param("iis", $pago_id, $pago['usuario_id'], $evento_detalles);
-            $stmt->execute();
-            */
 
             return [
                 'success' => true,
-                'message' => 'Pago procesado exitosamente en modo sandbox',
+                'requires_3ds' => true,
+                'redirect_url' => $redirect_url,
+                'message' => 'Se requiere autenticación 3D Secure',
                 'data' => [
                     'charge_id' => $charge_id,
-                    'transaction_id' => $transaction_id,
-                    'amount' => $pago['monto'],
-                    'status' => 'completed',
-                    'sandbox_mode' => true
+                    'redirect_url' => $redirect_url,
+                    'amount' => $pago['monto']
                 ]
             ];
         }
+        
+        // Pago completado sin 3D Secure
+        $transaction_id = $charge_result['authorization'] ?? null;
+        
+        $datos_openpay = [
+            'charge_id' => $charge_id,
+            'token_id' => $token_id,
+            'device_session_id' => $device_session_id,
+            'requires_3ds' => false,
+            'status' => $status,
+            'authorization' => $transaction_id,
+            'fecha_proceso' => date('Y-m-d H:i:s'),
+            'charge_data' => $charge_result
+        ];
+        
+        $datos_openpay_json = json_encode($datos_openpay);
+        
+        // Determinar estado final
+        $nuevo_estado = 'PENDIENTE';
+        switch ($status) {
+            case 'completed':
+                $nuevo_estado = 'COMPLETADO';
+                break;
+            case 'failed':
+                $nuevo_estado = 'FALLIDO';
+                break;
+            case 'cancelled':
+                $nuevo_estado = 'CANCELADO';
+                break;
+            case 'in_progress':
+            case 'charge_pending':
+                $nuevo_estado = 'EN_PROCESO';
+                break;
+        }
+        
+        $stmt = $conn->prepare("UPDATE pagos SET
+                               estado = ?,
+                               fecha_pago = CASE WHEN ? = 'COMPLETADO' THEN NOW() ELSE fecha_pago END,
+                               metodo_pago = 'card',
+                               referencia_externa = ?,
+                               autorizacion = ?,
+                               device_session_id = ?,
+                               datos_openpay = ?,
+                               fecha_actualizacion = NOW()
+                               WHERE id = ?");
+        
+        $stmt->bind_param("ssssssi", 
+            $nuevo_estado,
+            $nuevo_estado,
+            $charge_id,
+            $transaction_id,
+            $device_session_id,
+            $datos_openpay_json,
+            $pago_id
+        );
+        
+        if (!$stmt->execute()) {
+            throw new Exception("Error al actualizar el estado del pago");
+        }
+
+        // Activar suscripción si el pago fue completado
+        if ($nuevo_estado === 'COMPLETADO' && !empty($pago['suscripcion_id'])) {
+            $stmt = $conn->prepare("UPDATE suscripciones SET 
+                                   estado = 'ACTIVA',
+                                   fecha_inicio = NOW()
+                                   WHERE id = ?");
+            $stmt->bind_param("i", $pago['suscripcion_id']);
+            $stmt->execute();
+        }
+
+        return [
+            'success' => true,
+            'requires_3ds' => false,
+            'message' => $nuevo_estado === 'COMPLETADO' ? 'Pago procesado exitosamente' : 'Pago en proceso',
+            'data' => [
+                'charge_id' => $charge_id,
+                'transaction_id' => $transaction_id,
+                'amount' => $pago['monto'],
+                'status' => $nuevo_estado
+            ]
+        ];
 
     } catch (Exception $e) {
-        // Log del error
         error_log("Error en procesarPago: " . $e->getMessage());
-        
         return [
             'success' => false,
             'error' => $e->getMessage(),
@@ -139,19 +283,15 @@ function procesarPago($conn, $data) {
     }
 }
 
-function procesarPagoTienda($conn, $data) {
+function verificarEstadoPago($conn, $data) {
     try {
         if (!isset($data['pago_id'])) {
             throw new Exception("ID de pago requerido");
         }
 
         $pago_id = $data['pago_id'];
-        
-        // Verificar pago
-        $stmt = $conn->prepare("SELECT p.*, u.nombre, u.apellido_paterno 
-                               FROM pagos p
-                               JOIN usuarios u ON p.usuario_id = u.id
-                               WHERE p.id = ? AND p.estado = 'PENDIENTE'");
+
+        $stmt = $conn->prepare("SELECT * FROM pagos WHERE id = ?");
         $stmt->bind_param("i", $pago_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -161,41 +301,185 @@ function procesarPagoTienda($conn, $data) {
         }
 
         $pago = $result->fetch_assoc();
-        
-        // Generar referencia de pago en tienda
-        $referencia_tienda = 'SE' . str_pad($pago_id, 10, '0', STR_PAD_LEFT);
-        
-        // Crear estructura de datos para tienda
-        $datos_tienda = [
-            'tipo' => 'pago_tienda',
-            'referencia' => $referencia_tienda,
-            'fecha_generacion' => date('Y-m-d H:i:s'),
-            'vigencia' => date('Y-m-d H:i:s', strtotime('+7 days'))
-        ];
-        
-        $datos_tienda_json = json_encode($datos_tienda);
-        
-        // Actualizar pago con referencia de tienda usando columnas existentes
-        $stmt = $conn->prepare("UPDATE pagos SET 
-                               metodo_pago = 'tienda',
-                               referencia_externa = ?,
-                               datos_openpay = ?,
-                               estado = 'PENDIENTE'
-                               WHERE id = ?");
-        $stmt->bind_param("ssi", $referencia_tienda, $datos_tienda_json, $pago_id);
-        $stmt->execute();
+
+        if ($pago['estado'] !== 'PENDIENTE' && $pago['estado'] !== 'EN_PROCESO') {
+            return [
+                'success' => true,
+                'data' => [
+                    'estado' => $pago['estado'],
+                    'fecha_pago' => $pago['fecha_pago'],
+                    'referencia_externa' => $pago['referencia_externa']
+                ]
+            ];
+        }
+
+        if (!$pago['referencia_externa']) {
+            return [
+                'success' => true,
+                'data' => ['estado' => 'PENDIENTE']
+            ];
+        }
+
+        // Verificar con OpenPay
+        $response = callOpenPayAPI('charges/' . $pago['referencia_externa'], null, 'GET');
+
+        if ($response['success'] && isset($response['data']['status'])) {
+            $openpay_status = $response['data']['status'];
+            $nuevo_estado = 'PENDIENTE';
+
+            switch ($openpay_status) {
+                case 'completed':
+                    $nuevo_estado = 'COMPLETADO';
+                    break;
+                case 'failed':
+                case 'cancelled':
+                    $nuevo_estado = 'FALLIDO';
+                    break;
+                case 'in_progress':
+                case 'charge_pending':
+                    $nuevo_estado = 'EN_PROCESO';
+                    break;
+            }
+
+            if ($nuevo_estado !== $pago['estado']) {
+                $stmt = $conn->prepare("UPDATE pagos SET estado = ?, fecha_actualizacion = NOW() WHERE id = ?");
+                $stmt->bind_param("si", $nuevo_estado, $pago_id);
+                $stmt->execute();
+
+                if ($nuevo_estado === 'COMPLETADO' && $pago['suscripcion_id']) {
+                    $stmt = $conn->prepare("UPDATE suscripciones SET estado = 'ACTIVA', fecha_inicio = NOW() WHERE id = ?");
+                    $stmt->bind_param("i", $pago['suscripcion_id']);
+                    $stmt->execute();
+                }
+            }
+
+            return [
+                'success' => true,
+                'data' => [
+                    'estado' => $nuevo_estado,
+                    'openpay_status' => $openpay_status,
+                    'fecha_verificacion' => date('Y-m-d H:i:s')
+                ]
+            ];
+        }
 
         return [
             'success' => true,
-            'message' => 'Ficha de pago generada exitosamente',
-            'data' => [
-                'referencia' => $referencia_tienda,
-                'monto' => $pago['monto'],
-                'instrucciones' => 'Presente esta referencia en cualquier tienda OXXO, 7-Eleven o establecimiento autorizado'
-            ]
+            'data' => ['estado' => $pago['estado']]
         ];
 
     } catch (Exception $e) {
+        error_log("Error en verificarEstadoPago: " . $e->getMessage());
+        return [
+            'success' => false,
+            'error' => $e->getMessage()
+        ];
+    }
+}
+
+function procesarWebhookOpenPay($conn) {
+    try {
+        $json_payload = file_get_contents('php://input');
+        $webhook_data = json_decode($json_payload, true);
+        
+        error_log("Webhook OpenPay recibido: " . $json_payload);
+        
+        if (!$webhook_data || !isset($webhook_data['type'])) {
+            throw new Exception("Webhook inválido");
+        }
+
+        $event_type = $webhook_data['type'];
+        $transaction_data = $webhook_data['transaction'] ?? null;
+
+        if (!$transaction_data || !isset($transaction_data['order_id'])) {
+            throw new Exception("Datos de transacción faltantes en webhook");
+        }
+
+        $order_id = $transaction_data['order_id'];
+        
+        // Extraer el pago_id del order_id (formato: SE-000123)
+        $pago_id = null;
+        if (preg_match('/^SE-(\d+)$/', $order_id, $matches)) {
+            $pago_id = intval($matches[1]);
+        }
+
+        if (!$pago_id) {
+            error_log("No se pudo extraer pago_id del order_id: " . $order_id);
+            return ['success' => true, 'message' => 'Order ID no válido'];
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM pagos WHERE id = ?");
+        $stmt->bind_param("i", $pago_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows == 0) {
+            error_log("Webhook recibido para pago_id no encontrado: " . $pago_id);
+            return ['success' => true, 'message' => 'Pago ID no encontrado'];
+        }
+
+        $pago = $result->fetch_assoc();
+        $nuevo_estado = $pago['estado'];
+
+        switch ($event_type) {
+            case 'charge.succeeded':
+                $nuevo_estado = 'COMPLETADO';
+                break;
+            case 'charge.failed':
+                $nuevo_estado = 'FALLIDO';
+                break;
+            case 'charge.cancelled':
+                $nuevo_estado = 'CANCELADO';
+                break;
+            case 'charge.created':
+                $nuevo_estado = 'EN_PROCESO';
+                break;
+        }
+
+        if ($nuevo_estado !== $pago['estado']) {
+            $webhook_info = [
+                'event_type' => $event_type,
+                'webhook_received' => date('Y-m-d H:i:s'),
+                'transaction_status' => $transaction_data['status'] ?? null,
+                'authorization' => $transaction_data['authorization'] ?? null,
+                'charge_id' => $transaction_data['id'] ?? null
+            ];
+
+            $datos_openpay = json_decode($pago['datos_openpay'], true) ?: [];
+            $datos_openpay['webhook_info'] = $webhook_info;
+
+            $stmt = $conn->prepare("UPDATE pagos SET 
+                                   estado = ?, 
+                                   fecha_pago = CASE WHEN ? = 'COMPLETADO' THEN NOW() ELSE fecha_pago END,
+                                   autorizacion = ?,
+                                   referencia_externa = ?,
+                                   datos_openpay = ?,
+                                   fecha_actualizacion = NOW()
+                                   WHERE id = ?");
+            
+            $autorizacion = $transaction_data['authorization'] ?? null;
+            $charge_id = $transaction_data['id'] ?? null;
+            $datos_json = json_encode($datos_openpay);
+            
+            $stmt->bind_param("sssssi", $nuevo_estado, $nuevo_estado, $autorizacion, $charge_id, $datos_json, $pago_id);
+            $stmt->execute();
+
+            if ($nuevo_estado === 'COMPLETADO' && $pago['suscripcion_id']) {
+                $stmt = $conn->prepare("UPDATE suscripciones SET estado = 'ACTIVA', fecha_inicio = NOW() WHERE id = ?");
+                $stmt->bind_param("i", $pago['suscripcion_id']);
+                $stmt->execute();
+            }
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Webhook procesado correctamente',
+            'event_type' => $event_type,
+            'new_status' => $nuevo_estado
+        ];
+
+    } catch (Exception $e) {
+        error_log("Error en webhook: " . $e->getMessage());
         return [
             'success' => false,
             'error' => $e->getMessage()
@@ -204,8 +488,23 @@ function procesarPagoTienda($conn, $data) {
 }
 
 try {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_SERVER['REQUEST_METHOD'] !== 'GET') {
         sendCleanResponse(['success' => false, 'error' => 'Método HTTP no permitido']);
+    }
+
+    // Webhook de OpenPay (POST sin action)
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['action'])) {
+        $input_data = file_get_contents('php://input');
+        if (!empty($input_data)) {
+            $conn = new mysqli($host, $username, $password, $dbname);
+            if ($conn->connect_error) {
+                sendCleanResponse(['success' => false, 'error' => 'Error de conexión']);
+            }
+            $conn->set_charset("utf8");
+            
+            $result = procesarWebhookOpenPay($conn);
+            sendCleanResponse($result);
+        }
     }
 
     $input = json_decode(file_get_contents('php://input'), true);
@@ -214,7 +513,6 @@ try {
         sendCleanResponse(['success' => false, 'error' => 'Acción requerida']);
     }
 
-    // Conexión a base de datos
     $conn = new mysqli($host, $username, $password, $dbname);
     
     if ($conn->connect_error) {
@@ -223,15 +521,14 @@ try {
     
     $conn->set_charset("utf8");
 
-    // Procesar acciones
     switch ($input['action']) {
         case 'procesar_pago':
             $result = procesarPago($conn, $input);
             sendCleanResponse($result);
             break;
             
-        case 'procesar_pago_tienda':
-            $result = procesarPagoTienda($conn, $input);
+        case 'verificar_estado_pago':
+            $result = verificarEstadoPago($conn, $input);
             sendCleanResponse($result);
             break;
             

@@ -9,12 +9,19 @@ const Pago = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
   const [isCreatingSubscription, setIsCreatingSubscription] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('card');
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [currentSubscriptionId, setCurrentSubscriptionId] = useState(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [openPayLoaded, setOpenPayLoaded] = useState(false);
   const [loadingOpenPay, setLoadingOpenPay] = useState(false);
+  const [deviceSessionId, setDeviceSessionId] = useState(null);
+  const [cardData, setCardData] = useState({
+    holder_name: '',
+    card_number: '',
+    expiration_month: '',
+    expiration_year: '',
+    cvv2: ''
+  });
   
   const OPENPAY_CONFIG = {
     id: 'mzkvkma3reuzgzjf1ysj',
@@ -35,9 +42,6 @@ const Pago = () => {
       script.src = src;
       if (id) script.id = id;
       
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error(`Error cargando script: ${src}`));
-      
       const timeout = setTimeout(() => {
         reject(new Error(`Timeout cargando script: ${src}`));
       }, 10000);
@@ -47,18 +51,35 @@ const Pago = () => {
         resolve();
       };
       
+      script.onerror = () => {
+        clearTimeout(timeout);
+        reject(new Error(`Error cargando script: ${src}`));
+      };
+      
       document.head.appendChild(script);
     });
   };
 
   const initializeOpenPay = async () => {
-    if (window.OpenPay && openPayLoaded) return true;
+    if (window.OpenPay && openPayLoaded && deviceSessionId) return true;
     
     setLoadingOpenPay(true);
     
     try {
+      console.log('Cargando scripts de OpenPay...');
+      
       await loadScript(OPENPAY_CONFIG.scriptUrl, 'openpay-main-script');
+      console.log('Script principal cargado');
+      
       await loadScript(OPENPAY_CONFIG.dataScriptUrl, 'openpay-data-script');
+      console.log('Script de datos cargado');
+      
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('window.OpenPay disponible:', !!window.OpenPay);
+      if (window.OpenPay) {
+        console.log('Métodos OpenPay disponibles:', Object.keys(window.OpenPay));
+      }
       
       if (!window.OpenPay) {
         throw new Error('OpenPay no se cargó correctamente');
@@ -67,6 +88,19 @@ const Pago = () => {
       window.OpenPay.setId(OPENPAY_CONFIG.id);
       window.OpenPay.setApiKey(OPENPAY_CONFIG.publicKey);
       window.OpenPay.setSandboxMode(OPENPAY_CONFIG.sandbox);
+      
+      console.log('OpenPay configurado con ID:', OPENPAY_CONFIG.id);
+      
+      if (window.OpenPay.deviceData && window.OpenPay.deviceData.setup) {
+        const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        window.OpenPay.deviceData.setup(sessionId);
+        setDeviceSessionId(sessionId);
+        console.log('Device Session ID generado:', sessionId);
+      } else {
+        console.warn('OpenPay.deviceData no disponible');
+        const sessionId = 'basic_session_' + Date.now();
+        setDeviceSessionId(sessionId);
+      }
       
       setOpenPayLoaded(true);
       return true;
@@ -147,7 +181,7 @@ const Pago = () => {
       const subscriptionData = {
         action: 'crear_suscripcion',
         usuario_id: userData.usuario.id || userData.usuario.usuario_id,
-        email: userData.usuario.email, // Enviar email como backup
+        email: userData.usuario.email,
         tipo_programa: selectedOption.codigo,
         nivel_inicio: selectedOption.nivel_inicio,
         nivel_fin: selectedOption.nivel_fin || selectedOption.nivel_inicio
@@ -179,93 +213,178 @@ const Pago = () => {
     }
   };
 
-  const [cardData, setCardData] = useState({
-    holder_name: '',
-    card_number: '',
-    expiration_month: '',
-    expiration_year: '',
-    cvv2: ''
-  });
+  const processDirectPayment = async () => {
+    if (!openPayLoaded) {
+      const loaded = await initializeOpenPay();
+      if (!loaded) return;
+    }
 
-const processDirectPayment = async () => {
-  if (!openPayLoaded) {
-    const loaded = await initializeOpenPay();
-    if (!loaded) return;
-  }
+    if (!window.OpenPay?.card?.validateCardNumber(cardData.card_number)) {
+      setAlertType('danger');
+      setAlertMessage('El número de tarjeta proporcionado no es válido');
+      setShowAlert(true);
+      return;
+    }
 
-  if (!window.OpenPay?.card?.validateCardNumber(cardData.card_number)) {
-    setAlertType('danger');
-    setAlertMessage('El número de tarjeta proporcionado no es válido');
-    setShowAlert(true);
-    return;
-  }
+    setIsProcessingPayment(true);
+    
+    try {
+      const tokenData = {
+        card_number: cardData.card_number.replace(/\s/g, ''),
+        holder_name: cardData.holder_name.toUpperCase(),
+        expiration_year: cardData.expiration_year,
+        expiration_month: cardData.expiration_month.padStart(2, '0'),
+        cvv2: cardData.cvv2
+      };
 
-  setIsProcessingPayment(true);
-  
-  try {
-    const tokenData = {
-      card_number: cardData.card_number.replace(/\s/g, ''),
-      holder_name: cardData.holder_name.toUpperCase(),
-      expiration_year: cardData.expiration_year,
-      expiration_month: cardData.expiration_month.padStart(2, '0'),
-      cvv2: cardData.cvv2
-    };
+      console.log('Creando token OpenPay...');
 
-    await new Promise((resolve, reject) => {
-      window.OpenPay.token.create(tokenData, 
-        async (response) => {
-          try {
-            const paymentData = {
-              action: 'procesar_pago',
-              pago_id: currentSubscriptionId,
-              metodo_pago: 'card',
-              token_id: response.data.id,
-              device_session_id: window.OpenPayData?.getDeviceSessionId?.() || 'web_session_' + Date.now()
-            };
-
-            const paymentResponse = await fetch('https://simplyenglish.com.mx/api/pago.php', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(paymentData)
-            });
-
-            const paymentResult = await paymentResponse.json();
-            
-            if (paymentResult.success) {
-              setAlertType('success');
-              setAlertMessage('¡Pago procesado exitosamente! Su suscripción académica ha sido activada.');
-              setShowPaymentForm(false);
-              resetPaymentForm();
+      await new Promise((resolve, reject) => {
+        window.OpenPay.token.create(tokenData, 
+          async (response) => {
+            try {
+              console.log('Token creado exitosamente:', response.data.id);
               
-              // NO llamar handleEmailSearch aquí para evitar sobreescribir el mensaje
+              const paymentData = {
+                action: 'procesar_pago',
+                pago_id: currentSubscriptionId,
+                metodo_pago: 'card',
+                token_id: response.data.id,
+                device_session_id: deviceSessionId
+              };
+
+              console.log('Enviando pago al backend...');
+
+              const paymentResponse = await fetch('https://simplyenglish.com.mx/api/pago.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(paymentData)
+              });
+
+              const paymentResult = await paymentResponse.json();
               
-            } else {
+              console.log('Respuesta del backend:', paymentResult);
+              
+              if (paymentResult.success) {
+                if (paymentResult.requires_3ds && paymentResult.redirect_url) {
+                  console.log('Se requiere 3D Secure, redirigiendo...');
+                  
+                  setAlertType('info');
+                  setAlertMessage('Se requiere autenticación 3D Secure. Redirigiendo...');
+                  setShowAlert(true);
+                  
+                  const popup = window.open(
+                    paymentResult.redirect_url,
+                    '3ds_authentication',
+                    'width=600,height=700,scrollbars=yes,resizable=yes,toolbar=no,location=no,directories=no,status=no,menubar=no'
+                  );
+
+                  const checkClosed = setInterval(() => {
+                    if (popup.closed) {
+                      clearInterval(checkClosed);
+                      
+                      setTimeout(() => {
+                        checkPaymentStatus(currentSubscriptionId);
+                      }, 2000);
+                    }
+                  }, 1000);
+
+                  setTimeout(() => {
+                    if (!popup.closed) {
+                      popup.close();
+                      clearInterval(checkClosed);
+                      setAlertType('warning');
+                      setAlertMessage('El tiempo para completar la autenticación 3D Secure ha expirado. Intente nuevamente.');
+                      setShowAlert(true);
+                    }
+                  }, 300000);
+                  
+                } else {
+                  setAlertType('success');
+                  setAlertMessage('¡Pago procesado exitosamente! Su suscripción académica ha sido activada.');
+                  setShowPaymentForm(false);
+                  resetPaymentForm();
+                }
+              } else {
+                setAlertType('danger');
+                setAlertMessage(`Error en el procesamiento del pago: ${paymentResult.error || 'Error del sistema'}`);
+              }
+              
+              resolve();
+            } catch (error) {
               setAlertType('danger');
-              setAlertMessage(`Error en el procesamiento del pago: ${paymentResult.error || 'Error del sistema'}`);
+              setAlertMessage('Error en el procesamiento del pago: ' + error.message);
+              reject(error);
             }
-            
-            resolve();
-          } catch (error) {
+          },
+          (error) => {
+            console.error('Error creando token:', error);
             setAlertType('danger');
-            setAlertMessage('Error en el procesamiento del pago: ' + error.message);
+            setAlertMessage(`Error del procesador de pagos: ${error.data?.description || error.message || 'Error del sistema'}`);
             reject(error);
           }
-        },
-        (error) => {
-          setAlertType('danger');
-          setAlertMessage(`Error del procesador de pagos: ${error.data?.description || error.message || 'Error del sistema'}`);
-          reject(error);
-        }
-      );
-    });
+        );
+      });
 
-  } catch (error) {
-    console.error('Error en procesamiento de pago:', error);
-  } finally {
-    setIsProcessingPayment(false);
-    setShowAlert(true);
-  }
-};
+    } catch (error) {
+      console.error('Error en procesamiento de pago:', error);
+    } finally {
+      setIsProcessingPayment(false);
+      setShowAlert(true);
+    }
+  };
+
+  const checkPaymentStatus = async (pagoId) => {
+    try {
+      console.log('Verificando estado del pago...');
+      
+      const response = await fetch('https://simplyenglish.com.mx/api/pago.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'verificar_estado_pago',
+          pago_id: pagoId
+        })
+      });
+
+      const result = await response.json();
+      
+      console.log('Estado del pago:', result);
+      
+      if (result.success) {
+        const estado = result.data.estado;
+        
+        if (estado === 'COMPLETADO') {
+          setAlertType('success');
+          setAlertMessage('¡Pago procesado exitosamente! Su suscripción académica ha sido activada.');
+          setShowPaymentForm(false);
+          resetPaymentForm();
+        } else if (estado === 'FALLIDO' || estado === 'CANCELADO') {
+          setAlertType('danger');
+          setAlertMessage('El pago no pudo ser procesado. Intente nuevamente o contacte soporte.');
+        } else if (estado === 'EN_PROCESO') {
+          setAlertType('info');
+          setAlertMessage('El pago está siendo procesado. Recibirá una confirmación por correo electrónico.');
+        } else {
+          setAlertType('warning');
+          setAlertMessage('Estado del pago pendiente. Verifique su correo para confirmación.');
+        }
+      } else {
+        setAlertType('warning');
+        setAlertMessage('No se pudo verificar el estado del pago. Verifique su correo para confirmación.');
+      }
+      
+      setShowAlert(true);
+      setIsProcessingPayment(false);
+      
+    } catch (error) {
+      console.error('Error verificando estado del pago:', error);
+      setAlertType('warning');
+      setAlertMessage('No se pudo verificar el estado del pago. Revise su correo electrónico para confirmación.');
+      setShowAlert(true);
+      setIsProcessingPayment(false);
+    }
+  };
 
   const formatCardNumber = (value) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -280,29 +399,7 @@ const processDirectPayment = async () => {
     return parts.length ? parts.join(' ') : value;
   };
 
-  const generateStorePayment = async () => {
-    setIsProcessingPayment(true);
-    
-    try {
-      setTimeout(() => {
-        const paymentReference = `SE${Math.floor(Math.random() * 10000000000000)}`;
-        alert(`Ficha de pago generada exitosamente.\n\nReferencia de pago: ${paymentReference}\nMonto total: ${selectedOption.precio.toLocaleString()} MXN\n\nPuede realizar el pago en establecimientos autorizados (OXXO, 7-Eleven, etc.)`);
-        
-        setShowPaymentForm(false);
-        resetPaymentForm();
-        setIsProcessingPayment(false);
-      }, 2000);
-
-    } catch (error) {
-      setAlertType('danger');
-      setAlertMessage('Error en la generación de la ficha de pago');
-      setShowAlert(true);
-      setIsProcessingPayment(false);
-    }
-  };
-
   const resetPaymentForm = () => {
-    setPaymentMethod('card');
     setSelectedOption(null);
     setCardData({
       holder_name: '',
@@ -421,7 +518,7 @@ const processDirectPayment = async () => {
                   animation: 'spin 1s linear infinite'
                 }}></div>
               </div>
-              Inicializando sistema de pagos...
+              Inicializando sistema de pagos y antifraude...
             </div>
           )}
           
@@ -672,7 +769,6 @@ const processDirectPayment = async () => {
                           </p>
                           <p style={{
                             margin: '0',
-                            color: '#6b7280',
                             fontSize: '0.9rem'
                           }}>
                             {opcion.descripcion}
@@ -736,7 +832,7 @@ const processDirectPayment = async () => {
                     fontSize: '1.1rem',
                     fontWeight: '600'
                   }}>
-                    Procesamiento de Pago
+                    Procesamiento de Pago Seguro
                   </div>
                   
                   <div style={{
@@ -758,308 +854,220 @@ const processDirectPayment = async () => {
                     </div>
                   </div>
 
-                  <div style={{ marginBottom: '25px' }}>
-                    <div style={{
-                      display: 'flex',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '8px',
-                      overflow: 'hidden'
+                  <div style={{
+                    background: '#d4edda',
+                    border: '1px solid #c3e6cb',
+                    borderRadius: '8px',
+                    padding: '20px',
+                    marginBottom: '25px',
+                    color: '#155724'
+                  }}>
+                    <h6 style={{
+                      margin: '0 0 12px 0',
+                      fontWeight: '600',
+                      fontSize: '1rem'
                     }}>
-                      <label style={{
-                        flex: 1,
-                        background: paymentMethod === 'card' ? '#002868' : 'white',
-                        color: paymentMethod === 'card' ? 'white' : '#374151',
-                        padding: '12px',
-                        textAlign: 'center',
-                        cursor: 'pointer',
-                        fontWeight: '600',
-                        transition: 'all 0.3s ease'
-                      }}>
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          checked={paymentMethod === 'card'}
-                          onChange={() => setPaymentMethod('card')}
-                          style={{ display: 'none' }}
-                        />
-                        Tarjeta de Crédito/Débito
-                      </label>
-
-                      <label style={{
-                        flex: 1,
-                        background: paymentMethod === 'store' ? '#002868' : 'white',
-                        color: paymentMethod === 'store' ? 'white' : '#374151',
-                        padding: '12px',
-                        textAlign: 'center',
-                        cursor: 'pointer',
-                        fontWeight: '600',
-                        transition: 'all 0.3s ease'
-                      }}>
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          checked={paymentMethod === 'store'}
-                          onChange={() => setPaymentMethod('store')}
-                          style={{ display: 'none' }}
-                        />
-                        Pago en Tienda
-                      </label>
-                    </div>
+                      Proceso de Pago Seguro:
+                    </h6>
+                    <ol style={{
+                      margin: '0',
+                      paddingLeft: '20px',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.6'
+                    }}>
+                      <li>Ingrese los datos de su tarjeta en el formulario seguro</li>
+                      <li>OpenPay procesará su pago de forma segura</li>
+                      <li>Complete la autenticación 3D Secure si es requerida</li>
+                      <li>Su pago será procesado con protección antifraude</li>
+                      <li>Recibirá confirmación inmediata del resultado</li>
+                    </ol>
                   </div>
 
-                  {paymentMethod === 'card' && (
+                  <div style={{
+                    background: openPayLoaded && deviceSessionId ? '#d4edda' : '#fff3cd',
+                    border: `1px solid ${openPayLoaded && deviceSessionId ? '#c3e6cb' : '#ffeaa7'}`,
+                    color: openPayLoaded && deviceSessionId ? '#155724' : '#856404',
+                    borderRadius: '8px',
+                    padding: '15px',
+                    marginBottom: '25px'
+                  }}>
+                    <h6 style={{
+                      margin: '0 0 8px 0',
+                      fontWeight: '600',
+                      fontSize: '1rem'
+                    }}>
+                      {openPayLoaded && deviceSessionId ? 'Sistema de Pagos Listo' : 'Sistema de Pagos No Disponible'}
+                    </h6>
+                    <p style={{ margin: '0', fontSize: '0.9rem' }}>
+                      {openPayLoaded && deviceSessionId
+                        ? 'OpenPay y sistema antifraude inicializados correctamente. Listo para procesar su pago.'
+                        : 'Reintente la carga del sistema de pagos para continuar.'
+                      }
+                    </p>
+                    {deviceSessionId && (
+                      <p style={{ margin: '8px 0 0 0', fontSize: '0.8rem', opacity: 0.8 }}>
+                        ID de sesión antifraude: {deviceSessionId.substring(0, 20)}...
+                      </p>
+                    )}
+                  </div>
+
+                  {openPayLoaded && deviceSessionId ? (
                     <div>
-                      <div style={{
-                        background: openPayLoaded ? '#d4edda' : '#fff3cd',
-                        border: `1px solid ${openPayLoaded ? '#c3e6cb' : '#ffeaa7'}`,
-                        color: openPayLoaded ? '#155724' : '#856404',
-                        borderRadius: '8px',
-                        padding: '15px',
-                        marginBottom: '25px'
-                      }}>
-                        <h6 style={{
-                          margin: '0 0 8px 0',
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{
+                          display: 'block',
+                          marginBottom: '8px',
                           fontWeight: '600',
-                          fontSize: '1rem'
+                          color: '#374151'
                         }}>
-                          {openPayLoaded ? 'Sistema de Pagos Disponible' : 'Sistema de Pagos No Disponible'}
-                        </h6>
-                        <p style={{ margin: '0', fontSize: '0.9rem' }}>
-                          {openPayLoaded 
-                            ? 'Ingrese los datos de su tarjeta para procesar el pago de forma segura a través de OpenPay.'
-                            : 'Reintente la carga del sistema de pagos para continuar.'
-                          }
-                        </p>
+                          Nombre del Titular de la Tarjeta
+                        </label>
+                        <input
+                          type="text"
+                          value={cardData.holder_name}
+                          onChange={(e) => setCardData({...cardData, holder_name: e.target.value.toUpperCase()})}
+                          placeholder="JUAN PÉREZ GARCÍA"
+                          required
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '8px',
+                            fontSize: '1rem',
+                            boxSizing: 'border-box',
+                            textTransform: 'uppercase'
+                          }}
+                        />
                       </div>
 
-                      {openPayLoaded ? (
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{
+                          display: 'block',
+                          marginBottom: '8px',
+                          fontWeight: '600',
+                          color: '#374151'
+                        }}>
+                          Número de Tarjeta
+                        </label>
+                        <input
+                          type="text"
+                          value={cardData.card_number}
+                          onChange={(e) => setCardData({...cardData, card_number: formatCardNumber(e.target.value)})}
+                          placeholder="4111 1111 1111 1111"
+                          maxLength="19"
+                          required
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '8px',
+                            fontSize: '1rem',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr 1fr',
+                        gap: '15px',
+                        marginBottom: '25px'
+                      }}>
                         <div>
-                          <div style={{ marginBottom: '20px' }}>
-                            <label style={{
-                              display: 'block',
-                              marginBottom: '8px',
-                              fontWeight: '600',
-                              color: '#374151'
-                            }}>
-                              Nombre del Titular de la Tarjeta
-                            </label>
-                            <input
-                              type="text"
-                              value={cardData.holder_name}
-                              onChange={(e) => setCardData({...cardData, holder_name: e.target.value.toUpperCase()})}
-                              placeholder="JUAN PÉREZ GARCÍA"
-                              required
-                              style={{
-                                width: '100%',
-                                padding: '12px 16px',
-                                border: '1px solid #d1d5db',
-                                borderRadius: '8px',
-                                fontSize: '1rem',
-                                boxSizing: 'border-box',
-                                textTransform: 'uppercase'
-                              }}
-                            />
-                          </div>
-
-                          <div style={{ marginBottom: '20px' }}>
-                            <label style={{
-                              display: 'block',
-                              marginBottom: '8px',
-                              fontWeight: '600',
-                              color: '#374151'
-                            }}>
-                              Número de Tarjeta
-                            </label>
-                            <input
-                              type="text"
-                              value={cardData.card_number}
-                              onChange={(e) => setCardData({...cardData, card_number: formatCardNumber(e.target.value)})}
-                              placeholder="4111 1111 1111 1111"
-                              maxLength="19"
-                              required
-                              style={{
-                                width: '100%',
-                                padding: '12px 16px',
-                                border: '1px solid #d1d5db',
-                                borderRadius: '8px',
-                                fontSize: '1rem',
-                                boxSizing: 'border-box'
-                              }}
-                            />
-                          </div>
-
-                          <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 1fr 1fr',
-                            gap: '15px',
-                            marginBottom: '25px'
+                          <label style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '600',
+                            color: '#374151'
                           }}>
-                            <div>
-                              <label style={{
-                                display: 'block',
-                                marginBottom: '8px',
-                                fontWeight: '600',
-                                color: '#374151'
-                              }}>
-                                Mes
-                              </label>
-                              <select
-                                value={cardData.expiration_month}
-                                onChange={(e) => setCardData({...cardData, expiration_month: e.target.value})}
-                                required
-                                style={{
-                                  width: '100%',
-                                  padding: '12px 16px',
-                                  border: '1px solid #d1d5db',
-                                  borderRadius: '8px',
-                                  fontSize: '1rem',
-                                  boxSizing: 'border-box'
-                                }}
-                              >
-                                <option value="">MM</option>
-                                {[...Array(12)].map((_, i) => (
-                                  <option key={i} value={String(i + 1).padStart(2, '0')}>
-                                    {String(i + 1).padStart(2, '0')}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                            
-                            <div>
-                              <label style={{
-                                display: 'block',
-                                marginBottom: '8px',
-                                fontWeight: '600',
-                                color: '#374151'
-                              }}>
-                                Año
-                              </label>
-                              <select
-                                value={cardData.expiration_year}
-                                onChange={(e) => setCardData({...cardData, expiration_year: e.target.value})}
-                                required
-                                style={{
-                                  width: '100%',
-                                  padding: '12px 16px',
-                                  border: '1px solid #d1d5db',
-                                  borderRadius: '8px',
-                                  fontSize: '1rem',
-                                  boxSizing: 'border-box'
-                                }}
-                              >
-                                <option value="">AA</option>
-                                {[...Array(10)].map((_, i) => {
-                                  const year = new Date().getFullYear() + i;
-                                  return (
-                                    <option key={i} value={String(year).slice(-2)}>
-                                      {year}
-                                    </option>
-                                  );
-                                })}
-                              </select>
-                            </div>
-                            
-                            <div>
-                              <label style={{
-                                display: 'block',
-                                marginBottom: '8px',
-                                fontWeight: '600',
-                                color: '#374151'
-                              }}>
-                                CVV
-                              </label>
-                              <input
-                                type="text"
-                                value={cardData.cvv2}
-                                onChange={(e) => setCardData({...cardData, cvv2: e.target.value.replace(/\D/g, '')})}
-                                placeholder="123"
-                                maxLength="4"
-                                required
-                                style={{
-                                  width: '100%',
-                                  padding: '12px 16px',
-                                  border: '1px solid #d1d5db',
-                                  borderRadius: '8px',
-                                  fontSize: '1rem',
-                                  boxSizing: 'border-box'
-                                }}
-                              />
-                            </div>
-                          </div>
-
-                          <button
-                            onClick={processDirectPayment}
-                            disabled={isProcessingPayment}
+                            Mes
+                          </label>
+                          <select
+                            value={cardData.expiration_month}
+                            onChange={(e) => setCardData({...cardData, expiration_month: e.target.value})}
+                            required
                             style={{
-                              background: isProcessingPayment ? '#9ca3af' : '#10b981',
-                              color: 'white',
-                              border: 'none',
-                              padding: '16px 32px',
-                              borderRadius: '8px',
-                              fontSize: '1.1rem',
-                              fontWeight: '600',
-                              cursor: isProcessingPayment ? 'not-allowed' : 'pointer',
                               width: '100%',
-                              transition: 'all 0.3s ease'
+                              padding: '12px 16px',
+                              border: '1px solid #d1d5db',
+                              borderRadius: '8px',
+                              fontSize: '1rem',
+                              boxSizing: 'border-box'
                             }}
                           >
-                            {isProcessingPayment ? 'Procesando pago...' : `Procesar Pago - ${selectedOption.precio.toLocaleString()} MXN`}
-                          </button>
+                            <option value="">MM</option>
+                            {[...Array(12)].map((_, i) => (
+                              <option key={i} value={String(i + 1).padStart(2, '0')}>
+                                {String(i + 1).padStart(2, '0')}
+                              </option>
+                            ))}
+                          </select>
                         </div>
-                      ) : (
-                        <button
-                          onClick={initializeOpenPay}
-                          disabled={loadingOpenPay}
-                          style={{
-                            background: loadingOpenPay ? '#9ca3af' : '#ffc107',
-                            color: '#212529',
-                            border: 'none',
-                            padding: '16px 32px',
-                            borderRadius: '8px',
-                            fontSize: '1.1rem',
+                        
+                        <div>
+                          <label style={{
+                            display: 'block',
+                            marginBottom: '8px',
                             fontWeight: '600',
-                            cursor: loadingOpenPay ? 'not-allowed' : 'pointer',
-                            width: '100%'
-                          }}
-                        >
-                          {loadingOpenPay ? 'Cargando...' : 'Reintentar Carga del Sistema'}
-                        </button>
-                      )}
-                    </div>
-                  )}
-
-                  {paymentMethod === 'store' && (
-                    <div>
-                      <div style={{
-                        background: '#e3f2fd',
-                        border: '1px solid #1976d2',
-                        borderRadius: '8px',
-                        padding: '20px',
-                        marginBottom: '25px',
-                        color: '#0d47a1'
-                      }}>
-                        <h6 style={{
-                          margin: '0 0 12px 0',
-                          fontWeight: '600',
-                          fontSize: '1rem'
-                        }}>
-                          Procedimiento de Pago en Tienda:
-                        </h6>
-                        <ol style={{
-                          margin: '0',
-                          paddingLeft: '20px',
-                          fontSize: '0.9rem',
-                          lineHeight: '1.6'
-                        }}>
-                          <li>Genere su ficha de pago electrónica</li>
-                          <li>Acuda a establecimientos autorizados (OXXO, 7-Eleven, etc.)</li>
-                          <li>Presente el código de barras al cajero</li>
-                          <li>Su suscripción se activará automáticamente tras confirmación</li>
-                        </ol>
+                            color: '#374151'
+                          }}>
+                            Año
+                          </label>
+                          <select
+                            value={cardData.expiration_year}
+                            onChange={(e) => setCardData({...cardData, expiration_year: e.target.value})}
+                            required
+                            style={{
+                              width: '100%',
+                              padding: '12px 16px',
+                              border: '1px solid #d1d5db',
+                              borderRadius: '8px',
+                              fontSize: '1rem',
+                              boxSizing: 'border-box'
+                            }}
+                          >
+                            <option value="">AA</option>
+                            {[...Array(10)].map((_, i) => {
+                              const year = new Date().getFullYear() + i;
+                              return (
+                                <option key={i} value={String(year).slice(-2)}>
+                                  {year}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </div>
+                        
+                        <div>
+                          <label style={{
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontWeight: '600',
+                            color: '#374151'
+                          }}>
+                            CVV
+                          </label>
+                          <input
+                            type="text"
+                            value={cardData.cvv2}
+                            onChange={(e) => setCardData({...cardData, cvv2: e.target.value.replace(/\D/g, '')})}
+                            placeholder="123"
+                            maxLength="4"
+                            required
+                            style={{
+                              width: '100%',
+                              padding: '12px 16px',
+                              border: '1px solid #d1d5db',
+                              borderRadius: '8px',
+                              fontSize: '1rem',
+                              boxSizing: 'border-box'
+                            }}
+                          />
+                        </div>
                       </div>
 
                       <button
-                        onClick={generateStorePayment}
+                        onClick={processDirectPayment}
                         disabled={isProcessingPayment}
                         style={{
                           background: isProcessingPayment ? '#9ca3af' : '#10b981',
@@ -1075,9 +1083,28 @@ const processDirectPayment = async () => {
                           transition: 'all 0.3s ease'
                         }}
                       >
-                        {isProcessingPayment ? 'Generando ficha...' : 'Generar Ficha de Pago'}
+                        {isProcessingPayment ? 'Procesando pago...' : `Procesar Pago - ${selectedOption.precio.toLocaleString()} MXN`}
                       </button>
                     </div>
+                  ) : (
+                    <button
+                      onClick={initializeOpenPay}
+                      disabled={loadingOpenPay}
+                      style={{
+                        background: loadingOpenPay ? '#9ca3af' : '#ffc107',
+                        color: '#212529',
+                        border: 'none',
+                        padding: '16px 32px',
+                        borderRadius: '8px',
+                        fontSize: '1.1rem',
+                        fontWeight: '600',
+                        cursor: loadingOpenPay ? 'not-allowed' : 'pointer',
+                        width: '100%',
+                        marginBottom: '15px'
+                      }}
+                    >
+                      {loadingOpenPay ? 'Cargando...' : 'Reintentar Carga del Sistema'}
+                    </button>
                   )}
 
                   <button
@@ -1139,9 +1166,21 @@ const processDirectPayment = async () => {
                     padding: '6px 12px',
                     borderRadius: '6px',
                     fontSize: '0.9rem',
-                    fontWeight: '600'
+                    fontWeight: '600',
+                    display: 'block',
+                    marginBottom: '8px'
                   }}>
                     {openPayLoaded ? 'OpenPay Operativo' : 'Inicializando OpenPay...'}
+                  </span>
+                  <span style={{
+                    background: deviceSessionId ? '#10b981' : '#ffc107',
+                    color: deviceSessionId ? 'white' : '#212529',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
+                    fontWeight: '600'
+                  }}>
+                    {deviceSessionId ? 'Antifraude Activo' : 'Inicializando Antifraude...'}
                   </span>
                 </div>
 
@@ -1161,8 +1200,8 @@ const processDirectPayment = async () => {
                   color: '#374151'
                 }}>
                   <li style={{ marginBottom: '6px' }}>• Tarjetas de crédito y débito</li>
-                  <li style={{ marginBottom: '6px' }}>• Pago en tiendas de conveniencia</li>
-                  <li style={{ marginBottom: '6px' }}>• Procesamiento vía OpenPay</li>
+                  <li style={{ marginBottom: '6px' }}>• Autenticación 3D Secure</li>
+                  <li style={{ marginBottom: '6px' }}>• Protección antifraude OpenPay</li>
                 </ul>
 
                 <h6 style={{
@@ -1183,6 +1222,7 @@ const processDirectPayment = async () => {
                   <li style={{ marginBottom: '6px' }}>• Encriptación SSL/TLS</li>
                   <li style={{ marginBottom: '6px' }}>• Certificación PCI DSS</li>
                   <li style={{ marginBottom: '6px' }}>• Protección de datos bancarios</li>
+                  <li style={{ marginBottom: '6px' }}>• Verificación 3D Secure</li>
                 </ul>
 
                 <div style={{
@@ -1213,11 +1253,11 @@ const processDirectPayment = async () => {
                     fontSize: '0.8rem',
                     lineHeight: '1.4'
                   }}>
-                    <strong>Datos de Prueba (Sandbox):</strong><br />
-                    Tarjeta: 4111 1111 1111 1111<br />
-                    CVV: 123<br />
-                    Vencimiento: 12/25<br />
-                    <em>Solo para propósitos de demostración</em>
+                    <strong>Modo Sandbox Activo:</strong><br />
+                    Todos los pagos son de prueba.<br />
+                    Use datos de tarjeta de prueba<br />
+                    para realizar transacciones.<br />
+                    <em>No se realizarán cargos reales</em>
                   </small>
                 </div>
               </div>
