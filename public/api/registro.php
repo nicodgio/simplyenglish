@@ -4,13 +4,11 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// Habilitar reporte de errores para debug
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 ini_set('error_log', '/tmp/php_errors.log');
 
-// Manejar preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -23,33 +21,28 @@ $password = 'corsu5-Munkyg-xaxpyc';
 
 $jwt_secret = 'simply_english_jwt_secret_2025_very_secure_key';
 
-// Configuración de Telegram
 $bot_token = "8270319060:AAEhvFemccYqqLLveb8X9t8m3NT9YGQaTQM";
 $chat_id = "-4831902561";
 
-// Función para logging de debug
 function logDebug($message) {
     error_log('[SIMPLY_ENGLISH_DEBUG] ' . $message);
 }
 
-// Función para validar email
 function validateEmail($email) {
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
 
-// Función para validar teléfono
 function validatePhone($phone) {
     return preg_match('/^[\+]?[0-9\s\-\(\)]{10,}$/', $phone);
 }
 
-// Función para generar JWT (simplificada)
 function generateJWT($userId, $email, $secret) {
     $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
     $payload = json_encode([
         'userId' => $userId,
         'email' => $email,
         'iat' => time(),
-        'exp' => time() + (7 * 24 * 60 * 60) // 7 días
+        'exp' => time() + (7 * 24 * 60 * 60)
     ]);
     
     $base64Header = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
@@ -61,7 +54,6 @@ function generateJWT($userId, $email, $secret) {
     return $base64Header . "." . $base64Payload . "." . $base64Signature;
 }
 
-// Función para enviar mensaje a Telegram
 function sendTelegramMessage($bot_token, $chat_id, $message) {
     $telegram_data = [
         'chat_id' => $chat_id,
@@ -100,14 +92,13 @@ function sendTelegramMessage($bot_token, $chat_id, $message) {
     return true;
 }
 
-// Función para formatear los datos de registro para Telegram
 function formatRegistrationMessage($data, $userId) {
     $programas_nombres = [
-        'simply-mensual' => 'Simply English - Plan Mensual',
-        'simply-trimestral' => 'Simply English - Plan Trimestral',
-        'cenni-basico' => 'Certificación CENNI Básico',
-        'cenni-plus' => 'Certificación CENNI Plus',
-        'cenni-pro' => 'Certificación CENNI Pro'
+        'CONOCER_INDIVIDUAL' => 'CONOCER Nivel Individual',
+        'CONOCER_PAQUETE' => 'Paquete CONOCER (3 Niveles)',
+        'CENNI_BASICO' => 'Certificación CENNI Básico',
+        'CENNI_PLUS' => 'Certificación CENNI Plus',
+        'CENNI_PRO' => 'Certificación CENNI Pro'
     ];
 
     $niveles_nombres = [
@@ -117,6 +108,7 @@ function formatRegistrationMessage($data, $userId) {
         'intermedio' => 'Intermedio (B2)',
         'avanzado' => 'Avanzado (C1)',
         'superior' => 'Superior (C2)',
+        'cenni-evaluation' => 'CENNI - Evaluación específica',
         'no-se' => 'No está seguro (evaluación requerida)'
     ];
 
@@ -159,62 +151,78 @@ function formatRegistrationMessage($data, $userId) {
 
     $message .= "\n🎓 *Información Académica:*\n";
     $message .= "• *Programa:* $programa_texto\n";
-    $message .= "• *Nivel Actual:* $nivel_texto\n";
-
-    if (!empty($data['horarioPreferencia'])) {
-        $horarios = [
-            '4pm-5pm' => '4:00 PM - 5:00 PM',
-            '5pm-6pm' => '5:00 PM - 6:00 PM',
-            '6pm-7pm' => '6:00 PM - 7:00 PM',
-            '7pm-8pm' => '7:00 PM - 8:00 PM',
-            '8pm-9pm' => '8:00 PM - 9:00 PM',
-            'flexible' => 'Flexible'
-        ];
-        $horario_texto = isset($horarios[$data['horarioPreferencia']]) 
-            ? $horarios[$data['horarioPreferencia']] 
-            : $data['horarioPreferencia'];
-        $message .= "• *Horario Preferido:* $horario_texto\n";
+    
+    $is_cenni = strpos($data['programaInteres'], 'CENNI') !== false;
+    
+    if ($is_cenni) {
+        $message .= "• *Tipo:* Certificación CENNI\n";
+        $message .= "• *Evaluación:* Coordinación específica requerida\n";
+    } else {
+        $message .= "• *Nivel Actual:* $nivel_texto\n";
+        if (isset($data['nivelConocerCompletado']) && isset($data['nivelConocerActual'])) {
+            $message .= "• *CONOCER Completado:* {$data['nivelConocerCompletado']}\n";
+            $message .= "• *CONOCER Actual:* {$data['nivelConocerActual']}\n";
+        }
     }
 
-    if (!empty($data['modalidadPreferencia'])) {
-        $modalidades = [
-            'online' => 'En línea',
-            'presencial' => 'Presencial',
-            'hibrida' => 'Híbrida',
-            'sin-preferencia' => 'Sin preferencia'
-        ];
-        $modalidad_texto = isset($modalidades[$data['modalidadPreferencia']]) 
-            ? $modalidades[$data['modalidadPreferencia']] 
-            : $data['modalidadPreferencia'];
-        $message .= "• *Modalidad:* $modalidad_texto\n";
-    }
+    if (!$is_cenni) {
+        if (!empty($data['horarioPreferencia']) && $data['horarioPreferencia'] !== 'cenni-coordinado') {
+            $horarios = [
+                '4pm-5pm' => '4:00 PM - 5:00 PM',
+                '5pm-6pm' => '5:00 PM - 6:00 PM',
+                '6pm-7pm' => '6:00 PM - 7:00 PM',
+                '7pm-8pm' => '7:00 PM - 8:00 PM',
+                '8pm-9pm' => '8:00 PM - 9:00 PM',
+                'flexible' => 'Flexible'
+            ];
+            $horario_texto = isset($horarios[$data['horarioPreferencia']]) 
+                ? $horarios[$data['horarioPreferencia']] 
+                : $data['horarioPreferencia'];
+            $message .= "• *Horario Preferido:* $horario_texto\n";
+        }
 
-    if (!empty($data['experienciaPrevia'])) {
-        $experiencia = strlen($data['experienciaPrevia']) > 100 
-            ? substr($data['experienciaPrevia'], 0, 100) . '...' 
-            : $data['experienciaPrevia'];
-        $message .= "\n📚 *Experiencia Previa:*\n$experiencia\n";
-    }
+        if (!empty($data['experienciaPrevia']) && $data['experienciaPrevia'] !== 'CENNI - No aplica') {
+            $experiencia = strlen($data['experienciaPrevia']) > 100 
+                ? substr($data['experienciaPrevia'], 0, 100) . '...' 
+                : $data['experienciaPrevia'];
+            $message .= "\n📚 *Experiencia Previa:*\n$experiencia\n";
+        }
 
-    if (!empty($data['objetivos'])) {
-        $objetivos = strlen($data['objetivos']) > 100 
-            ? substr($data['objetivos'], 0, 100) . '...' 
-            : $data['objetivos'];
-        $message .= "\n🎯 *Objetivos:*\n$objetivos\n";
+        if (!empty($data['objetivos']) && $data['objetivos'] !== 'Certificación CENNI') {
+            $objetivos = strlen($data['objetivos']) > 100 
+                ? substr($data['objetivos'], 0, 100) . '...' 
+                : $data['objetivos'];
+            $message .= "\n🎯 *Objetivos:*\n$objetivos\n";
+        }
     }
 
     $message .= "\n🆔 *ID Usuario:* $userId\n";
     $message .= "🕐 *Fecha Registro:* $fecha\n";
     $message .= "━━━━━━━━━━━━━━━━━━━━\n";
-    $message .= "⏰ *Acción requerida:* Contactar en 24 horas para evaluación inicial";
+    
+    if ($is_cenni) {
+        $message .= "⚡ *Acción requerida:* Contactar para coordinación de evaluación CENNI";
+    } else {
+        $message .= "⏰ *Acción requerida:* Contactar en 24 horas para evaluación inicial";
+    }
 
     return $message;
+}
+
+function determinarCategoriaPrograma($programa_codigo) {
+    if (strpos($programa_codigo, 'CENNI') !== false) {
+        return 'CENNI';
+    } elseif (strpos($programa_codigo, 'CONOCER_PAQUETE') !== false) {
+        return 'CONOCER_PAQUETE';
+    } elseif (strpos($programa_codigo, 'CONOCER') !== false) {
+        return 'CONOCER_INDIVIDUAL';
+    }
+    return 'OTRO';
 }
 
 logDebug('Script iniciado');
 
 try {
-    // Intentar conectar a la base de datos
     logDebug('Intentando conectar a la base de datos...');
     
     $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
@@ -228,12 +236,10 @@ try {
     $pdo = new PDO($dsn, $username, $password, $options);
     logDebug('Conexión a base de datos exitosa');
     
-    // Verificar que la tabla existe
     $tableCheck = $pdo->query("SHOW TABLES LIKE 'usuarios'");
     if ($tableCheck->rowCount() == 0) {
         logDebug('La tabla usuarios no existe, creándola...');
         
-        // Crear tabla si no existe
         $createTable = "
         CREATE TABLE usuarios (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -250,24 +256,44 @@ try {
             codigo_postal VARCHAR(10) NOT NULL,
             programa_interes VARCHAR(100) NOT NULL,
             nivel_actual VARCHAR(50) NOT NULL,
+            nivel_conocer_actual INT DEFAULT 0,
+            nivel_conocer_completado INT DEFAULT 0,
             experiencia_previa TEXT,
             objetivos TEXT,
             horario_preferencia VARCHAR(50),
             modalidad_preferencia VARCHAR(50),
             fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            activo TINYINT(1) DEFAULT 1
+            fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            activo TINYINT(1) DEFAULT 1,
+            INDEX idx_email (email),
+            INDEX idx_programa (programa_interes),
+            INDEX idx_activo (activo)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
         
         $pdo->exec($createTable);
         logDebug('Tabla usuarios creada exitosamente');
     } else {
-        logDebug('Tabla usuarios existe');
+        $columns = $pdo->query("DESCRIBE usuarios")->fetchAll(PDO::FETCH_COLUMN);
+        
+        if (!in_array('nivel_conocer_actual', $columns)) {
+            $pdo->exec("ALTER TABLE usuarios ADD COLUMN nivel_conocer_actual INT DEFAULT 0 AFTER nivel_actual");
+            logDebug('Columna nivel_conocer_actual agregada');
+        }
+        
+        if (!in_array('nivel_conocer_completado', $columns)) {
+            $pdo->exec("ALTER TABLE usuarios ADD COLUMN nivel_conocer_completado INT DEFAULT 0 AFTER nivel_conocer_actual");
+            logDebug('Columna nivel_conocer_completado agregada');
+        }
+        
+        if (!in_array('fecha_actualizacion', $columns)) {
+            $pdo->exec("ALTER TABLE usuarios ADD COLUMN fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER fecha_registro");
+            logDebug('Columna fecha_actualizacion agregada');
+        }
     }
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         logDebug('Procesando petición POST');
         
-        // Leer datos JSON
         $input = file_get_contents('php://input');
         logDebug('Input raw: ' . $input);
         
@@ -285,7 +311,6 @@ try {
         
         logDebug('Datos decodificados: ' . print_r($data, true));
         
-        // Validar campos obligatorios
         $required_fields = ['nombre', 'apellidoPaterno', 'email', 'telefono', 'fechaNacimiento', 
                            'direccion', 'ciudad', 'estado', 'codigoPostal', 'programaInteres', 'nivelActual'];
         
@@ -306,7 +331,6 @@ try {
             exit();
         }
         
-        // Validar email
         if (!validateEmail($data['email'])) {
             logDebug('Email inválido: ' . $data['email']);
             http_response_code(400);
@@ -317,7 +341,6 @@ try {
             exit();
         }
         
-        // Validar teléfono
         if (!validatePhone($data['telefono'])) {
             logDebug('Teléfono inválido: ' . $data['telefono']);
             http_response_code(400);
@@ -328,7 +351,6 @@ try {
             exit();
         }
         
-        // Verificar si el usuario ya existe
         logDebug('Verificando si el email ya existe: ' . $data['email']);
         $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = ?");
         $stmt->execute([$data['email']]);
@@ -343,7 +365,9 @@ try {
             exit();
         }
         
-        // Preparar datos para inserción
+        $categoria_programa = determinarCategoriaPrograma($data['programaInteres']);
+        logDebug('Categoría del programa: ' . $categoria_programa);
+        
         $insertData = [
             $data['nombre'],
             $data['apellidoPaterno'],
@@ -358,21 +382,23 @@ try {
             $data['codigoPostal'],
             $data['programaInteres'],
             $data['nivelActual'],
+            (int)($data['nivelConocerActual'] ?? 0),
+            (int)($data['nivelConocerCompletado'] ?? 0),
             $data['experienciaPrevia'] ?? null,
             $data['objetivos'] ?? null,
             $data['horarioPreferencia'] ?? null,
-            $data['modalidadPreferencia'] ?? null
+            $data['modalidadPreferencia'] ?? 'online'
         ];
         
         logDebug('Datos preparados para inserción: ' . print_r($insertData, true));
         
-        // Insertar nuevo usuario
         $sql = "INSERT INTO usuarios (
             nombre, apellido_paterno, apellido_materno, email, telefono, 
             fecha_nacimiento, genero, direccion, ciudad, estado, codigo_postal,
-            programa_interes, nivel_actual, experiencia_previa, objetivos,
-            horario_preferencia, modalidad_preferencia, fecha_registro, activo
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 1)";
+            programa_interes, nivel_actual, nivel_conocer_actual, nivel_conocer_completado,
+            experiencia_previa, objetivos, horario_preferencia, modalidad_preferencia, 
+            fecha_registro, fecha_actualizacion, activo
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 1)";
         
         logDebug('Ejecutando query SQL');
         $stmt = $pdo->prepare($sql);
@@ -384,7 +410,6 @@ try {
             
             logDebug('Usuario insertado exitosamente con ID: ' . $userId);
             
-            // Enviar notificación a Telegram
             logDebug('Enviando notificación a Telegram...');
             $telegram_message = formatRegistrationMessage($data, $userId);
             $telegram_sent = sendTelegramMessage($bot_token, $chat_id, $telegram_message);
@@ -404,7 +429,8 @@ try {
                         'nombre' => $data['nombre'],
                         'apellidoPaterno' => $data['apellidoPaterno'],
                         'email' => $data['email'],
-                        'programaInteres' => $data['programaInteres']
+                        'programaInteres' => $data['programaInteres'],
+                        'categoriaPrograma' => $categoria_programa
                     ]
                 ]
             ]);
@@ -417,10 +443,10 @@ try {
     } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         logDebug('Procesando petición GET');
         
-        // Endpoint para obtener usuarios (opcional)
         $stmt = $pdo->prepare("
             SELECT id, nombre, apellido_paterno, apellido_materno, email, telefono,
-                   programa_interes, nivel_actual, fecha_registro, activo
+                   programa_interes, nivel_actual, nivel_conocer_actual, nivel_conocer_completado,
+                   fecha_registro, activo
             FROM usuarios WHERE activo = 1 ORDER BY fecha_registro DESC LIMIT 50
         ");
         $stmt->execute();

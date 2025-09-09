@@ -118,7 +118,39 @@ const Pago = () => {
 
   useEffect(() => {
     initializeOpenPay();
-  }, []);
+    
+    const handle3DSMessage = (event) => {
+      if (event.data && event.data.type === '3ds_complete') {
+        console.log('Mensaje 3DS recibido:', event.data);
+        
+        if (event.data.status === 'COMPLETADO') {
+          setAlertType('success');
+          setAlertMessage('¡Pago procesado exitosamente! Su suscripción académica ha sido activada.');
+          setShowPaymentForm(false);
+          resetPaymentForm();
+        } else if (event.data.status === 'FALLIDO') {
+          setAlertType('danger');
+          setAlertMessage('El pago no pudo ser procesado. Intente nuevamente.');
+        } else {
+          setAlertType('info');
+          setAlertMessage(event.data.message || 'Procesando pago...');
+          
+          setTimeout(() => {
+            checkPaymentStatus(currentSubscriptionId);
+          }, 3000);
+        }
+        
+        setShowAlert(true);
+        setIsProcessingPayment(false);
+      }
+    };
+
+    window.addEventListener('message', handle3DSMessage);
+    
+    return () => {
+      window.removeEventListener('message', handle3DSMessage);
+    };
+  }, [currentSubscriptionId]);
 
   const handleEmailSearch = async (e) => {
     e.preventDefault();
@@ -294,8 +326,12 @@ const Pago = () => {
                       popup.close();
                       clearInterval(checkClosed);
                       setAlertType('warning');
-                      setAlertMessage('El tiempo para completar la autenticación 3D Secure ha expirado. Intente nuevamente.');
+                      setAlertMessage('El tiempo para completar la autenticación 3D Secure ha expirado. Verificando estado del pago...');
                       setShowAlert(true);
+                      
+                      setTimeout(() => {
+                        checkPaymentStatus(currentSubscriptionId);
+                      }, 2000);
                     }
                   }, 300000);
                   
@@ -329,7 +365,9 @@ const Pago = () => {
     } catch (error) {
       console.error('Error en procesamiento de pago:', error);
     } finally {
-      setIsProcessingPayment(false);
+      if (!showAlert || alertType !== 'info') {
+        setIsProcessingPayment(false);
+      }
       setShowAlert(true);
     }
   };
@@ -401,6 +439,7 @@ const Pago = () => {
 
   const resetPaymentForm = () => {
     setSelectedOption(null);
+    setCurrentSubscriptionId(null);
     setCardData({
       holder_name: '',
       card_number: '',

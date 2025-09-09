@@ -5,7 +5,7 @@ import {
   faUser, faEnvelope, faPhone, faCalendarAlt, faMapMarkerAlt,
   faIdCard, faBookOpen, faLanguage, faClipboardList,
   faHeadset, faCheckCircle, faArrowLeft,
-  faSpinner, faLightbulb
+  faSpinner, faLightbulb, faExclamationTriangle
 } from '@fortawesome/free-solid-svg-icons';
 
 const Registro = () => {
@@ -39,6 +39,7 @@ const Registro = () => {
   const [programasDisponibles, setProgramasDisponibles] = useState([]);
   const [nivelesIngles, setNivelesIngles] = useState([]);
   const [loadingProgramas, setLoadingProgramas] = useState(true);
+  const [selectedProgramCategory, setSelectedProgramCategory] = useState(null);
 
   useEffect(() => {
     document.title = 'Registro de Estudiantes - Simply English | Inscríbete Ahora';
@@ -88,11 +89,11 @@ const Registro = () => {
   const usarProgramasPorDefecto = () => {
     console.log('Usando programas por defecto');
     setProgramasDisponibles([
-      { value: 'CONOCER_INDIVIDUAL', label: 'CONOCER Nivel Individual ($1,245 MXN/nivel)' },
-      { value: 'CONOCER_PAQUETE', label: 'Paquete CONOCER (3 Niveles) ($3,110 MXN)' },
-      { value: 'CENNI_BASICO', label: 'Certificación CENNI Básico ($1,866 MXN)' },
-      { value: 'CENNI_PLUS', label: 'Certificación CENNI Plus ($2,488 MXN)' },
-      { value: 'CENNI_PRO', label: 'Certificación CENNI Pro ($3,420 MXN)' }
+      { value: 'CONOCER_INDIVIDUAL', label: 'CONOCER Nivel Individual ($1,245 MXN/nivel)', categoria: 'CONOCER_INDIVIDUAL' },
+      { value: 'CONOCER_PAQUETE', label: 'Paquete CONOCER (3 Niveles) ($3,110 MXN)', categoria: 'CONOCER_PAQUETE' },
+      { value: 'CENNI_BASICO', label: 'Certificación CENNI Básico ($1,866 MXN)', categoria: 'CENNI' },
+      { value: 'CENNI_PLUS', label: 'Certificación CENNI Plus ($2,488 MXN)', categoria: 'CENNI' },
+      { value: 'CENNI_PRO', label: 'Certificación CENNI Pro ($3,420 MXN)', categoria: 'CENNI' }
     ]);
 
     setNivelesIngles([
@@ -111,6 +112,25 @@ const Registro = () => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleProgramaChange = (e) => {
+    const { value } = e.target;
+    const programaSeleccionado = programasDisponibles.find(programa => programa.value === value);
+    
+    setSelectedProgramCategory(programaSeleccionado?.categoria || null);
+    
+    setFormData(prev => ({
+      ...prev,
+      programaInteres: value,
+      // Limpiar campos específicos de CONOCER si se selecciona CENNI
+      nivelActual: programaSeleccionado?.categoria === 'CENNI' ? 'cenni-evaluation' : prev.nivelActual,
+      nivelConocerActual: programaSeleccionado?.categoria === 'CENNI' ? 0 : prev.nivelConocerActual,
+      nivelConocerCompletado: programaSeleccionado?.categoria === 'CENNI' ? 0 : prev.nivelConocerCompletado,
+      experienciaPrevia: programaSeleccionado?.categoria === 'CENNI' ? 'CENNI - No aplica' : prev.experienciaPrevia,
+      objetivos: programaSeleccionado?.categoria === 'CENNI' ? 'Certificación CENNI' : prev.objetivos,
+      horarioPreferencia: programaSeleccionado?.categoria === 'CENNI' ? 'cenni-coordinado' : prev.horarioPreferencia
     }));
   };
 
@@ -182,6 +202,7 @@ const Registro = () => {
           modalidadPreferencia: 'online'
         });
 
+        setSelectedProgramCategory(null);
         setTimeout(() => setShowAlert(false), 10000);
       } else {
         console.error('Error en la respuesta:', result);
@@ -198,6 +219,8 @@ const Registro = () => {
       setIsSubmitting(false);
     }
   };
+
+  const isCENNI = selectedProgramCategory === 'CENNI';
 
   const styles = {
     container: {
@@ -357,6 +380,15 @@ const Registro = () => {
       padding: '12px 16px',
       marginBottom: '20px',
       fontSize: '0.875rem'
+    },
+    warningBox: {
+      background: '#fef3c7',
+      border: '1px solid #f59e0b',
+      borderRadius: '8px',
+      padding: '15px',
+      marginBottom: '20px',
+      fontSize: '0.9rem',
+      color: '#92400e'
     },
     certificationBox: {
       background: 'linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)',
@@ -652,7 +684,7 @@ const Registro = () => {
                       <select
                         name="programaInteres"
                         value={formData.programaInteres}
-                        onChange={handleInputChange}
+                        onChange={handleProgramaChange}
                         style={styles.formControl}
                         required
                         disabled={isSubmitting}
@@ -667,76 +699,89 @@ const Registro = () => {
                     )}
                   </div>
 
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Nivel Actual de Inglés *</label>
-                    <select
-                      name="nivelActual"
-                      value={formData.nivelActual}
-                      onChange={handleNivelChange}
-                      style={styles.formControl}
-                      required
-                      disabled={isSubmitting || loadingProgramas}
-                    >
-                      <option value="">Seleccione su nivel</option>
-                      {nivelesIngles.map((nivel) => (
-                        <option key={nivel.value} value={nivel.value}>
-                          {nivel.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {formData.nivelActual && formData.nivelConocerActual > 0 && (
-                    <div style={styles.infoBox}>
-                      <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: '8px' }} />
-                      <strong>Nivel CONOCER:</strong> Completado: {formData.nivelConocerCompletado} | Siguiente: {formData.nivelConocerActual}
+                  {isCENNI && (
+                    <div style={styles.warningBox}>
+                      <FontAwesomeIcon icon={faExclamationTriangle} style={{ marginRight: '10px', color: '#f59e0b' }} />
+                      <strong>Certificación CENNI:</strong> Has seleccionado un programa de certificación CENNI. 
+                      Nuestro equipo académico se pondrá en contacto contigo para coordinar la evaluación específica 
+                      requerida para este tipo de certificación. No es necesario completar información adicional de nivel.
                     </div>
                   )}
 
+                  {!isCENNI && (
+                    <>
+                      <div style={styles.formGroup}>
+                        <label style={styles.formLabel}>Nivel Actual de Inglés *</label>
+                        <select
+                          name="nivelActual"
+                          value={formData.nivelActual}
+                          onChange={handleNivelChange}
+                          style={styles.formControl}
+                          required
+                          disabled={isSubmitting || loadingProgramas}
+                        >
+                          <option value="">Seleccione su nivel</option>
+                          {nivelesIngles.map((nivel) => (
+                            <option key={nivel.value} value={nivel.value}>
+                              {nivel.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {formData.nivelActual && formData.nivelConocerActual > 0 && (
+                        <div style={styles.infoBox}>
+                          <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: '8px' }} />
+                          <strong>Nivel CONOCER:</strong> Completado: {formData.nivelConocerCompletado} | Siguiente: {formData.nivelConocerActual}
+                        </div>
+                      )}
+
+                      <div style={styles.formGroup}>
+                        <label style={styles.formLabel}>Horario de Preferencia</label>
+                        <select
+                          name="horarioPreferencia"
+                          value={formData.horarioPreferencia}
+                          onChange={handleInputChange}
+                          style={styles.formControl}
+                          disabled={isSubmitting}
+                        >
+                          <option value="">Seleccione un horario</option>
+                          <option value="4pm-5pm">4:00 PM - 5:00 PM</option>
+                          <option value="5pm-6pm">5:00 PM - 6:00 PM</option>
+                          <option value="6pm-7pm">6:00 PM - 7:00 PM</option>
+                          <option value="7pm-8pm">7:00 PM - 8:00 PM</option>
+                          <option value="8pm-9pm">8:00 PM - 9:00 PM</option>
+                          <option value="flexible">Horario Flexible</option>
+                        </select>
+                      </div>
+
+                      <div style={styles.formGroup}>
+                        <label style={styles.formLabel}>Experiencia Previa en Inglés</label>
+                        <textarea
+                          name="experienciaPrevia"
+                          value={formData.experienciaPrevia}
+                          onChange={handleInputChange}
+                          style={{ ...styles.formControl, ...styles.textArea }}
+                          placeholder="Describa brevemente su experiencia previa con el idioma inglés"
+                          disabled={isSubmitting}
+                        />
+                      </div>
+
+                      <div style={styles.formGroup}>
+                        <label style={styles.formLabel}>Objetivos de Aprendizaje</label>
+                        <textarea
+                          name="objetivos"
+                          value={formData.objetivos}
+                          onChange={handleInputChange}
+                          style={{ ...styles.formControl, ...styles.textArea }}
+                          placeholder="¿Cuáles son sus objetivos al estudiar inglés?"
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                    </>
+                  )}
+
                   <input type="hidden" name="modalidadPreferencia" value="online" />
-
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Horario de Preferencia</label>
-                    <select
-                      name="horarioPreferencia"
-                      value={formData.horarioPreferencia}
-                      onChange={handleInputChange}
-                      style={styles.formControl}
-                      disabled={isSubmitting}
-                    >
-                      <option value="">Seleccione un horario</option>
-                      <option value="4pm-5pm">4:00 PM - 5:00 PM</option>
-                      <option value="5pm-6pm">5:00 PM - 6:00 PM</option>
-                      <option value="6pm-7pm">6:00 PM - 7:00 PM</option>
-                      <option value="7pm-8pm">7:00 PM - 8:00 PM</option>
-                      <option value="8pm-9pm">8:00 PM - 9:00 PM</option>
-                      <option value="flexible">Horario Flexible</option>
-                    </select>
-                  </div>
-
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Experiencia Previa en Inglés</label>
-                    <textarea
-                      name="experienciaPrevia"
-                      value={formData.experienciaPrevia}
-                      onChange={handleInputChange}
-                      style={{ ...styles.formControl, ...styles.textArea }}
-                      placeholder="Describa brevemente su experiencia previa con el idioma inglés"
-                      disabled={isSubmitting}
-                    />
-                  </div>
-
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Objetivos de Aprendizaje</label>
-                    <textarea
-                      name="objetivos"
-                      value={formData.objetivos}
-                      onChange={handleInputChange}
-                      style={{ ...styles.formControl, ...styles.textArea }}
-                      placeholder="¿Cuáles son sus objetivos al estudiar inglés?"
-                      disabled={isSubmitting}
-                    />
-                  </div>
 
                   <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', marginTop: '30px' }}>
                     <button
