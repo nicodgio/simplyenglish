@@ -164,7 +164,7 @@ const Pago = () => {
         
         if (event.data.status === 'COMPLETADO') {
           setAlertType('success');
-          setAlertMessage('¡Pago procesado exitosamente! Su pago académico ha sido activado.');
+          setAlertMessage('¡Pago procesado exitosamente! Su transacción ha sido completada.');
           setShowPaymentForm(false);
           resetPaymentForm();
         } else if (event.data.status === 'FALLIDO') {
@@ -211,7 +211,7 @@ const Pago = () => {
         
         if (result.data.usuario?.pago_activo_id && result.data.usuario?.estado_pago === 'PENDIENTE') {
           setAlertType('warning');
-          setAlertMessage('Se ha identificado un proceso de pago pendiente. Complete la transacción para activar su pago académico.');
+          setAlertMessage('Se ha identificado un proceso de pago pendiente. Complete la transacción para continuar.');
         } else if (result.data.puede_pagar && result.data.opciones_pago?.length > 0) {
           setAlertType('success');
           setAlertMessage(result.data.mensaje_estado);
@@ -221,7 +221,7 @@ const Pago = () => {
           
           if (tieneSubscripcionActiva) {
             setAlertType('success');
-            setAlertMessage('Su pago académico se encuentra ACTIVO. No requiere procesamiento de pagos adicionales.');
+            setAlertMessage('Ya has realizado el pago del nivel actual. No requiere procesamiento de pagos adicionales.');
           } else {
             setAlertType('info');
             setAlertMessage('No se encontraron opciones de pago disponibles para este usuario en el sistema.');
@@ -376,7 +376,7 @@ const Pago = () => {
                   
                 } else {
                   setAlertType('success');
-                  setAlertMessage('¡Pago procesado exitosamente! Su pago académico ha sido activado.');
+                  setAlertMessage('¡Pago procesado exitosamente! Su transacción ha sido completada.');
                   setShowPaymentForm(false);
                   resetPaymentForm();
                 }
@@ -433,7 +433,7 @@ const Pago = () => {
         
         if (estado === 'COMPLETADO') {
           setAlertType('success');
-          setAlertMessage('¡Pago procesado exitosamente! Su pago académico ha sido activado.');
+          setAlertMessage('¡Pago procesado exitosamente! Su transacción ha sido completada.');
           setShowPaymentForm(false);
           resetPaymentForm();
         } else if (estado === 'FALLIDO' || estado === 'CANCELADO') {
@@ -575,7 +575,7 @@ const Pago = () => {
             
             <p style={styles.heroSubtitle}>
               Procesamiento seguro de matrículas y suscripciones académicas<br />
-              Plataforma certificada con tecnología OpenPay
+              Plataforma certificada con tecnología Openpay
             </p>
           </div>
         </div>
@@ -962,7 +962,7 @@ const Pago = () => {
                       lineHeight: '1.6'
                     }}>
                       <li>Ingrese los datos de su tarjeta en el formulario seguro</li>
-                      <li>OpenPay procesará su pago de forma segura</li>
+                      <li>Openpay procesará su pago de forma segura</li>
                       <li>Complete la autenticación 3D Secure si es requerida</li>
                       <li>Su pago será procesado con protección antifraude</li>
                       <li>Recibirá confirmación inmediata del resultado</li>
@@ -986,7 +986,7 @@ const Pago = () => {
                     </h6>
                     <p style={{ margin: '0', fontSize: '0.9rem' }}>
                       {openPayLoaded && deviceSessionId
-                        ? 'OpenPay y sistema antifraude inicializados correctamente. Listo para procesar su pago.'
+                        ? 'Openpay y sistema antifraude inicializados correctamente. Listo para procesar su pago.'
                         : 'Reintente la carga del sistema de pagos para continuar.'
                       }
                     </p>
@@ -1381,7 +1381,7 @@ const Pago = () => {
                     display: 'block',
                     marginBottom: '8px'
                   }}>
-                    {openPayLoaded ? 'OpenPay Operativo' : 'Inicializando OpenPay...'}
+                    {openPayLoaded ? 'Openpay Operativo' : 'Inicializando Openpay...'}
                   </span>
                   <span style={{
                     background: deviceSessionId ? '#10b981' : '#ffc107',
@@ -1412,7 +1412,7 @@ const Pago = () => {
                 }}>
                   <li style={{ marginBottom: '6px' }}>• Tarjetas de crédito y débito</li>
                   <li style={{ marginBottom: '6px' }}>• Autenticación 3D Secure</li>
-                  <li style={{ marginBottom: '6px' }}>• Protección antifraude OpenPay</li>
+                  <li style={{ marginBottom: '6px' }}>• Protección antifraude Openpay</li>
                 </ul>
 
                 <h6 style={{
@@ -1449,7 +1449,7 @@ const Pago = () => {
                     color: '#155724',
                     fontSize: '0.85rem'
                   }}>
-                    Procesamiento Seguro por OpenPay
+                    Procesamiento Seguro por Openpay
                   </small>
                 </div>
 

@@ -160,7 +160,7 @@ function procesarPago($conn, $data) {
             'method' => 'card',
             'amount' => floatval($pago['monto']),
             'currency' => 'MXN',
-            'description' => 'Suscripción SimplyEnglish - Pago #' . $pago_id,
+            'description' => 'Pago SimplyEnglish - Pago #' . $pago_id,
             'order_id' => 'SE-' . str_pad($pago_id, 6, '0', STR_PAD_LEFT),
             'device_session_id' => $device_session_id,
             'customer' => [
@@ -299,7 +299,7 @@ function procesarPago($conn, $data) {
         }
 
         if ($nuevo_estado === 'COMPLETADO' && !empty($pago['suscripcion_id'])) {
-            error_log("Activando suscripción ID: " . $pago['suscripcion_id']);
+            error_log("Activando Pago ID: " . $pago['suscripcion_id']);
             
             $stmt = $conn->prepare("UPDATE suscripciones SET 
                                    estado = 'ACTIVA',
@@ -309,9 +309,9 @@ function procesarPago($conn, $data) {
             $stmt->bind_param("i", $pago['suscripcion_id']);
             
             if (!$stmt->execute()) {
-                error_log("Error al activar suscripción: " . $stmt->error);
+                error_log("Error al activar Pago: " . $stmt->error);
             } else {
-                error_log("Suscripción activada exitosamente");
+                error_log("Pago activada exitosamente");
             }
         }
 
