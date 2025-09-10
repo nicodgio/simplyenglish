@@ -165,7 +165,7 @@ const Footer = () => {
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
                 <FontAwesomeIcon icon={faPhone} style={{ color: '#BF0A30', marginRight: '15px', fontSize: '1.1rem' }} />
                 <div>
-                  <div style={{ fontWeight: '600', color: '#002868' }}>+52 (33) 1234-5678</div>
+                  <div style={{ fontWeight: '600', color: '#002868' }}>+52 (33) 4874 3643</div>
                   <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>Lun - Vie: 9:00 AM - 6:00 PM</div>
                 </div>
               </div>
@@ -173,7 +173,7 @@ const Footer = () => {
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
                 <FontAwesomeIcon icon={faEnvelope} style={{ color: '#BF0A30', marginRight: '15px', fontSize: '1.1rem' }} />
                 <div>
-                  <div style={{ fontWeight: '600', color: '#002868' }}>info@simplyenglish.mx</div>
+                  <div style={{ fontWeight: '600', color: '#002868' }}>informacion@simplyenglish.com.mx</div>
                   <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>Respuesta en 24 horas</div>
                 </div>
               </div>
@@ -181,8 +181,8 @@ const Footer = () => {
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <FontAwesomeIcon icon={faMapMarkerAlt} style={{ color: '#BF0A30', marginRight: '15px', fontSize: '1.1rem' }} />
                 <div>
-                  <div style={{ fontWeight: '600', color: '#002868' }}>Bahia de banderas, Nayarit</div>
-                  <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>México</div>
+                  <div style={{ fontWeight: '600', color: '#002868' }}>Playa Destiladeras 89 . Palma Real</div>
+                  <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>Bahía de Banderas</div>
                 </div>
               </div>
             </div>
@@ -260,7 +260,7 @@ const Footer = () => {
             </ul>
 
             <h5 style={{ color: '#002868', marginTop: '20px' }}>4. Pagos y Facturación</h5>
-            <p>Los pagos se procesan de manera segura a través de OpenPay. Al realizar un pago, usted acepta los términos y condiciones de OpenPay.</p>
+            <p>Los pagos seran procesados mediante la pasarela Openpay.</p>
 
             <h5 style={{ color: '#002868', marginTop: '20px' }}>5. Certificaciones</h5>
             <p>Ofrecemos dos tipos de certificaciones:</p>
@@ -287,7 +287,7 @@ const Footer = () => {
             <p>Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios serán notificados a través de nuestros canales oficiales.</p>
 
             <h5 style={{ color: '#002868', marginTop: '20px' }}>10. Contacto</h5>
-            <p>Para cualquier consulta sobre estos términos, contacte a: info@simplyenglish.mx</p>
+            <p>Para cualquier consulta sobre estos términos, contacte a: informacion@simplyenglish.com.mx</p>
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -307,10 +307,10 @@ const Footer = () => {
             
             <h5 style={{ color: '#002868', marginTop: '20px' }}>Responsable del Tratamiento</h5>
             <p><strong>Simply English</strong><br />
-            Playa Destiladeras 89, Palma Real<br />
+            Playa Destiladeras 89 . Palma Real<br />
             Bahía de Banderas, Nayarit, México<br />
-            Correo: info@simplyenglish.mx<br />
-            Teléfono: +52 (33) 1234-5678</p>
+            Correo: informacion@simplyenglish.com.mx<br />
+            Teléfono: +52 (33) 4874 3643</p>
 
             <h5 style={{ color: '#002868', marginTop: '20px' }}>Datos Personales Recabados</h5>
             <p>Recabamos los siguientes datos personales necesarios para brindar nuestros servicios:</p>
@@ -365,8 +365,8 @@ const Footer = () => {
 
             <h5 style={{ color: '#002868', marginTop: '20px' }}>Ejercicio de Derechos</h5>
             <p>Para ejercer sus derechos ARCO o realizar consultas sobre este aviso, contacte a:<br />
-            <strong>Email:</strong> info@simplyenglish.mx<br />
-            <strong>Teléfono:</strong> +52 (33) 1234-5678</p>
+            <strong>Email:</strong> informacion@simplyenglish.com.mx<br />
+            <strong>Teléfono:</strong> +52 (33) 4874 3643</p>
           </div>
         </Modal.Body>
         <Modal.Footer>
