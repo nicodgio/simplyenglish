@@ -330,14 +330,14 @@ const Footer = () => {
               <li>Comunicación sobre el progreso académico</li>
               <li>Emisión de certificados y constancias</li>
               <li>Programación de exámenes CENNI</li>
-              <li>Procesamiento de pagos (a través de OpenPay)</li>
+              <li>Procesamiento de pagos (a través de Openpay)</li>
               <li>Envío de información relevante sobre nuestros servicios</li>
             </ul>
 
             <h5 style={{ color: '#002868', marginTop: '20px' }}>Compartición de Datos</h5>
             <p>Sus datos personales pueden ser compartidos con:</p>
             <ul>
-              <li><strong>OpenPay:</strong> Para el procesamiento seguro de pagos</li>
+              <li><strong>Openpay:</strong> Para el procesamiento seguro de pagos</li>
               <li><strong>PEARSON:</strong> Para la emisión de certificaciones CENNI</li>
               <li><strong>SEP (Secretaría de Educación Pública):</strong> Para la expedición de certificaciones CONOCER y el aval de certificaciones CENNI</li>
             </ul>
@@ -358,7 +358,7 @@ const Footer = () => {
             <p>Sus datos personales serán conservados durante el tiempo necesario para cumplir con las finalidades establecidas y las obligaciones legales aplicables.</p>
 
             <h5 style={{ color: '#002868', marginTop: '20px' }}>Transferencias Internacionales</h5>
-            <p>No realizamos transferencias internacionales de datos personales fuera de México, excepto las necesarias para el procesamiento de pagos a través de OpenPay.</p>
+            <p>No realizamos transferencias internacionales de datos personales fuera de México, excepto las necesarias para el procesamiento de pagos a través de Openpay.</p>
 
             <h5 style={{ color: '#002868', marginTop: '20px' }}>Modificaciones al Aviso</h5>
             <p>Nos reservamos el derecho de modificar este aviso de privacidad. Las modificaciones serán publicadas en nuestro sitio web y comunicadas a través de nuestros canales oficiales.</p>

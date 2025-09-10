@@ -14,6 +14,63 @@ $OPENPAY_CONFIG = [
     'api_url' => 'https://sandbox-api.openpay.mx/v1/'
 ];
 
+function getGenericErrorMessage($openPayError = null) {
+    $errorMessages = [
+        'Tu compra no fue procesada. Tarjeta rechazada.',
+        'Tarjeta rechazada. Ingrese sus datos correctamente e inténtelo de nuevo.',
+        'Error de pago, comuníquese con su banco e inténtelo de nuevo.',
+        'Consulte el saldo de su tarjeta e inténtelo más tarde.',
+        'Transacción fallida.',
+        'Comuníquese con su banco e ingrese sus datos correctamente.'
+    ];
+
+    if (!$openPayError) {
+        return $errorMessages[0];
+    }
+
+    $errorCode = '';
+    $errorDesc = '';
+    
+    if (is_array($openPayError)) {
+        $errorCode = $openPayError['error_code'] ?? $openPayError['code'] ?? '';
+        $errorDesc = $openPayError['description'] ?? $openPayError['message'] ?? '';
+    } else if (is_string($openPayError)) {
+        $errorDesc = $openPayError;
+    }
+
+    $errorCodeLower = strtolower($errorCode);
+    $errorDescLower = strtolower($errorDesc);
+
+    if (strpos($errorCodeLower, 'insufficient_funds') !== false || 
+        strpos($errorDescLower, 'insufficient') !== false ||
+        strpos($errorDescLower, 'fondos') !== false) {
+        return $errorMessages[3];
+    }
+    
+    if (strpos($errorCodeLower, 'card_declined') !== false || 
+        strpos($errorCodeLower, 'declined') !== false || 
+        strpos($errorDescLower, 'declined') !== false || 
+        strpos($errorDescLower, 'rechazada') !== false) {
+        return $errorMessages[1];
+    }
+    
+    if (strpos($errorCodeLower, 'processing_error') !== false || 
+        strpos($errorCodeLower, 'bank') !== false ||
+        strpos($errorDescLower, 'bank') !== false || 
+        strpos($errorDescLower, 'banco') !== false) {
+        return $errorMessages[2];
+    }
+    
+    if (strpos($errorCodeLower, 'invalid') !== false || 
+        strpos($errorDescLower, 'invalid') !== false ||
+        strpos($errorDescLower, 'incorrect') !== false ||
+        strpos($errorDescLower, 'incorrecto') !== false) {
+        return $errorMessages[5];
+    }
+
+    return $errorMessages[array_rand($errorMessages)];
+}
+
 function callOpenPayAPI($endpoint, $method = 'GET') {
     global $OPENPAY_CONFIG;
     
@@ -91,7 +148,7 @@ try {
             case 'failed':
             case 'cancelled':
                 $nuevo_estado = 'FALLIDO';
-                $message = 'El pago no pudo ser procesado. Por favor, intente nuevamente.';
+                $message = getGenericErrorMessage($response['data']);
                 break;
             case 'in_progress':
             case 'charge_pending':
@@ -125,13 +182,13 @@ try {
         }
 
     } else {
-        $message = 'No se pudo verificar el estado del pago. Revise su correo electrónico.';
+        $message = getGenericErrorMessage();
         $nuevo_estado = $pago['estado'];
     }
 
 } catch (Exception $e) {
     error_log("Error en 3DS callback: " . $e->getMessage());
-    $message = 'Error en la verificación del pago: ' . $e->getMessage();
+    $message = getGenericErrorMessage($e->getMessage());
     $nuevo_estado = 'ERROR';
 }
 
@@ -218,7 +275,6 @@ try {
 <body>
     <div class="container">
         <h1>SimplyEnglish</h1>
-        
         <?php if (isset($nuevo_estado)): ?>
             <div class="status-badge <?= $nuevo_estado === 'COMPLETADO' ? 'success' : ($nuevo_estado === 'FALLIDO' ? 'error' : ($nuevo_estado === 'EN_PROCESO' ? 'info' : 'warning')) ?>">
                 <?php
@@ -227,7 +283,7 @@ try {
                         echo 'Pago Completado';
                         break;
                     case 'FALLIDO':
-                        echo 'Pago Fallido';
+                        echo 'Pago Rechazado';
                         break;
                     case 'EN_PROCESO':
                         echo 'Pago en Proceso';
@@ -240,7 +296,7 @@ try {
         <?php endif; ?>
         
         <div class="message">
-            <?= htmlspecialchars($message ?? 'Error desconocido') ?>
+            <?= htmlspecialchars($message ?? 'Error en el procesamiento del pago') ?>
         </div>
         
         <?php if (isset($pago_id)): ?>
@@ -262,6 +318,10 @@ try {
                         message: '<?= addslashes($message ?? '') ?>'
                     }, '*');
                 }
+                
+                setTimeout(function() {
+                    window.close();
+                }, 3000);
             }, 1000);
         </script>
     </div>

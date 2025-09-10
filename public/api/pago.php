@@ -30,6 +30,63 @@ function sendCleanResponse($data) {
     exit;
 }
 
+function getGenericErrorMessage($openPayError = null) {
+    $errorMessages = [
+        'Tu compra no fue procesada. Tarjeta rechazada.',
+        'Tarjeta rechazada. Ingrese sus datos correctamente e inténtelo de nuevo.',
+        'Error de pago, comuníquese con su banco e inténtelo de nuevo.',
+        'Consulte el saldo de su tarjeta e inténtelo más tarde.',
+        'Transacción fallida.',
+        'Comuníquese con su banco e ingrese sus datos correctamente.'
+    ];
+
+    if (!$openPayError) {
+        return $errorMessages[0];
+    }
+
+    $errorCode = '';
+    $errorDesc = '';
+    
+    if (is_array($openPayError)) {
+        $errorCode = $openPayError['error_code'] ?? $openPayError['code'] ?? '';
+        $errorDesc = $openPayError['description'] ?? $openPayError['message'] ?? '';
+    } else if (is_string($openPayError)) {
+        $errorDesc = $openPayError;
+    }
+
+    $errorCodeLower = strtolower($errorCode);
+    $errorDescLower = strtolower($errorDesc);
+
+    if (strpos($errorCodeLower, 'insufficient_funds') !== false || 
+        strpos($errorDescLower, 'insufficient') !== false ||
+        strpos($errorDescLower, 'fondos') !== false) {
+        return $errorMessages[3];
+    }
+    
+    if (strpos($errorCodeLower, 'card_declined') !== false || 
+        strpos($errorCodeLower, 'declined') !== false || 
+        strpos($errorDescLower, 'declined') !== false || 
+        strpos($errorDescLower, 'rechazada') !== false) {
+        return $errorMessages[1];
+    }
+    
+    if (strpos($errorCodeLower, 'processing_error') !== false || 
+        strpos($errorCodeLower, 'bank') !== false ||
+        strpos($errorDescLower, 'bank') !== false || 
+        strpos($errorDescLower, 'banco') !== false) {
+        return $errorMessages[2];
+    }
+    
+    if (strpos($errorCodeLower, 'invalid') !== false || 
+        strpos($errorDescLower, 'invalid') !== false ||
+        strpos($errorDescLower, 'incorrect') !== false ||
+        strpos($errorDescLower, 'incorrecto') !== false) {
+        return $errorMessages[5];
+    }
+
+    return $errorMessages[array_rand($errorMessages)];
+}
+
 function callOpenPayAPI($endpoint, $data = null, $method = 'POST') {
     global $OPENPAY_CONFIG;
     
@@ -121,12 +178,7 @@ function procesarPago($conn, $data) {
         $response = callOpenPayAPI('charges', $chargeData);
 
         if (!$response['success']) {
-            $error_msg = 'Error de OpenPay';
-            if (isset($response['data']['description'])) {
-                $error_msg = $response['data']['description'];
-            } elseif (isset($response['data']['error_code'])) {
-                $error_msg = $response['data']['error_code'] . ': ' . ($response['data']['description'] ?? 'Error desconocido');
-            }
+            $error_msg = getGenericErrorMessage($response['data']);
             error_log("Error en OpenPay: " . json_encode($response['data'], JSON_PRETTY_PRINT));
             throw new Exception($error_msg);
         }
@@ -279,7 +331,7 @@ function procesarPago($conn, $data) {
         error_log("Error en procesarPago: " . $e->getMessage());
         return [
             'success' => false,
-            'error' => $e->getMessage(),
+            'error' => getGenericErrorMessage($e->getMessage()),
             'error_code' => 'PAYMENT_PROCESSING_ERROR'
         ];
     }
@@ -375,7 +427,7 @@ function verificarEstadoPago($conn, $data) {
         error_log("Error en verificarEstadoPago: " . $e->getMessage());
         return [
             'success' => false,
-            'error' => $e->getMessage()
+            'error' => getGenericErrorMessage($e->getMessage())
         ];
     }
 }
@@ -488,7 +540,7 @@ function procesarWebhookOpenPay($conn) {
         error_log("Error en webhook: " . $e->getMessage());
         return [
             'success' => false,
-            'error' => $e->getMessage()
+            'error' => getGenericErrorMessage($e->getMessage())
         ];
     }
 }
@@ -546,7 +598,7 @@ try {
 
 } catch (Exception $e) {
     error_log("Error general en pago.php: " . $e->getMessage());
-    sendCleanResponse(['success' => false, 'error' => 'Error interno del servidor']);
+    sendCleanResponse(['success' => false, 'error' => getGenericErrorMessage($e->getMessage())]);
 } finally {
     if (isset($conn)) {
         $conn->close();

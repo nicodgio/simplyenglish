@@ -31,6 +31,45 @@ const Pago = () => {
     dataScriptUrl: 'https://js.openpay.mx/openpay-data.v1.min.js'
   };
 
+  const getGenericErrorMessage = (openPayError) => {
+    const errorMessages = [
+      'Tu compra no fue procesada. Tarjeta rechazada.',
+      'Tarjeta rechazada. Ingrese sus datos correctamente e inténtelo de nuevo.',
+      'Error de pago, comuníquese con su banco e inténtelo de nuevo.',
+      'Consulte el saldo de su tarjeta e inténtelo más tarde.',
+      'Transacción fallida.',
+      'Comuníquese con su banco e ingrese sus datos correctamente.'
+    ];
+
+    if (!openPayError) {
+      return errorMessages[0];
+    }
+
+    const errorCode = openPayError.error_code || openPayError.code || '';
+    const errorDesc = openPayError.description || openPayError.message || '';
+
+    if (errorCode.includes('insufficient_funds') || errorDesc.toLowerCase().includes('insufficient')) {
+      return errorMessages[3];
+    }
+    
+    if (errorCode.includes('card_declined') || errorCode.includes('declined') || 
+        errorDesc.toLowerCase().includes('declined') || errorDesc.toLowerCase().includes('rechazada')) {
+      return errorMessages[1];
+    }
+    
+    if (errorCode.includes('processing_error') || errorCode.includes('bank') ||
+        errorDesc.toLowerCase().includes('bank') || errorDesc.toLowerCase().includes('banco')) {
+      return errorMessages[2];
+    }
+    
+    if (errorCode.includes('invalid') || errorDesc.toLowerCase().includes('invalid') ||
+        errorDesc.toLowerCase().includes('incorrect')) {
+      return errorMessages[5];
+    }
+
+    return errorMessages[Math.floor(Math.random() * errorMessages.length)];
+  };
+
   const loadScript = (src, id = null) => {
     return new Promise((resolve, reject) => {
       if (id && document.getElementById(id)) {
@@ -125,12 +164,12 @@ const Pago = () => {
         
         if (event.data.status === 'COMPLETADO') {
           setAlertType('success');
-          setAlertMessage('¡Pago procesado exitosamente! Su suscripción académica ha sido activada.');
+          setAlertMessage('¡Pago procesado exitosamente! Su pago académico ha sido activado.');
           setShowPaymentForm(false);
           resetPaymentForm();
         } else if (event.data.status === 'FALLIDO') {
           setAlertType('danger');
-          setAlertMessage('El pago no pudo ser procesado. Intente nuevamente.');
+          setAlertMessage(getGenericErrorMessage());
         } else {
           setAlertType('info');
           setAlertMessage(event.data.message || 'Procesando pago...');
@@ -172,7 +211,7 @@ const Pago = () => {
         
         if (result.data.usuario?.pago_activo_id && result.data.usuario?.estado_pago === 'PENDIENTE') {
           setAlertType('warning');
-          setAlertMessage('Se ha identificado un proceso de pago pendiente. Complete la transacción para activar su suscripción académica.');
+          setAlertMessage('Se ha identificado un proceso de pago pendiente. Complete la transacción para activar su pago académico.');
         } else if (result.data.puede_pagar && result.data.opciones_pago?.length > 0) {
           setAlertType('success');
           setAlertMessage(result.data.mensaje_estado);
@@ -182,7 +221,7 @@ const Pago = () => {
           
           if (tieneSubscripcionActiva) {
             setAlertType('success');
-            setAlertMessage('Su suscripción académica se encuentra ACTIVA. No requiere procesamiento de pagos adicionales.');
+            setAlertMessage('Su pago académico se encuentra ACTIVO. No requiere procesamiento de pagos adicionales.');
           } else {
             setAlertType('info');
             setAlertMessage('No se encontraron opciones de pago disponibles para este usuario en el sistema.');
@@ -231,10 +270,10 @@ const Pago = () => {
         setCurrentSubscriptionId(result.data.pago_id);
         setShowPaymentForm(true);
         setAlertType('success');
-        setAlertMessage(`Suscripción generada exitosamente. Número de referencia: SE-${String(result.data.pago_id).padStart(6, '0')}`);
+        setAlertMessage(`Pago generado exitosamente. Número de referencia: SE-${String(result.data.pago_id).padStart(6, '0')}`);
       } else {
         setAlertType('danger');
-        setAlertMessage(`Error en la creación de suscripción: ${result.error || 'Error del sistema'}`);
+        setAlertMessage(`Error en la creación del pago: ${result.error || 'Error del sistema'}`);
       }
     } catch (error) {
       setAlertType('danger');
@@ -253,7 +292,7 @@ const Pago = () => {
 
     if (!window.OpenPay?.card?.validateCardNumber(cardData.card_number)) {
       setAlertType('danger');
-      setAlertMessage('El número de tarjeta proporcionado no es válido');
+      setAlertMessage('Tarjeta rechazada. Ingrese sus datos correctamente e inténtelo de nuevo.');
       setShowAlert(true);
       return;
     }
@@ -337,26 +376,26 @@ const Pago = () => {
                   
                 } else {
                   setAlertType('success');
-                  setAlertMessage('¡Pago procesado exitosamente! Su suscripción académica ha sido activada.');
+                  setAlertMessage('¡Pago procesado exitosamente! Su pago académico ha sido activado.');
                   setShowPaymentForm(false);
                   resetPaymentForm();
                 }
               } else {
                 setAlertType('danger');
-                setAlertMessage(`Error en el procesamiento del pago: ${paymentResult.error || 'Error del sistema'}`);
+                setAlertMessage(getGenericErrorMessage(paymentResult));
               }
               
               resolve();
             } catch (error) {
               setAlertType('danger');
-              setAlertMessage('Error en el procesamiento del pago: ' + error.message);
+              setAlertMessage(getGenericErrorMessage());
               reject(error);
             }
           },
           (error) => {
             console.error('Error creando token:', error);
             setAlertType('danger');
-            setAlertMessage(`Error del procesador de pagos: ${error.data?.description || error.message || 'Error del sistema'}`);
+            setAlertMessage(getGenericErrorMessage(error.data));
             reject(error);
           }
         );
@@ -394,12 +433,12 @@ const Pago = () => {
         
         if (estado === 'COMPLETADO') {
           setAlertType('success');
-          setAlertMessage('¡Pago procesado exitosamente! Su suscripción académica ha sido activada.');
+          setAlertMessage('¡Pago procesado exitosamente! Su pago académico ha sido activado.');
           setShowPaymentForm(false);
           resetPaymentForm();
         } else if (estado === 'FALLIDO' || estado === 'CANCELADO') {
           setAlertType('danger');
-          setAlertMessage('El pago no pudo ser procesado. Intente nuevamente o contacte soporte.');
+          setAlertMessage(getGenericErrorMessage());
         } else if (estado === 'EN_PROCESO') {
           setAlertType('info');
           setAlertMessage('El pago está siendo procesado. Recibirá una confirmación por correo electrónico.');
@@ -435,6 +474,14 @@ const Pago = () => {
     }
     
     return parts.length ? parts.join(' ') : value;
+  };
+
+  const getCardType = (cardNumber) => {
+    const number = cardNumber.replace(/\s/g, '');
+    if (/^4/.test(number)) return 'visa';
+    if (/^5[1-5]/.test(number) || /^2[2-7]/.test(number)) return 'mastercard';
+    if (/^3[47]/.test(number)) return 'americanexpress';
+    return null;
   };
 
   const resetPaymentForm = () => {
@@ -952,6 +999,87 @@ const Pago = () => {
 
                   {openPayLoaded && deviceSessionId ? (
                     <div>
+                      <div style={{
+                        background: '#f8f9fa',
+                        border: '1px solid #e9ecef',
+                        borderRadius: '8px',
+                        padding: '20px',
+                        marginBottom: '25px'
+                      }}>
+                        <h6 style={{
+                          margin: '0 0 15px 0',
+                          fontWeight: '600',
+                          fontSize: '1rem',
+                          color: '#374151',
+                          textAlign: 'center'
+                        }}>
+                          Métodos de Pago Aceptados
+                        </h6>
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}>
+                          <div style={{
+                            display: 'flex',
+                            gap: '15px',
+                            alignItems: 'center'
+                          }}>
+                            <img 
+                              src="/imgs/banco/visa.png" 
+                              alt="Visa" 
+                              style={{
+                                height: '32px',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '4px',
+                                padding: '4px'
+                              }}
+                            />
+                            <img 
+                              src="/imgs/banco/masterCard.png" 
+                              alt="Mastercard" 
+                              style={{
+                                height: '32px',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '4px',
+                                padding: '4px'
+                              }}
+                            />
+                            <img 
+                              src="/imgs/banco/americanExpress.png" 
+                              alt="American Express" 
+                              style={{
+                                height: '32px',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '4px',
+                                padding: '4px'
+                              }}
+                            />
+                          </div>
+                          <div style={{
+                            borderLeft: '2px solid #e5e7eb',
+                            paddingLeft: '15px'
+                          }}>
+                            <img 
+                              src="/imgs/banco/openpay.jpg" 
+                              alt="OpenPay" 
+                              style={{
+                                height: '24px',
+                                opacity: 0.8
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <p style={{
+                          margin: '15px 0 0 0',
+                          fontSize: '0.85rem',
+                          color: '#6b7280',
+                          textAlign: 'center'
+                        }}>
+                          Tarjetas de crédito y débito con protección 3D Secure
+                        </p>
+                      </div>
+
                       <div style={{ marginBottom: '20px' }}>
                         <label style={{
                           display: 'block',
@@ -979,7 +1107,7 @@ const Pago = () => {
                         />
                       </div>
 
-                      <div style={{ marginBottom: '20px' }}>
+                      <div style={{ marginBottom: '20px', position: 'relative' }}>
                         <label style={{
                           display: 'block',
                           marginBottom: '8px',
@@ -998,12 +1126,56 @@ const Pago = () => {
                           style={{
                             width: '100%',
                             padding: '12px 16px',
+                            paddingRight: '50px',
                             border: '1px solid #d1d5db',
                             borderRadius: '8px',
                             fontSize: '1rem',
                             boxSizing: 'border-box'
                           }}
                         />
+                        {cardData.card_number && getCardType(cardData.card_number) && (
+                          <div style={{
+                            position: 'absolute',
+                            right: '12px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            marginTop: '14px'
+                          }}>
+                            {getCardType(cardData.card_number) === 'visa' && (
+                              <img 
+                                src="/imgs/banco/visa.png" 
+                                alt="Visa" 
+                                style={{
+                                  height: '20px',
+                                  border: '1px solid #e5e7eb',
+                                  borderRadius: '2px'
+                                }}
+                              />
+                            )}
+                            {getCardType(cardData.card_number) === 'mastercard' && (
+                              <img 
+                                src="/imgs/banco/masterCard.png" 
+                                alt="Mastercard" 
+                                style={{
+                                  height: '20px',
+                                  border: '1px solid #e5e7eb',
+                                  borderRadius: '2px'
+                                }}
+                              />
+                            )}
+                            {getCardType(cardData.card_number) === 'americanexpress' && (
+                              <img 
+                                src="/imgs/banco/americanExpress.png" 
+                                alt="American Express" 
+                                style={{
+                                  height: '20px',
+                                  border: '1px solid #e5e7eb',
+                                  borderRadius: '2px'
+                                }}
+                              />
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       <div style={{
