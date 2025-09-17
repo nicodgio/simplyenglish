@@ -9,7 +9,7 @@ $password = 'corsu5-Munkyg-xaxpyc';
 
 $OPENPAY_CONFIG = [
     'id' => 'mzkvkma3reuzgzjf1ysj',
-    'private_key' => 'sk_7e7f366c059a41de8f9f95ed10382024',
+    'private_key' => 'sk_c489fd8353de4d8bbd84646b907645b2',
     'sandbox' => true,
     'api_url' => 'https://sandbox-api.openpay.mx/v1/'
 ];

@@ -74,54 +74,77 @@ function buscarUsuario($pdo, $email) {
 
         $usuario_completo = construirDatosUsuario($pdo, $usuario);
 
-        // Verificar si tiene pagos completados o suscripciones activas
-        $stmt_activa = $pdo->prepare("
-            SELECT COUNT(*) as tiene_activa
+        // Obtener información detallada de suscripciones activas
+        $suscripcion_activa = obtenerSuscripcionActivaDetallada($pdo, $usuario['id']);
+        
+        // Verificar si tiene pagos pendientes
+        $stmt_pendiente = $pdo->prepare("
+            SELECT p.*, tp.nombre as programa_nombre, tp.categoria 
             FROM pagos p
-            LEFT JOIN suscripciones s ON p.suscripcion_id = s.id
-            WHERE p.usuario_id = ? AND (p.estado = 'COMPLETADO' OR s.estado = 'ACTIVA')
+            LEFT JOIN tipos_programa tp ON p.tipo_programa_id = tp.id
+            WHERE p.usuario_id = ? AND p.estado = 'PENDIENTE'
+            ORDER BY p.fecha_creacion DESC
+            LIMIT 1
         ");
-        $stmt_activa->execute([$usuario['id']]);
-        $activa_info = $stmt_activa->fetch();
+        $stmt_pendiente->execute([$usuario['id']]);
+        $pago_pendiente = $stmt_pendiente->fetch();
 
-        if ($activa_info['tiene_activa'] > 0) {
-            sendResponse([
-                'success' => true,
-                'data' => [
-                    'usuario' => $usuario_completo,
-                    'puede_pagar' => false,
-                    'opciones_pago' => [],
-                    'suscripciones' => [['estado' => 'ACTIVA']],
-                    'mensaje_estado' => 'Su suscripción académica se encuentra ACTIVA. No requiere procesamiento de pagos adicionales.'
-                ]
-            ]);
+        if ($pago_pendiente) {
+            // Cancelar pagos pendientes automáticamente
+            $stmt_cancel_pago = $pdo->prepare("UPDATE pagos SET estado = 'CANCELADO', fecha_actualizacion = NOW() WHERE usuario_id = ? AND estado = 'PENDIENTE'");
+            $stmt_cancel_pago->execute([$usuario['id']]);
+            
+            // Cancelar suscripciones pendientes relacionadas
+            $stmt_cancel_suscripcion = $pdo->prepare("UPDATE suscripciones SET estado = 'CANCELADA', fecha_actualizacion = NOW() WHERE usuario_id = ? AND estado = 'PENDIENTE'");
+            $stmt_cancel_suscripcion->execute([$usuario['id']]);
+            
+            logError("Pagos y suscripciones pendientes cancelados automáticamente para usuario ID: " . $usuario['id']);
+            
+            // Continuar con la lógica normal como si no hubiera pagos pendientes
         }
 
-        $opciones_pago = obtenerOpcionesPago($pdo, $usuario);
-        $suscripcion_activa = obtenerSuscripcionActiva($pdo, $usuario['id']);
-
         if ($suscripcion_activa) {
-            sendResponse([
-                'success' => true,
-                'data' => [
-                    'usuario' => $usuario_completo,
-                    'opciones_pago' => [],
-                    'suscripcion_activa' => $suscripcion_activa,
-                    'puede_pagar' => false,
-                    'mensaje_estado' => 'Su suscripción académica se encuentra ACTIVA. No requiere procesamiento de pagos adicionales.'
-                ]
-            ]);
-        } elseif ($usuario_completo['pago_activo_id'] && $usuario_completo['estado_pago'] === 'PENDIENTE') {
-            sendResponse([
-                'success' => true,
-                'data' => [
-                    'usuario' => $usuario_completo,
-                    'opciones_pago' => [],
-                    'puede_pagar' => false,
-                    'mensaje_estado' => 'Se ha identificado un proceso de pago pendiente. Complete la transacción para activar su suscripción académica.'
-                ]
-            ]);
-        } elseif (count($opciones_pago) > 0) {
+            $opciones_pago = obtenerOpcionesPagoConSuscripcionActiva($pdo, $usuario, $suscripcion_activa);
+            
+            if ($suscripcion_activa['categoria'] === 'CENNI') {
+                sendResponse([
+                    'success' => true,
+                    'data' => [
+                        'usuario' => $usuario_completo,
+                        'suscripcion_activa' => $suscripcion_activa,
+                        'opciones_pago' => [],
+                        'puede_pagar' => false,
+                        'mensaje_estado' => "Su certificación CENNI ({$suscripcion_activa['programa_nombre']}) está activa desde " . 
+                                         date('d/m/Y', strtotime($suscripcion_activa['fecha_inicio'])) . 
+                                         ". El proceso de certificación ha sido iniciado y la academia se pondrá en contacto con usted."
+                    ]
+                ]);
+            } else {
+                // Para programas CONOCER, mostrar suscripción activa pero permitir pagar siguiente nivel
+                $mensaje_estado = "Su suscripción de {$suscripcion_activa['programa_nombre']} está ACTIVA desde " . 
+                                date('d/m/Y', strtotime($suscripcion_activa['fecha_inicio'])) . ".";
+                
+                if (count($opciones_pago) > 0) {
+                    $mensaje_estado .= " Puede proceder con el pago del siguiente nivel.";
+                }
+
+                sendResponse([
+                    'success' => true,
+                    'data' => [
+                        'usuario' => $usuario_completo,
+                        'suscripcion_activa' => $suscripcion_activa,
+                        'opciones_pago' => $opciones_pago,
+                        'puede_pagar' => count($opciones_pago) > 0,
+                        'mensaje_estado' => $mensaje_estado
+                    ]
+                ]);
+            }
+        }
+
+        // Si no tiene suscripción activa, usar la lógica original
+        $opciones_pago = obtenerOpcionesPago($pdo, $usuario);
+
+        if (count($opciones_pago) > 0) {
             sendResponse([
                 'success' => true,
                 'data' => [
@@ -153,10 +176,11 @@ function buscarUsuario($pdo, $email) {
     }
 }
 
-function obtenerSuscripcionActiva($pdo, $usuario_id) {
+function obtenerSuscripcionActivaDetallada($pdo, $usuario_id) {
     try {
         $stmt = $pdo->prepare("
-            SELECT s.*, tp.nombre as programa_nombre, tp.descripcion as programa_descripcion
+            SELECT s.*, tp.nombre as programa_nombre, tp.descripcion as programa_descripcion, tp.categoria,
+                   tp.precio, tp.codigo as programa_codigo
             FROM suscripciones s
             LEFT JOIN tipos_programa tp ON s.tipo_programa_id = tp.id
             WHERE s.usuario_id = ? AND s.estado = 'ACTIVA'
@@ -168,6 +192,105 @@ function obtenerSuscripcionActiva($pdo, $usuario_id) {
     } catch (Exception $e) {
         logError('Error obteniendo suscripción activa: ' . $e->getMessage());
         return null;
+    }
+}
+
+function obtenerOpcionesPagoConSuscripcionActiva($pdo, $usuario, $suscripcion_activa) {
+    try {
+        $usuario_id = $usuario['id'];
+        
+        // Si es CENNI, no ofrecer más opciones
+        if ($suscripcion_activa['categoria'] === 'CENNI') {
+            return [];
+        }
+
+        // Para CONOCER, determinar el siguiente nivel disponible
+        $nivel_fin_actual = intval($suscripcion_activa['nivel_fin'] ?? $suscripcion_activa['nivel_inicio']);
+        
+        // Verificar si ya completó hasta el nivel 8
+        if ($nivel_fin_actual >= 8) {
+            // Ofrecer programas CENNI si ya completó todos los niveles CONOCER
+            $stmt = $pdo->prepare("SELECT * FROM tipos_programa WHERE activo = 1 AND categoria = 'CENNI'");
+            $stmt->execute();
+            $programas_cenni = $stmt->fetchAll();
+
+            $opciones = [];
+            foreach ($programas_cenni as $programa) {
+                // Verificar que no tenga ya un pago/suscripción para este CENNI
+                $stmt_check = $pdo->prepare("
+                    SELECT COUNT(*) as count 
+                    FROM pagos p
+                    INNER JOIN tipos_programa tp ON p.tipo_programa_id = tp.id
+                    WHERE p.usuario_id = ? AND tp.codigo = ? AND p.estado IN ('COMPLETADO', 'PENDIENTE', 'EN_PROCESO')
+                ");
+                $stmt_check->execute([$usuario_id, $programa['codigo']]);
+                $tiene_pago = $stmt_check->fetch()['count'] > 0;
+
+                if (!$tiene_pago) {
+                    $opciones[] = [
+                        'tipo' => 'CENNI',
+                        'codigo' => $programa['codigo'],
+                        'nombre' => $programa['nombre'],
+                        'descripcion' => $programa['descripcion'],
+                        'precio' => floatval($programa['precio']),
+                        'categoria' => 'CENNI',
+                        'nivel_inicio' => 1,
+                        'nivel_fin' => 1
+                    ];
+                }
+            }
+            return $opciones;
+        }
+
+        // Ofrecer siguiente nivel CONOCER
+        $siguiente_nivel = $nivel_fin_actual + 1;
+        
+        if ($siguiente_nivel <= 8) {
+            $stmt = $pdo->prepare("SELECT * FROM tipos_programa WHERE activo = 1 AND categoria IN ('CONOCER_INDIVIDUAL', 'CONOCER_PAQUETE')");
+            $stmt->execute();
+            $programas = $stmt->fetchAll();
+
+            $opciones = [];
+            foreach ($programas as $programa) {
+                $cantidad_niveles = intval($programa['cantidad_niveles'] ?? 1);
+                
+                if ($programa['categoria'] === 'CONOCER_INDIVIDUAL') {
+                    $opciones[] = [
+                        'tipo' => 'CONOCER_INDIVIDUAL',
+                        'codigo' => $programa['codigo'],
+                        'nombre' => "CONOCER Nivel $siguiente_nivel",
+                        'descripcion' => "Acceso al nivel $siguiente_nivel de CONOCER",
+                        'precio' => floatval($programa['precio']),
+                        'nivel_inicio' => $siguiente_nivel,
+                        'nivel_fin' => $siguiente_nivel,
+                        'categoria' => 'CONOCER_INDIVIDUAL',
+                        'cantidad_niveles' => $cantidad_niveles
+                    ];
+                } elseif ($programa['categoria'] === 'CONOCER_PAQUETE') {
+                    $nivel_fin = min($siguiente_nivel + $cantidad_niveles - 1, 8);
+                    if ($nivel_fin >= $siguiente_nivel) {
+                        $opciones[] = [
+                            'tipo' => 'CONOCER_PAQUETE',
+                            'codigo' => $programa['codigo'],
+                            'nombre' => "Paquete CONOCER Niveles $siguiente_nivel-$nivel_fin",
+                            'descripcion' => "Acceso a $cantidad_niveles niveles consecutivos de CONOCER",
+                            'precio' => floatval($programa['precio']),
+                            'nivel_inicio' => $siguiente_nivel,
+                            'nivel_fin' => $nivel_fin,
+                            'categoria' => 'CONOCER_PAQUETE',
+                            'cantidad_niveles' => $cantidad_niveles
+                        ];
+                    }
+                }
+            }
+            return $opciones;
+        }
+
+        return [];
+
+    } catch (Exception $e) {
+        logError('Error obteniendo opciones con suscripción activa: ' . $e->getMessage());
+        return [];
     }
 }
 
@@ -218,13 +341,6 @@ function obtenerOpcionesPago($pdo, $usuario) {
     try {
         $usuario_id = $usuario['id'];
         
-        // Verificar si tiene suscripciones activas
-        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM suscripciones WHERE usuario_id = ? AND estado = 'ACTIVA'");
-        $stmt->execute([$usuario_id]);
-        if ($stmt->fetch()['count'] > 0) {
-            return [];
-        }
-
         // Determinar si es programa CENNI
         $es_cenni = strpos($usuario['programa_interes'], 'CENNI') !== false;
         
@@ -270,7 +386,7 @@ function obtenerOpcionesPago($pdo, $usuario) {
                 logError("Programa CENNI no encontrado: {$usuario['programa_interes']}");
             }
         } else {
-            // Lógica para programas CONOCER (la lógica original)
+            // Lógica para programas CONOCER
             $nivel_completado = intval($usuario['nivel_conocer_completado'] ?? 0);
             
             if ($nivel_completado < 8) {
@@ -281,6 +397,8 @@ function obtenerOpcionesPago($pdo, $usuario) {
                 $siguiente_nivel = $nivel_completado + 1;
 
                 foreach ($programas as $programa) {
+                    $cantidad_niveles = intval($programa['cantidad_niveles'] ?? 1);
+                    
                     if ($programa['categoria'] === 'CONOCER_INDIVIDUAL') {
                         $opciones[] = [
                             'tipo' => 'CONOCER_INDIVIDUAL',
@@ -290,20 +408,24 @@ function obtenerOpcionesPago($pdo, $usuario) {
                             'precio' => floatval($programa['precio']),
                             'nivel_inicio' => $siguiente_nivel,
                             'nivel_fin' => $siguiente_nivel,
-                            'categoria' => 'CONOCER_INDIVIDUAL'
+                            'categoria' => 'CONOCER_INDIVIDUAL',
+                            'cantidad_niveles' => $cantidad_niveles
                         ];
-                    } elseif ($programa['categoria'] === 'CONOCER_PAQUETE' && $siguiente_nivel + 2 <= 8) {
-                        $nivel_fin = $siguiente_nivel + 2;
-                        $opciones[] = [
-                            'tipo' => 'CONOCER_PAQUETE',
-                            'codigo' => $programa['codigo'],
-                            'nombre' => "Paquete CONOCER Niveles $siguiente_nivel-$nivel_fin",
-                            'descripcion' => "Acceso a 3 niveles consecutivos de CONOCER",
-                            'precio' => floatval($programa['precio']),
-                            'nivel_inicio' => $siguiente_nivel,
-                            'nivel_fin' => $nivel_fin,
-                            'categoria' => 'CONOCER_PAQUETE'
-                        ];
+                    } elseif ($programa['categoria'] === 'CONOCER_PAQUETE') {
+                        $nivel_fin = min($siguiente_nivel + $cantidad_niveles - 1, 8);
+                        if ($nivel_fin >= $siguiente_nivel) {
+                            $opciones[] = [
+                                'tipo' => 'CONOCER_PAQUETE',
+                                'codigo' => $programa['codigo'],
+                                'nombre' => "Paquete CONOCER Niveles $siguiente_nivel-$nivel_fin",
+                                'descripcion' => "Acceso a $cantidad_niveles niveles consecutivos de CONOCER",
+                                'precio' => floatval($programa['precio']),
+                                'nivel_inicio' => $siguiente_nivel,
+                                'nivel_fin' => $nivel_fin,
+                                'categoria' => 'CONOCER_PAQUETE',
+                                'cantidad_niveles' => $cantidad_niveles
+                            ];
+                        }
                     }
                 }
             } else {
@@ -404,26 +526,59 @@ function crearSuscripcion($pdo, $data) {
             sendResponse(['success' => false, 'error' => 'Tipo de programa no encontrado']);
         }
 
-        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM suscripciones WHERE usuario_id = ? AND estado = 'ACTIVA'");
+        // Verificar si existe una suscripción activa de CONOCER
+        $stmt = $pdo->prepare("
+            SELECT s.*, tp.categoria 
+            FROM suscripciones s
+            LEFT JOIN tipos_programa tp ON s.tipo_programa_id = tp.id
+            WHERE s.usuario_id = ? AND s.estado = 'ACTIVA'
+            ORDER BY s.fecha_inicio DESC 
+            LIMIT 1
+        ");
         $stmt->execute([$usuario_id]);
-        if ($stmt->fetch()['count'] > 0) {
-            sendResponse(['success' => false, 'error' => 'El usuario ya tiene una suscripción activa']);
-        }
+        $suscripcion_activa = $stmt->fetch();
 
-        // Cancelar suscripciones y pagos pendientes
-        $stmt = $pdo->prepare("UPDATE suscripciones SET estado = 'CANCELADA' WHERE usuario_id = ? AND estado = 'PENDIENTE'");
-        $stmt->execute([$usuario_id]);
-
+        // Cancelar pagos pendientes
         $stmt = $pdo->prepare("UPDATE pagos SET estado = 'CANCELADO' WHERE usuario_id = ? AND estado = 'PENDIENTE'");
         $stmt->execute([$usuario_id]);
 
-        // Crear nueva suscripción
-        $stmt = $pdo->prepare("
-            INSERT INTO suscripciones (usuario_id, tipo_programa_id, nivel_inicio, nivel_fin, estado, fecha_creacion)
-            VALUES (?, ?, ?, ?, 'PENDIENTE', NOW())
-        ");
-        $stmt->execute([$usuario_id, $programa['id'], $nivel_inicio, $nivel_fin]);
-        $suscripcion_id = $pdo->lastInsertId();
+        $suscripcion_id = null;
+        $accion_realizada = '';
+
+        if ($suscripcion_activa && $suscripcion_activa['categoria'] !== 'CENNI' && $programa['categoria'] !== 'CENNI') {
+            // Si existe suscripción CONOCER activa y el nuevo programa también es CONOCER, extender la suscripción
+            $nuevo_nivel_fin = max($suscripcion_activa['nivel_fin'], $nivel_fin);
+            
+            // Actualizar la suscripción existente
+            $stmt = $pdo->prepare("
+                UPDATE suscripciones 
+                SET nivel_fin = ?, fecha_actualizacion = NOW()
+                WHERE id = ?
+            ");
+            $stmt->execute([$nuevo_nivel_fin, $suscripcion_activa['id']]);
+            
+            $suscripcion_id = $suscripcion_activa['id'];
+            $accion_realizada = 'extendida';
+            
+            logError("Suscripción extendida - ID: $suscripcion_id, Nuevo nivel_fin: $nuevo_nivel_fin");
+            
+        } else {
+            // Crear nueva suscripción (para CENNI o primera suscripción CONOCER)
+            
+            // Cancelar suscripciones pendientes
+            $stmt = $pdo->prepare("UPDATE suscripciones SET estado = 'CANCELADA' WHERE usuario_id = ? AND estado = 'PENDIENTE'");
+            $stmt->execute([$usuario_id]);
+            
+            $stmt = $pdo->prepare("
+                INSERT INTO suscripciones (usuario_id, tipo_programa_id, nivel_inicio, nivel_fin, estado, fecha_creacion)
+                VALUES (?, ?, ?, ?, 'PENDIENTE', NOW())
+            ");
+            $stmt->execute([$usuario_id, $programa['id'], $nivel_inicio, $nivel_fin]);
+            $suscripcion_id = $pdo->lastInsertId();
+            $accion_realizada = 'creada';
+            
+            logError("Nueva suscripción creada - ID: $suscripcion_id");
+        }
 
         // Crear pago asociado
         $stmt = $pdo->prepare("
@@ -433,13 +588,18 @@ function crearSuscripcion($pdo, $data) {
         $stmt->execute([$usuario_id, $suscripcion_id, $programa['id'], $programa['precio']]);
         $pago_id = $pdo->lastInsertId();
 
+        logError("Pago creado - ID: $pago_id, Monto: {$programa['precio']}");
+
         sendResponse([
             'success' => true,
             'data' => [
                 'suscripcion_id' => $suscripcion_id,
                 'pago_id' => $pago_id,
                 'monto' => $programa['precio'],
-                'referencia' => "SE-" . str_pad($pago_id, 6, '0', STR_PAD_LEFT)
+                'referencia' => "SE-" . str_pad($pago_id, 6, '0', STR_PAD_LEFT),
+                'accion' => $accion_realizada,
+                'nivel_inicio' => $nivel_inicio,
+                'nivel_fin' => $nivel_fin
             ]
         ]);
 
