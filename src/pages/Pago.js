@@ -25,8 +25,8 @@ const Pago = () => {
   
   const OPENPAY_CONFIG = {
     id: 'mzkvkma3reuzgzjf1ysj',
-    publicKey: 'pk_8e75485c69c34418bbcf1174ef7b17f1',
-    sandbox: true,
+    publicKey: 'pk_9731aabf0ae142699440f368f8fc72a9',
+    sandbox: false,
     scriptUrl: 'https://js.openpay.mx/openpay.v1.min.js',
     dataScriptUrl: 'https://js.openpay.mx/openpay-data.v1.min.js'
   };

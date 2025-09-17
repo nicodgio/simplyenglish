@@ -18,10 +18,10 @@ $password = 'corsu5-Munkyg-xaxpyc';
 
 $OPENPAY_CONFIG = [
     'id' => 'mzkvkma3reuzgzjf1ysj',
-    'private_key' => 'sk_c489fd8353de4d8bbd84646b907645b2',
-    'public_key' => 'pk_8e75485c69c34418bbcf1174ef7b17f1',
-    'sandbox' => true,
-    'api_url' => 'https://sandbox-api.openpay.mx/v1/'
+    'private_key' => 'sk_65c7bcf5d5b94ec4bf9ad09f425dbb1e',
+    'public_key' => 'pk_9731aabf0ae142699440f368f8fc72a9',
+    'sandbox' => false,
+    'api_url' => 'https://api.openpay.mx/v1/'
 ];
 
 function sendCleanResponse($data) {
