@@ -102,12 +102,14 @@ function formatRegistrationMessage($data, $userId) {
     ];
 
     $niveles_nombres = [
-        'principiante' => 'Principiante (A1)',
-        'basico' => 'Básico (A2)',
-        'intermedio-bajo' => 'Intermedio Bajo (B1)',
-        'intermedio' => 'Intermedio (B2)',
-        'avanzado' => 'Avanzado (C1)',
-        'superior' => 'Superior (C2)',
+        'principiante' => 'Principiante (A1) - Nivel 1',
+        'basico' => 'Básico (A2) - Nivel 2', 
+        'elemental-1' => 'Elemental I (A2) - Nivel 3',
+        'elemental-2' => 'Elemental II (A2+) - Nivel 4',
+        'pre-intermedio-1' => 'Pre-Intermedio I (A2+) - Nivel 5',
+        'pre-intermedio-2' => 'Pre-Intermedio II (B1-) - Nivel 6',
+        'intermedio-prep' => 'Preparación B1 - Nivel 7',
+        'intermedio' => 'Intermedio (B1) - Nivel 8',
         'cenni-evaluation' => 'CENNI - Evaluación específica',
         'no-se' => 'No está seguro (evaluación requerida)'
     ];

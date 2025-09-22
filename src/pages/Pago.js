@@ -969,34 +969,6 @@ const Pago = () => {
                     </ol>
                   </div>
 
-                  <div style={{
-                    background: openPayLoaded && deviceSessionId ? '#d4edda' : '#fff3cd',
-                    border: `1px solid ${openPayLoaded && deviceSessionId ? '#c3e6cb' : '#ffeaa7'}`,
-                    color: openPayLoaded && deviceSessionId ? '#155724' : '#856404',
-                    borderRadius: '8px',
-                    padding: '15px',
-                    marginBottom: '25px'
-                  }}>
-                    <h6 style={{
-                      margin: '0 0 8px 0',
-                      fontWeight: '600',
-                      fontSize: '1rem'
-                    }}>
-                      {openPayLoaded && deviceSessionId ? 'Sistema de Pagos Listo' : 'Sistema de Pagos No Disponible'}
-                    </h6>
-                    <p style={{ margin: '0', fontSize: '0.9rem' }}>
-                      {openPayLoaded && deviceSessionId
-                        ? 'Openpay y sistema antifraude inicializados correctamente. Listo para procesar su pago.'
-                        : 'Reintente la carga del sistema de pagos para continuar.'
-                      }
-                    </p>
-                    {deviceSessionId && (
-                      <p style={{ margin: '8px 0 0 0', fontSize: '0.8rem', opacity: 0.8 }}>
-                        ID de sesión antifraude: {deviceSessionId.substring(0, 20)}...
-                      </p>
-                    )}
-                  </div>
-
                   {openPayLoaded && deviceSessionId ? (
                     <div>
                       <div style={{

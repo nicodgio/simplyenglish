@@ -14,7 +14,8 @@ $OPENPAY_CONFIG = [
     'api_url' => 'https://api.openpay.mx/v1/'
 ];
 
-function getGenericErrorMessage($openPayError = null) {
+function getGenericErrorMessage($openPayError = null)
+{
     $errorMessages = [
         'Tu compra no fue procesada. Tarjeta rechazada.',
         'Tarjeta rechazada. Ingrese sus datos correctamente e inténtelo de nuevo.',
@@ -30,7 +31,7 @@ function getGenericErrorMessage($openPayError = null) {
 
     $errorCode = '';
     $errorDesc = '';
-    
+
     if (is_array($openPayError)) {
         $errorCode = $openPayError['error_code'] ?? $openPayError['code'] ?? '';
         $errorDesc = $openPayError['description'] ?? $openPayError['message'] ?? '';
@@ -41,41 +42,50 @@ function getGenericErrorMessage($openPayError = null) {
     $errorCodeLower = strtolower($errorCode);
     $errorDescLower = strtolower($errorDesc);
 
-    if (strpos($errorCodeLower, 'insufficient_funds') !== false || 
+    if (
+        strpos($errorCodeLower, 'insufficient_funds') !== false ||
         strpos($errorDescLower, 'insufficient') !== false ||
-        strpos($errorDescLower, 'fondos') !== false) {
+        strpos($errorDescLower, 'fondos') !== false
+    ) {
         return $errorMessages[3];
     }
-    
-    if (strpos($errorCodeLower, 'card_declined') !== false || 
-        strpos($errorCodeLower, 'declined') !== false || 
-        strpos($errorDescLower, 'declined') !== false || 
-        strpos($errorDescLower, 'rechazada') !== false) {
+
+    if (
+        strpos($errorCodeLower, 'card_declined') !== false ||
+        strpos($errorCodeLower, 'declined') !== false ||
+        strpos($errorDescLower, 'declined') !== false ||
+        strpos($errorDescLower, 'rechazada') !== false
+    ) {
         return $errorMessages[1];
     }
-    
-    if (strpos($errorCodeLower, 'processing_error') !== false || 
+
+    if (
+        strpos($errorCodeLower, 'processing_error') !== false ||
         strpos($errorCodeLower, 'bank') !== false ||
-        strpos($errorDescLower, 'bank') !== false || 
-        strpos($errorDescLower, 'banco') !== false) {
+        strpos($errorDescLower, 'bank') !== false ||
+        strpos($errorDescLower, 'banco') !== false
+    ) {
         return $errorMessages[2];
     }
-    
-    if (strpos($errorCodeLower, 'invalid') !== false || 
+
+    if (
+        strpos($errorCodeLower, 'invalid') !== false ||
         strpos($errorDescLower, 'invalid') !== false ||
         strpos($errorDescLower, 'incorrect') !== false ||
-        strpos($errorDescLower, 'incorrecto') !== false) {
+        strpos($errorDescLower, 'incorrecto') !== false
+    ) {
         return $errorMessages[5];
     }
 
     return $errorMessages[array_rand($errorMessages)];
 }
 
-function callOpenPayAPI($endpoint, $method = 'GET') {
+function callOpenPayAPI($endpoint, $method = 'GET')
+{
     global $OPENPAY_CONFIG;
-    
+
     $url = $OPENPAY_CONFIG['api_url'] . $OPENPAY_CONFIG['id'] . '/' . $endpoint;
-    
+
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -83,19 +93,19 @@ function callOpenPayAPI($endpoint, $method = 'GET') {
         'Content-Type: application/json',
         'Authorization: Basic ' . base64_encode($OPENPAY_CONFIG['private_key'] . ':')
     ]);
-    
+
     if ($method === 'GET') {
         curl_setopt($ch, CURLOPT_HTTPGET, true);
     }
-    
+
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    
+
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    
+
     curl_close($ch);
-    
+
     return [
         'success' => $httpCode >= 200 && $httpCode < 300,
         'data' => json_decode($response, true),
@@ -109,13 +119,13 @@ try {
     }
 
     $pago_id = $_GET['pago_id'];
-    
+
     $conn = new mysqli($host, $username, $password, $dbname);
-    
+
     if ($conn->connect_error) {
         throw new Exception('Error de conexión a base de datos');
     }
-    
+
     $conn->set_charset("utf8");
 
     $stmt = $conn->prepare("SELECT * FROM pagos WHERE id = ?");
@@ -128,7 +138,7 @@ try {
     }
 
     $pago = $result->fetch_assoc();
-    
+
     if (!$pago['referencia_externa']) {
         throw new Exception("No hay referencia de OpenPay para verificar");
     }
@@ -160,7 +170,7 @@ try {
         if ($nuevo_estado !== $pago['estado']) {
             $fecha_pago = ($nuevo_estado === 'COMPLETADO') ? date('Y-m-d H:i:s') : $pago['fecha_pago'];
             $authorization = $response['data']['authorization'] ?? $pago['autorizacion'];
-            
+
             $stmt = $conn->prepare("UPDATE pagos SET 
                                    estado = ?, 
                                    fecha_pago = ?,
@@ -195,6 +205,7 @@ try {
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -210,6 +221,7 @@ try {
             align-items: center;
             justify-content: center;
         }
+
         .container {
             background: white;
             border-radius: 12px;
@@ -218,26 +230,31 @@ try {
             max-width: 600px;
             text-align: center;
         }
+
         .success {
             color: #10b981;
             border: 2px solid #10b981;
             background: #ecfdf5;
         }
+
         .error {
             color: #dc2626;
             border: 2px solid #dc2626;
             background: #fef2f2;
         }
+
         .warning {
             color: #f59e0b;
             border: 2px solid #f59e0b;
             background: #fffbeb;
         }
+
         .info {
             color: #3b82f6;
             border: 2px solid #3b82f6;
             background: #eff6ff;
         }
+
         .status-badge {
             padding: 12px 24px;
             border-radius: 8px;
@@ -246,16 +263,19 @@ try {
             margin: 20px 0;
             display: inline-block;
         }
+
         h1 {
             color: #002868;
             margin-bottom: 20px;
             font-size: 2rem;
         }
+
         .message {
             font-size: 1.1rem;
             line-height: 1.6;
             margin: 20px 0;
         }
+
         .close-btn {
             background: #6b7280;
             color: white;
@@ -267,16 +287,19 @@ try {
             cursor: pointer;
             margin-top: 20px;
         }
+
         .close-btn:hover {
             background: #4b5563;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>SimplyEnglish</h1>
         <?php if (isset($nuevo_estado)): ?>
-            <div class="status-badge <?= $nuevo_estado === 'COMPLETADO' ? 'success' : ($nuevo_estado === 'FALLIDO' ? 'error' : ($nuevo_estado === 'EN_PROCESO' ? 'info' : 'warning')) ?>">
+            <div
+                class="status-badge <?= $nuevo_estado === 'COMPLETADO' ? 'success' : ($nuevo_estado === 'FALLIDO' ? 'error' : ($nuevo_estado === 'EN_PROCESO' ? 'info' : 'warning')) ?>">
                 <?php
                 switch ($nuevo_estado) {
                     case 'COMPLETADO':
@@ -294,36 +317,33 @@ try {
                 ?>
             </div>
         <?php endif; ?>
-        
+
         <div class="message">
             <?= htmlspecialchars($message ?? 'Error en el procesamiento del pago') ?>
         </div>
-        
+
         <?php if (isset($pago_id)): ?>
             <p style="color: #6b7280; font-size: 0.9rem;">
                 Referencia: SE-<?= str_pad($pago_id, 6, '0', STR_PAD_LEFT) ?>
             </p>
         <?php endif; ?>
-        
+
         <button class="close-btn" onclick="window.close()">
             Cerrar Ventana
         </button>
-        
+
         <script>
-            setTimeout(function() {
-                if (window.opener) {
-                    window.opener.postMessage({
-                        type: '3ds_complete',
-                        status: '<?= $nuevo_estado ?? 'UNKNOWN' ?>',
-                        message: '<?= addslashes($message ?? '') ?>'
-                    }, '*');
-                }
-                
-                setTimeout(function() {
-                    window.close();
-                }, 3000);
-            }, 1000);
+            // Enviar mensaje a la ventana padre inmediatamente
+            if (window.opener) {
+                window.opener.postMessage({
+                    type: '3ds_complete',
+                    status: '<?= $nuevo_estado ?? 'UNKNOWN' ?>',
+                    message: '<?= addslashes($message ?? '') ?>'
+                }, '*');
+            }
+
         </script>
     </div>
 </body>
+
 </html>

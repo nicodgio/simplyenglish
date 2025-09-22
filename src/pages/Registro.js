@@ -99,10 +99,12 @@ const Registro = () => {
     setNivelesIngles([
       { value: 'principiante', label: 'Principiante (A1) - Empezar desde Nivel 1', conocer_completado: 0, conocer_actual: 1 },
       { value: 'basico', label: 'Básico (A2) - Empezar desde Nivel 2', conocer_completado: 1, conocer_actual: 2 },
-      { value: 'intermedio-bajo', label: 'Intermedio Bajo (B1) - Empezar desde Nivel 3', conocer_completado: 2, conocer_actual: 3 },
-      { value: 'intermedio', label: 'Intermedio (B2) - Empezar desde Nivel 4', conocer_completado: 3, conocer_actual: 4 },
-      { value: 'avanzado', label: 'Avanzado (C1) - Empezar desde Nivel 6', conocer_completado: 5, conocer_actual: 6 },
-      { value: 'superior', label: 'Superior (C2) - Empezar desde Nivel 8', conocer_completado: 7, conocer_actual: 8 },
+      { value: 'elemental-1', label: 'Elemental I (A2) - Empezar desde Nivel 3', conocer_completado: 2, conocer_actual: 3 },
+      { value: 'elemental-2', label: 'Elemental II (A2+) - Empezar desde Nivel 4', conocer_completado: 3, conocer_actual: 4 },
+      { value: 'pre-intermedio-1', label: 'Pre-Intermedio I (A2+) - Empezar desde Nivel 5', conocer_completado: 4, conocer_actual: 5 },
+      { value: 'pre-intermedio-2', label: 'Pre-Intermedio II (B1-) - Empezar desde Nivel 6', conocer_completado: 5, conocer_actual: 6 },
+      { value: 'intermedio-prep', label: 'Preparación B1 - Empezar desde Nivel 7', conocer_completado: 6, conocer_actual: 7 },
+      { value: 'intermedio', label: 'Intermedio (B1) - Empezar desde Nivel 8', conocer_completado: 7, conocer_actual: 8 },
       { value: 'no-se', label: 'No estoy seguro (evaluación requerida)', conocer_completado: 0, conocer_actual: 1 }
     ]);
   };
@@ -118,9 +120,9 @@ const Registro = () => {
   const handleProgramaChange = (e) => {
     const { value } = e.target;
     const programaSeleccionado = programasDisponibles.find(programa => programa.value === value);
-    
+
     setSelectedProgramCategory(programaSeleccionado?.categoria || null);
-    
+
     setFormData(prev => ({
       ...prev,
       programaInteres: value,
@@ -171,39 +173,61 @@ const Registro = () => {
       console.log('Response data:', result);
 
       if (response.ok && result.success) {
-        setAlertType('success');
-        setShowAlert(true);
+        // Verificar si es un usuario existente
+        if (result.userExists) {
+          setAlertType('existing');
+          setShowAlert(true);
 
-        setRegisteredUser({
-          userId: result.data?.userId,
-          token: result.data?.token,
-          usuario: result.data?.usuario
-        });
+          setRegisteredUser({
+            userId: result.data?.userId,
+            usuario: result.data?.usuario,
+            existingUser: true
+          });
 
-        setFormData({
-          nombre: '',
-          apellidoPaterno: '',
-          apellidoMaterno: '',
-          email: '',
-          telefono: '',
-          fechaNacimiento: '',
-          genero: '',
-          direccion: '',
-          ciudad: '',
-          estado: '',
-          codigoPostal: '',
-          programaInteres: '',
-          nivelActual: '',
-          nivelConocerActual: 0,
-          nivelConocerCompletado: 0,
-          experienciaPrevia: '',
-          objetivos: '',
-          horarioPreferencia: '',
-          modalidadPreferencia: 'online'
-        });
+          // No limpiar el formulario para usuarios existentes
+          // para que puedan ver lo que intentaron registrar
 
-        setSelectedProgramCategory(null);
+        } else {
+          // Usuario nuevo registrado exitosamente
+          setAlertType('success');
+          setShowAlert(true);
+
+          setRegisteredUser({
+            userId: result.data?.userId,
+            token: result.data?.token,
+            usuario: result.data?.usuario,
+            existingUser: false
+          });
+
+          // Limpiar formulario solo para usuarios nuevos
+          setFormData({
+            nombre: '',
+            apellidoPaterno: '',
+            apellidoMaterno: '',
+            email: '',
+            telefono: '',
+            fechaNacimiento: '',
+            genero: '',
+            direccion: '',
+            ciudad: '',
+            estado: '',
+            codigoPostal: '',
+            programaInteres: '',
+            nivelActual: '',
+            nivelConocerActual: 0,
+            nivelConocerCompletado: 0,
+            experienciaPrevia: '',
+            objetivos: '',
+            horarioPreferencia: '',
+            modalidadPreferencia: 'online'
+          });
+
+          setSelectedProgramCategory(null);
+        }
+
+        // Mantener alerta visible por más tiempo
         setTimeout(() => setShowAlert(false), 10000);
+
       } else {
         console.error('Error en la respuesta:', result);
         setAlertType('error');
@@ -400,9 +424,12 @@ const Registro = () => {
   };
 
   const alertMessages = {
-    success: registeredUser
+    success: registeredUser && !registeredUser.existingUser
       ? `¡Registro completado exitosamente! Tu ID de usuario es: ${registeredUser.userId}. Nos pondremos en contacto contigo en las próximas 24 horas para confirmar tu inscripción y coordinar tu evaluación inicial.`
       : '¡Registro completado exitosamente! Nos pondremos en contacto contigo en las próximas 24 horas para confirmar tu inscripción y coordinar tu evaluación inicial.',
+    existing: registeredUser && registeredUser.existingUser
+      ? `¡Hola ${registeredUser.usuario?.nombre}! Ya cuentas con una cuenta activa (ID: ${registeredUser.userId}). Por favor procede a realizar el pago de tu programa.`
+      : 'Ya cuentas con una cuenta activa. Por favor procede a realizar el pago de tu programa.',
     error: 'Hubo un error al procesar tu registro. Por favor, verifica tus datos e intenta nuevamente.',
     info: 'Procesando tu registro, por favor espera...'
   };
@@ -412,6 +439,11 @@ const Registro = () => {
       background: '#d1fae5',
       border: '1px solid #10b981',
       color: '#065f46'
+    },
+    existing: {
+      background: '#fef3c7',
+      border: '1px solid #f59e0b',
+      color: '#92400e'
     },
     error: {
       background: '#fee2e2',
@@ -485,7 +517,12 @@ const Registro = () => {
           {showAlert && (
             <div style={{ ...styles.alert, ...alertStyles[alertType] }}>
               <FontAwesomeIcon
-                icon={alertType === 'success' ? faCheckCircle : alertType === 'error' ? faInfoCircle : faSpinner}
+                icon={
+                  alertType === 'success' ? faCheckCircle :
+                    alertType === 'existing' ? faExclamationTriangle :
+                      alertType === 'error' ? faInfoCircle :
+                        faSpinner
+                }
                 style={{ marginRight: '10px' }}
                 spin={alertType === 'info'}
               />
@@ -700,11 +737,19 @@ const Registro = () => {
                   </div>
 
                   {isCENNI && (
-                    <div style={styles.warningBox}>
-                      <FontAwesomeIcon icon={faExclamationTriangle} style={{ marginRight: '10px', color: '#f59e0b' }} />
-                      <strong>Certificación CENNI:</strong> Has seleccionado un programa de certificación CENNI. 
-                      Nuestro equipo académico se pondrá en contacto contigo para coordinar la evaluación específica 
-                      requerida para este tipo de certificación. No es necesario completar información adicional de nivel.
+                    <div style={{
+                      background: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)',
+                      border: '1px solid #10b981',
+                      borderRadius: '8px',
+                      padding: '15px',
+                      marginBottom: '20px',
+                      fontSize: '0.9rem',
+                      color: '#065f46'
+                    }}>
+                      <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: '10px', color: '#10b981' }} />
+                      <strong>Programa CENNI seleccionado:</strong> Excelente elección. Nuestro equipo especializado
+                      te contactará pronto para coordinar tu evaluación personalizada. Los campos de nivel se han
+                      ajustado automáticamente para tu comodidad.
                     </div>
                   )}
 
@@ -967,4 +1012,4 @@ const Registro = () => {
   );
 };
 
-export default Registro;
+export default Registro
