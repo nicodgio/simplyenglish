@@ -51,20 +51,51 @@ const Contacto = () => {
     try {
       console.log("Enviando datos:", formData);
 
+      // Usar FormData en lugar de JSON
+      const formDataToSend = new FormData();
+      formDataToSend.append('nombre', formData.nombre);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('telefono', formData.telefono || '');
+      formDataToSend.append('asunto', formData.asunto);
+      formDataToSend.append('mensaje', formData.mensaje);
+      formDataToSend.append('servicio', formData.servicio || '');
+
       const response = await fetch(
-        "https://simplyenglish.com.mx/api/contacto.php",
+        "https://simplyenglish.com.mx/mensaje.php",
         {
           method: "POST",
+          body: formDataToSend,
           headers: {
-            "Content-Type": "application/json",
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache'
           },
-          body: JSON.stringify(formData),
+          credentials: 'same-origin'
         }
       );
 
       console.log("Response status:", response.status);
-      const result = await response.json();
-      console.log("Response data:", result);
+      console.log("Response headers:", response.headers);
+
+      // Intentar parsear la respuesta como JSON
+      let result;
+      const responseText = await response.text();
+      console.log("Response text:", responseText);
+
+      // Verificar si la respuesta contiene el script anti-bot
+      if (responseText.includes('humans_21909') || responseText.includes('document.cookie')) {
+        console.error("Respuesta bloqueada por sistema anti-bot:", responseText);
+        alert("Error: La solicitud fue bloqueada por el sistema de seguridad. Por favor, contacte directamente por teléfono o email.");
+        return;
+      }
+
+      try {
+        result = JSON.parse(responseText);
+        console.log("Response data:", result);
+      } catch (parseError) {
+        console.error("Error parseando respuesta:", responseText);
+        throw new Error("Respuesta del servidor no válida");
+      }
 
       if (response.ok && result.success) {
         setShowAlert(true);
@@ -86,7 +117,7 @@ const Contacto = () => {
       }
     } catch (error) {
       console.error("Error en el envío:", error);
-      alert("Error de conexión. Por favor intenta nuevamente.");
+      alert("Error de conexión. Por favor intenta nuevamente o contacta directamente por teléfono.");
     }
   };
 
@@ -192,7 +223,7 @@ const Contacto = () => {
       {/* Main Content */}
       <section style={{ padding: "60px 0" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
-          
+
           {/* Contact Information - Single Row */}
           <div style={{
             display: "flex",
@@ -212,14 +243,14 @@ const Contacto = () => {
                 flex: "1",
                 minWidth: "200px",
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#002868";
-                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 40, 104, 0.08)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#e9ecef";
-                e.currentTarget.style.boxShadow = "none";
-              }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#002868";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 40, 104, 0.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "#e9ecef";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
               >
                 <div style={{
                   width: "44px",
@@ -303,7 +334,7 @@ const Contacto = () => {
               </div>
             )}
 
-            <div>
+            <form onSubmit={handleSubmit}>
               <div style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
@@ -517,7 +548,7 @@ const Contacto = () => {
 
               <div style={{ textAlign: "center" }}>
                 <button
-                  onClick={handleSubmit}
+                  type="submit"
                   style={{
                     background: "#002868",
                     color: "white",
@@ -541,7 +572,7 @@ const Contacto = () => {
                   Enviar Solicitud
                 </button>
               </div>
-            </div>
+            </form>
           </div>
 
         </div>
@@ -588,14 +619,14 @@ const Contacto = () => {
                 transition: "all 0.2s ease",
                 cursor: "pointer",
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#002868";
-                e.currentTarget.style.backgroundColor = "#ffffff";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#e9ecef";
-                e.currentTarget.style.backgroundColor = "#f8f9fa";
-              }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#002868";
+                  e.currentTarget.style.backgroundColor = "#ffffff";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "#e9ecef";
+                  e.currentTarget.style.backgroundColor = "#f8f9fa";
+                }}
               >
                 <FontAwesomeIcon
                   icon={servicio.icon}

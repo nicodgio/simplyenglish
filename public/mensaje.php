@@ -2,7 +2,8 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, X-Requested-With, User-Agent');
+header('Access-Control-Allow-Credentials: true');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -15,11 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-$input = json_decode(file_get_contents('php://input'), true);
+// Usar $_POST para FormData
+$input = $_POST;
 
-if (!$input) {
+if (empty($input)) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Datos inválidos']);
+    echo json_encode(['success' => false, 'error' => 'No se recibieron datos']);
     exit();
 }
 
@@ -35,12 +37,12 @@ foreach ($required_fields as $field) {
 $bot_token = "8270319060:AAEhvFemccYqqLLveb8X9t8m3NT9YGQaTQM";
 $chat_id = "-4831902561";
 
-$nombre = htmlspecialchars($input['nombre']);
-$email = htmlspecialchars($input['email']);
-$telefono = !empty($input['telefono']) ? htmlspecialchars($input['telefono']) : 'No proporcionado';
-$servicio = !empty($input['servicio']) ? htmlspecialchars($input['servicio']) : 'No especificado';
-$asunto = htmlspecialchars($input['asunto']);
-$mensaje = htmlspecialchars($input['mensaje']);
+$nombre = htmlspecialchars(trim($input['nombre']));
+$email = htmlspecialchars(trim($input['email']));
+$telefono = !empty($input['telefono']) ? htmlspecialchars(trim($input['telefono'])) : 'No proporcionado';
+$servicio = !empty($input['servicio']) ? htmlspecialchars(trim($input['servicio'])) : 'No especificado';
+$asunto = htmlspecialchars(trim($input['asunto']));
+$mensaje = htmlspecialchars(trim($input['mensaje']));
 
 $servicio_nombres = [
     'simply-mensual' => 'Curso Simply English - Plan Mensual',
@@ -49,11 +51,10 @@ $servicio_nombres = [
     'cenni-plus' => 'Certificación CENNI Plus',
     'cenni-pro' => 'Certificación CENNI Pro',
     'asesoria' => 'Asesoría Académica',
-    'otro' => 'Otro'
+    'otro' => 'Información General'
 ];
 
 $servicio_texto = isset($servicio_nombres[$servicio]) ? $servicio_nombres[$servicio] : $servicio;
-
 $fecha = date('d/m/Y H:i:s');
 
 $telegram_message = "🔔 *NUEVO MENSAJE DE CONTACTO*\n\n";
