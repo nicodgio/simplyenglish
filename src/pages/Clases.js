@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
+import {
   faChalkboardTeacher, faUsers, faBookOpen, faGlobe, faVideo,
   faClock, faGraduationCap, faPlay, faCheck,
   faStar, faRocket, faTrophy, faChartLine,
@@ -19,7 +19,7 @@ const Clases = () => {
 
   useEffect(() => {
     document.title = 'Clases de Inglés Online - Simply English | A1 a B1 en 8 Meses';
-    
+
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.content = 'Clases de inglés 100% en vivo. Programa completo A1 a B1 en 8 meses. Certificación incluida. Grupos reducidos, horarios flexibles. Primera clase gratis.';
@@ -306,137 +306,48 @@ const Clases = () => {
 
   return (
     <main style={{ overflowX: 'hidden', width: '100%' }}>
-      <section style={styles.hero} aria-label="Clases de inglés online">
-        <div style={styles.heroPattern} />
-        <div style={styles.container}>
-          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={styles.badge}>
-              <FontAwesomeIcon icon={faGraduationCap} style={{ marginRight: '10px' }} />
-              Programa Completo A1 - B1
+      <section style={{
+        background: "linear-gradient(180deg, #1a2855 0%, #2c3e50 100%)",
+        color: "white",
+        padding: "80px 0",
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
+          <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
+            <div style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              borderRadius: "4px",
+              padding: "8px 20px",
+              display: "inline-block",
+              marginBottom: "24px",
+              fontSize: "0.9rem",
+              fontWeight: "500",
+              letterSpacing: "0.5px",
+            }}>
+              <FontAwesomeIcon icon={faGraduationCap} style={{ marginRight: "8px" }} />
+              PROGRAMA COMPLETO A1 - B1
             </div>
             <h1 style={{
-              fontSize: 'clamp(2rem, 6vw, 3.5rem)',
-              fontWeight: '700',
-              marginBottom: '24px',
-              color: 'white',
-              lineHeight: '1.2'
+              fontSize: "2.8rem",
+              fontWeight: "300",
+              marginBottom: "20px",
+              letterSpacing: "-0.02em",
+              lineHeight: "1.2",
+              color: "white",
             }}>
-              De cero a nivel intermedio<br />
-              <span style={{ color: '#FFD700' }}>en 8 meses</span>
+              De cero a nivel intermedio en 8 meses
             </h1>
             <p style={{
-              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
+              fontSize: "1.1rem",
               opacity: 0.9,
-              marginBottom: '40px',
-              color: 'white',
-              maxWidth: '700px',
-              margin: '0 auto 40px',
-              padding: '0 15px'
+              fontWeight: "300",
+              maxWidth: "600px",
+              margin: "0 auto",
+              lineHeight: "1.6",
             }}>
-              Metodología comprobada que te lleva paso a paso desde las bases hasta 
-              conversar con confianza en inglés. Certificación B1 incluida.
+              Metodología comprobada que te lleva paso a paso desde las bases
+              <br />
+              hasta conversar con confianza en inglés. Certificación B1 incluida
             </p>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              gap: 'clamp(20px, 4vw, 30px)',
-              marginBottom: '40px',
-              flexWrap: 'wrap'
-            }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{
-                  fontSize: 'clamp(2rem, 4vw, 2.5rem)',
-                  fontWeight: 'bold',
-                  color: '#FFD700'
-                }}>8</div>
-                <div style={{
-                  opacity: 0.9,
-                  fontSize: 'clamp(0.8rem, 1.5vw, 0.95rem)'
-                }}>Niveles progresivos</div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{
-                  fontSize: 'clamp(2rem, 4vw, 2.5rem)',
-                  fontWeight: 'bold',
-                  color: '#FFD700'
-                }}>4</div>
-                <div style={{
-                  opacity: 0.9,
-                  fontSize: 'clamp(0.8rem, 1.5vw, 0.95rem)'
-                }}>Horas semanales</div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{
-                  fontSize: 'clamp(2rem, 4vw, 2.5rem)',
-                  fontWeight: 'bold',
-                  color: '#FFD700'
-                }}>B1</div>
-                <div style={{
-                  opacity: 0.9,
-                  fontSize: 'clamp(0.8rem, 1.5vw, 0.95rem)'
-                }}>Nivel alcanzado</div>
-              </div>
-            </div>
-            <div style={{
-              display: 'flex',
-              gap: '20px',
-              justifyContent: 'center',
-              flexWrap: 'wrap'
-            }}>
-              <a
-                href="/registro"
-                style={{
-                  background: '#BF0A30',
-                  color: 'white',
-                  border: 'none',
-                  padding: 'clamp(12px, 2vw, 15px) clamp(25px, 4vw, 40px)',
-                  fontSize: 'clamp(1rem, 2vw, 1.1rem)',
-                  fontWeight: 'bold',
-                  borderRadius: '30px',
-                  transition: 'all 0.3s ease',
-                  textDecoration: 'none',
-                  display: 'inline-block'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#9f0825';
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#BF0A30';
-                  e.currentTarget.style.transform = 'scale(1)';
-                }}
-                aria-label="Comenzar programa de inglés ahora"
-              >
-                <FontAwesomeIcon icon={faRocket} style={{ marginRight: '10px' }} />
-                Comenzar ahora
-              </a>
-              <a
-                href="/horarios"
-                style={{
-                  background: 'transparent',
-                  color: 'white',
-                  border: '2px solid white',
-                  padding: 'clamp(12px, 2vw, 15px) clamp(25px, 4vw, 40px)',
-                  fontSize: 'clamp(1rem, 2vw, 1.1rem)',
-                  fontWeight: 'bold',
-                  borderRadius: '30px',
-                  transition: 'all 0.3s ease',
-                  textDecoration: 'none',
-                  display: 'inline-block'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'white';
-                  e.currentTarget.style.color = '#002868';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = 'white';
-                }}
-                aria-label="Ver horarios disponibles"
-              >
-                Ver horarios
-              </a>
-            </div>
           </div>
         </div>
       </section>
@@ -450,23 +361,23 @@ const Clases = () => {
           }}>
             <article>
               <div style={styles.statCard}>
-                <FontAwesomeIcon 
-                  icon={faClock} 
-                  style={{ 
-                    fontSize: 'clamp(2rem, 4vw, 3rem)', 
-                    color: '#002868', 
-                    marginBottom: '15px' 
+                <FontAwesomeIcon
+                  icon={faClock}
+                  style={{
+                    fontSize: 'clamp(2rem, 4vw, 3rem)',
+                    color: '#002868',
+                    marginBottom: '15px'
                   }}
                 />
-                <h3 style={{ 
-                  color: '#002868', 
+                <h3 style={{
+                  color: '#002868',
                   marginBottom: '10px',
                   fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)'
                 }}>
                   {animatedNumbers.hours} horas
                 </h3>
-                <p style={{ 
-                  color: '#6c757d', 
+                <p style={{
+                  color: '#6c757d',
                   margin: 0,
                   fontSize: 'clamp(0.8rem, 1.5vw, 0.95rem)'
                 }}>
@@ -476,23 +387,23 @@ const Clases = () => {
             </article>
             <article>
               <div style={styles.statCard}>
-                <FontAwesomeIcon 
-                  icon={faUsers} 
-                  style={{ 
-                    fontSize: 'clamp(2rem, 4vw, 3rem)', 
-                    color: '#BF0A30', 
-                    marginBottom: '15px' 
+                <FontAwesomeIcon
+                  icon={faUsers}
+                  style={{
+                    fontSize: 'clamp(2rem, 4vw, 3rem)',
+                    color: '#BF0A30',
+                    marginBottom: '15px'
                   }}
                 />
-                <h3 style={{ 
-                  color: '#BF0A30', 
+                <h3 style={{
+                  color: '#BF0A30',
                   marginBottom: '10px',
                   fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)'
                 }}>
                   {animatedNumbers.students} máx
                 </h3>
-                <p style={{ 
-                  color: '#6c757d', 
+                <p style={{
+                  color: '#6c757d',
                   margin: 0,
                   fontSize: 'clamp(0.8rem, 1.5vw, 0.95rem)'
                 }}>
@@ -502,23 +413,23 @@ const Clases = () => {
             </article>
             <article>
               <div style={styles.statCard}>
-                <FontAwesomeIcon 
-                  icon={faGraduationCap} 
-                  style={{ 
-                    fontSize: 'clamp(2rem, 4vw, 3rem)', 
-                    color: '#002868', 
-                    marginBottom: '15px' 
+                <FontAwesomeIcon
+                  icon={faGraduationCap}
+                  style={{
+                    fontSize: 'clamp(2rem, 4vw, 3rem)',
+                    color: '#002868',
+                    marginBottom: '15px'
                   }}
                 />
-                <h3 style={{ 
-                  color: '#002868', 
+                <h3 style={{
+                  color: '#002868',
                   marginBottom: '10px',
                   fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)'
                 }}>
                   Nivel B1
                 </h3>
-                <p style={{ 
-                  color: '#6c757d', 
+                <p style={{
+                  color: '#6c757d',
                   margin: 0,
                   fontSize: 'clamp(0.8rem, 1.5vw, 0.95rem)'
                 }}>
@@ -533,19 +444,19 @@ const Clases = () => {
       <section style={{ ...styles.sectionPadding, ...styles.bgLight }} aria-label="Características del programa">
         <div style={styles.container}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
-            <h2 style={{ 
-              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
-              marginBottom: '1rem' 
+            <h2 style={{
+              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+              marginBottom: '1rem'
             }}>
               ¿Por qué elegirnos?
             </h2>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
-              color: '#6c757d', 
-              maxWidth: '700px', 
-              margin: '0 auto' 
+            <p style={{
+              fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+              color: '#6c757d',
+              maxWidth: '700px',
+              margin: '0 auto'
             }}>
-              Nuestra metodología única garantiza resultados reales con un enfoque 
+              Nuestra metodología única garantiza resultados reales con un enfoque
               100% práctico y conversacional.
             </p>
           </div>
@@ -557,7 +468,7 @@ const Clases = () => {
           }}>
             {features.map((feature, index) => (
               <article key={index}>
-                <div 
+                <div
                   style={styles.featureBox}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = feature.color;
@@ -570,21 +481,21 @@ const Clases = () => {
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
-                  <div style={{ 
+                  <div style={{
                     ...styles.iconWrapper,
                     background: feature.color + '15',
                     color: feature.color
                   }}>
                     <FontAwesomeIcon icon={feature.icon} />
                   </div>
-                  <h5 style={{ 
+                  <h5 style={{
                     marginBottom: '15px',
                     fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                   }}>
                     {feature.title}
                   </h5>
-                  <p style={{ 
-                    color: '#6c757d', 
+                  <p style={{
+                    color: '#6c757d',
                     margin: 0,
                     fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                   }}>
@@ -600,19 +511,19 @@ const Clases = () => {
       <section style={styles.sectionPadding} aria-label="Niveles del programa">
         <div style={styles.container}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
-            <h2 style={{ 
-              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
-              marginBottom: '1rem' 
+            <h2 style={{
+              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+              marginBottom: '1rem'
             }}>
               Tu camino hacia el nivel intermedio
             </h2>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
-              color: '#6c757d', 
-              maxWidth: '700px', 
-              margin: '0 auto' 
+            <p style={{
+              fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+              color: '#6c757d',
+              maxWidth: '700px',
+              margin: '0 auto'
             }}>
-              8 niveles diseñados para llevarte desde cero hasta mantener conversaciones 
+              8 niveles diseñados para llevarte desde cero hasta mantener conversaciones
               con confianza en inglés (Nivel B1).
             </p>
           </div>
@@ -623,19 +534,19 @@ const Clases = () => {
             gap: 'clamp(20px, 4vw, 30px)'
           }}>
             {levels.map((level, index) => (
-              <article 
+              <article
                 key={index}
                 style={styles.levelCard}
                 onMouseEnter={() => setHoveredLevel(index)}
                 onMouseLeave={() => setHoveredLevel(null)}
                 onClick={() => setSelectedLevel(level)}
               >
-                <div style={{ 
+                <div style={{
                   ...styles.levelHeader,
                   background: level.color,
                   transform: hoveredLevel === index ? 'scale(1.05)' : 'scale(1)'
                 }}>
-                  <div style={{ 
+                  <div style={{
                     position: 'absolute',
                     top: '-20px',
                     right: '-20px',
@@ -645,21 +556,21 @@ const Clases = () => {
                     <FontAwesomeIcon icon={level.icon} />
                   </div>
                   <div style={{ position: 'relative', zIndex: 1 }}>
-                    <div style={{ 
-                      fontSize: 'clamp(2rem, 5vw, 3rem)', 
+                    <div style={{
+                      fontSize: 'clamp(2rem, 5vw, 3rem)',
                       fontWeight: 'bold',
                       marginBottom: '10px'
                     }}>
                       {level.number}
                     </div>
-                    <h4 style={{ 
-                      marginBottom: '5px', 
+                    <h4 style={{
+                      marginBottom: '5px',
                       color: 'white',
                       fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                     }}>
                       {level.name}
                     </h4>
-                    <span style={{ 
+                    <span style={{
                       background: 'rgba(255,255,255,0.2)',
                       padding: '4px 12px',
                       borderRadius: '15px',
@@ -669,34 +580,34 @@ const Clases = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 <div style={{ padding: 'clamp(20px, 4vw, 30px)' }}>
-                  <h5 style={{ 
-                    marginBottom: '15px', 
+                  <h5 style={{
+                    marginBottom: '15px',
                     color: level.color,
                     fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                   }}>
                     {level.title}
                   </h5>
-                  <p style={{ 
-                    color: '#6c757d', 
-                    marginBottom: '20px', 
-                    fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)' 
+                  <p style={{
+                    color: '#6c757d',
+                    marginBottom: '20px',
+                    fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)'
                   }}>
                     {level.description}
                   </p>
-                  
+
                   <div style={{ marginBottom: '20px' }}>
                     {level.skills.map((skill, idx) => (
-                      <div key={idx} style={{ 
-                        display: 'flex', 
+                      <div key={idx} style={{
+                        display: 'flex',
                         alignItems: 'center',
                         marginBottom: '8px',
                         fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
                       }}>
-                        <FontAwesomeIcon 
-                          icon={faCheck} 
-                          style={{ 
+                        <FontAwesomeIcon
+                          icon={faCheck}
+                          style={{
                             color: '#28a745',
                             marginRight: '10px',
                             fontSize: 'clamp(0.7rem, 1.2vw, 0.8rem)'
@@ -706,8 +617,8 @@ const Clases = () => {
                       </div>
                     ))}
                   </div>
-                  
-                  <div style={{ 
+
+                  <div style={{
                     borderTop: '1px solid #e9ecef',
                     paddingTop: '15px',
                     display: 'flex',
@@ -716,15 +627,15 @@ const Clases = () => {
                     flexWrap: 'wrap',
                     gap: '10px'
                   }}>
-                    <span style={{ 
-                      color: '#6c757d', 
-                      fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)' 
+                    <span style={{
+                      color: '#6c757d',
+                      fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
                     }}>
                       <FontAwesomeIcon icon={faClock} style={{ marginRight: '8px' }} />
                       {level.duration}
                     </span>
                     {level.certificate && (
-                      <span style={{ 
+                      <span style={{
                         color: '#FFD700',
                         fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
                         fontWeight: 'bold'
@@ -735,8 +646,8 @@ const Clases = () => {
                     )}
                   </div>
                 </div>
-                
-                <div style={{ 
+
+                <div style={{
                   position: 'absolute',
                   bottom: 0,
                   left: 0,
@@ -762,19 +673,19 @@ const Clases = () => {
             alignItems: 'center'
           }}>
             <div>
-              <h2 style={{ 
-                fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
-                marginBottom: '2rem' 
+              <h2 style={{
+                fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+                marginBottom: '2rem'
               }}>
                 Metodología que garantiza resultados
               </h2>
-              
+
               <div style={{
                 ...styles.methodologyCard,
                 flexDirection: window.innerWidth < 768 ? 'column' : 'row',
                 textAlign: window.innerWidth < 768 ? 'center' : 'left'
               }}>
-                <div style={{ 
+                <div style={{
                   flexShrink: 0,
                   width: 'clamp(50px, 8vw, 60px)',
                   height: 'clamp(50px, 8vw, 60px)',
@@ -789,19 +700,19 @@ const Clases = () => {
                   <FontAwesomeIcon icon={faChalkboardTeacher} />
                 </div>
                 <div>
-                  <h5 style={{ 
-                    marginBottom: '10px', 
+                  <h5 style={{
+                    marginBottom: '10px',
                     color: '#002868',
                     fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                   }}>
                     Enfoque Comunicativo
                   </h5>
-                  <p style={{ 
-                    color: '#6c757d', 
+                  <p style={{
+                    color: '#6c757d',
                     margin: 0,
                     fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                   }}>
-                    50% de cada clase dedicada a práctica conversacional. 
+                    50% de cada clase dedicada a práctica conversacional.
                     Hablarás inglés desde el primer día.
                   </p>
                 </div>
@@ -812,7 +723,7 @@ const Clases = () => {
                 flexDirection: window.innerWidth < 768 ? 'column' : 'row',
                 textAlign: window.innerWidth < 768 ? 'center' : 'left'
               }}>
-                <div style={{ 
+                <div style={{
                   flexShrink: 0,
                   width: 'clamp(50px, 8vw, 60px)',
                   height: 'clamp(50px, 8vw, 60px)',
@@ -827,19 +738,19 @@ const Clases = () => {
                   <FontAwesomeIcon icon={faLightbulb} />
                 </div>
                 <div>
-                  <h5 style={{ 
-                    marginBottom: '10px', 
+                  <h5 style={{
+                    marginBottom: '10px',
                     color: '#BF0A30',
                     fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                   }}>
                     Aprendizaje Activo
                   </h5>
-                  <p style={{ 
-                    color: '#6c757d', 
+                  <p style={{
+                    color: '#6c757d',
                     margin: 0,
                     fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                   }}>
-                    Dinámicas interactivas, role-plays y situaciones reales 
+                    Dinámicas interactivas, role-plays y situaciones reales
                     que mantienen tu motivación al máximo.
                   </p>
                 </div>
@@ -850,7 +761,7 @@ const Clases = () => {
                 flexDirection: window.innerWidth < 768 ? 'column' : 'row',
                 textAlign: window.innerWidth < 768 ? 'center' : 'left'
               }}>
-                <div style={{ 
+                <div style={{
                   flexShrink: 0,
                   width: 'clamp(50px, 8vw, 60px)',
                   height: 'clamp(50px, 8vw, 60px)',
@@ -865,19 +776,19 @@ const Clases = () => {
                   <FontAwesomeIcon icon={faHeadset} />
                 </div>
                 <div>
-                  <h5 style={{ 
-                    marginBottom: '10px', 
+                  <h5 style={{
+                    marginBottom: '10px',
                     color: '#002868',
                     fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                   }}>
                     Soporte Continuo
                   </h5>
-                  <p style={{ 
-                    color: '#6c757d', 
+                  <p style={{
+                    color: '#6c757d',
                     margin: 0,
                     fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                   }}>
-                    Apoyo personalizado dentro y fuera de clase. 
+                    Apoyo personalizado dentro y fuera de clase.
                     Resolvemos tus dudas por WhatsApp 24/7.
                   </p>
                 </div>
@@ -885,141 +796,141 @@ const Clases = () => {
             </div>
 
             <div>
-              <div style={{ 
+              <div style={{
                 background: 'white',
                 borderRadius: '15px',
                 padding: 'clamp(30px, 5vw, 40px)',
                 boxShadow: '0 20px 60px rgba(0, 40, 104, 0.1)',
                 textAlign: 'center'
               }}>
-                <h4 style={{ 
-                  color: '#002868', 
+                <h4 style={{
+                  color: '#002868',
                   marginBottom: '30px',
                   fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)'
                 }}>
                   Lo que incluye cada nivel
                 </h4>
-                
+
                 <div style={{ textAlign: 'left' }}>
-                  <div style={{ 
+                  <div style={{
                     display: 'flex',
                     alignItems: 'center',
                     marginBottom: '20px',
                     paddingBottom: '20px',
                     borderBottom: '1px solid #e9ecef'
                   }}>
-                    <FontAwesomeIcon 
-                      icon={faVideo} 
-                      style={{ 
+                    <FontAwesomeIcon
+                      icon={faVideo}
+                      style={{
                         color: '#BF0A30',
                         fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
                         marginRight: '20px'
                       }}
                     />
                     <div>
-                      <h6 style={{ 
+                      <h6 style={{
                         marginBottom: '5px',
                         fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                       }}>
                         16 clases en vivo
                       </h6>
-                      <p style={{ 
-                        color: '#6c757d', 
-                        margin: 0, 
-                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)' 
+                      <p style={{
+                        color: '#6c757d',
+                        margin: 0,
+                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
                       }}>
                         4 clases por semana de 60 minutos
                       </p>
                     </div>
                   </div>
 
-                  <div style={{ 
+                  <div style={{
                     display: 'flex',
                     alignItems: 'center',
                     marginBottom: '20px',
                     paddingBottom: '20px',
                     borderBottom: '1px solid #e9ecef'
                   }}>
-                    <FontAwesomeIcon 
-                      icon={faBookOpen} 
-                      style={{ 
+                    <FontAwesomeIcon
+                      icon={faBookOpen}
+                      style={{
                         color: '#002868',
                         fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
                         marginRight: '20px'
                       }}
                     />
                     <div>
-                      <h6 style={{ 
+                      <h6 style={{
                         marginBottom: '5px',
                         fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                       }}>
                         Material digital
                       </h6>
-                      <p style={{ 
-                        color: '#6c757d', 
-                        margin: 0, 
-                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)' 
+                      <p style={{
+                        color: '#6c757d',
+                        margin: 0,
+                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
                       }}>
                         Libros, ejercicios y recursos multimedia
                       </p>
                     </div>
                   </div>
 
-                  <div style={{ 
+                  <div style={{
                     display: 'flex',
                     alignItems: 'center',
                     marginBottom: '20px',
                     paddingBottom: '20px',
                     borderBottom: '1px solid #e9ecef'
                   }}>
-                    <FontAwesomeIcon 
-                      icon={faChartLine} 
-                      style={{ 
+                    <FontAwesomeIcon
+                      icon={faChartLine}
+                      style={{
                         color: '#BF0A30',
                         fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
                         marginRight: '20px'
                       }}
                     />
                     <div>
-                      <h6 style={{ 
+                      <h6 style={{
                         marginBottom: '5px',
                         fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                       }}>
                         Evaluación continua
                       </h6>
-                      <p style={{ 
-                        color: '#6c757d', 
-                        margin: 0, 
-                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)' 
+                      <p style={{
+                        color: '#6c757d',
+                        margin: 0,
+                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
                       }}>
                         Seguimiento personalizado de tu progreso
                       </p>
                     </div>
                   </div>
 
-                  <div style={{ 
+                  <div style={{
                     display: 'flex',
                     alignItems: 'center'
                   }}>
-                    <FontAwesomeIcon 
-                      icon={faHandshake} 
-                      style={{ 
+                    <FontAwesomeIcon
+                      icon={faHandshake}
+                      style={{
                         color: '#002868',
                         fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
                         marginRight: '20px'
                       }}
                     />
                     <div>
-                      <h6 style={{ 
+                      <h6 style={{
                         marginBottom: '5px',
                         fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                       }}>
                         Práctica adicional
                       </h6>
-                      <p style={{ 
-                        color: '#6c757d', 
-                        margin: 0, 
-                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)' 
+                      <p style={{
+                        color: '#6c757d',
+                        margin: 0,
+                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
                       }}>
                         Sesiones de conversación y tutorías
                       </p>
@@ -1028,8 +939,8 @@ const Clases = () => {
                 </div>
 
                 <a
-                  href="/contacto"
-                  style={{ 
+                  href="/Usuarios"
+                  style={{
                     ...styles.primaryButton,
                     width: '100%',
                     marginTop: '30px',
@@ -1046,7 +957,7 @@ const Clases = () => {
                   }}
                   aria-label="Contactar para detalles del programa de inglés"
                 >
-                  Ver detalles del programa
+                  Registrate
                 </a>
               </div>
             </div>
@@ -1057,19 +968,19 @@ const Clases = () => {
       <section style={styles.sectionPadding} aria-label="Ruta de aprendizaje">
         <div style={styles.container}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
-            <h2 style={{ 
-              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
-              marginBottom: '1rem' 
+            <h2 style={{
+              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+              marginBottom: '1rem'
             }}>
               Tu ruta hacia el nivel intermedio
             </h2>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
-              color: '#6c757d', 
-              maxWidth: '700px', 
-              margin: '0 auto' 
+            <p style={{
+              fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+              color: '#6c757d',
+              maxWidth: '700px',
+              margin: '0 auto'
             }}>
-              Cada etapa está diseñada para construir sobre la anterior, 
+              Cada etapa está diseñada para construir sobre la anterior,
               garantizando un aprendizaje sólido y progresivo hasta alcanzar el B1.
             </p>
           </div>
@@ -1081,7 +992,7 @@ const Clases = () => {
           }}>
             <article>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ 
+                <div style={{
                   width: 'clamp(100px, 15vw, 120px)',
                   height: 'clamp(100px, 15vw, 120px)',
                   borderRadius: '50%',
@@ -1094,27 +1005,27 @@ const Clases = () => {
                   margin: '0 auto 20px',
                   boxShadow: '0 10px 30px rgba(0, 40, 104, 0.2)'
                 }}>
-                  <FontAwesomeIcon icon={faRocket} style={{ 
-                    fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', 
-                    marginBottom: '5px' 
+                  <FontAwesomeIcon icon={faRocket} style={{
+                    fontSize: 'clamp(1.8rem, 3vw, 2.5rem)',
+                    marginBottom: '5px'
                   }} />
-                  <span style={{ 
-                    fontSize: 'clamp(0.7rem, 1.3vw, 0.9rem)', 
-                    fontWeight: 'bold' 
+                  <span style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw, 0.9rem)',
+                    fontWeight: 'bold'
                   }}>
                     Meses 1-2
                   </span>
                 </div>
-                <h5 style={{ 
-                  color: '#002868', 
+                <h5 style={{
+                  color: '#002868',
                   marginBottom: '10px',
                   fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                 }}>
                   Bases Sólidas
                 </h5>
-                <p style={{ 
-                  color: '#6c757d', 
-                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)' 
+                <p style={{
+                  color: '#6c757d',
+                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)'
                 }}>
                   Aprende vocabulario esencial y estructuras básicas (A1)
                 </p>
@@ -1123,7 +1034,7 @@ const Clases = () => {
 
             <article>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ 
+                <div style={{
                   width: 'clamp(100px, 15vw, 120px)',
                   height: 'clamp(100px, 15vw, 120px)',
                   borderRadius: '50%',
@@ -1136,27 +1047,27 @@ const Clases = () => {
                   margin: '0 auto 20px',
                   boxShadow: '0 10px 30px rgba(191, 10, 48, 0.2)'
                 }}>
-                  <FontAwesomeIcon icon={faUserGraduate} style={{ 
-                    fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', 
-                    marginBottom: '5px' 
+                  <FontAwesomeIcon icon={faUserGraduate} style={{
+                    fontSize: 'clamp(1.8rem, 3vw, 2.5rem)',
+                    marginBottom: '5px'
                   }} />
-                  <span style={{ 
-                    fontSize: 'clamp(0.7rem, 1.3vw, 0.9rem)', 
-                    fontWeight: 'bold' 
+                  <span style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw, 0.9rem)',
+                    fontWeight: 'bold'
                   }}>
                     Meses 3-4
                   </span>
                 </div>
-                <h5 style={{ 
-                  color: '#BF0A30', 
+                <h5 style={{
+                  color: '#BF0A30',
                   marginBottom: '10px',
                   fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                 }}>
                   Comunicación Básica
                 </h5>
-                <p style={{ 
-                  color: '#6c757d', 
-                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)' 
+                <p style={{
+                  color: '#6c757d',
+                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)'
                 }}>
                   Participa en conversaciones simples del día a día (A1+)
                 </p>
@@ -1165,7 +1076,7 @@ const Clases = () => {
 
             <article>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ 
+                <div style={{
                   width: 'clamp(100px, 15vw, 120px)',
                   height: 'clamp(100px, 15vw, 120px)',
                   borderRadius: '50%',
@@ -1178,27 +1089,27 @@ const Clases = () => {
                   margin: '0 auto 20px',
                   boxShadow: '0 10px 30px rgba(0, 40, 104, 0.2)'
                 }}>
-                  <FontAwesomeIcon icon={faChartLine} style={{ 
-                    fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', 
-                    marginBottom: '5px' 
+                  <FontAwesomeIcon icon={faChartLine} style={{
+                    fontSize: 'clamp(1.8rem, 3vw, 2.5rem)',
+                    marginBottom: '5px'
                   }} />
-                  <span style={{ 
-                    fontSize: 'clamp(0.7rem, 1.3vw, 0.9rem)', 
-                    fontWeight: 'bold' 
+                  <span style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw, 0.9rem)',
+                    fontWeight: 'bold'
                   }}>
                     Meses 5-6
                   </span>
                 </div>
-                <h5 style={{ 
-                  color: '#002868', 
+                <h5 style={{
+                  color: '#002868',
                   marginBottom: '10px',
                   fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                 }}>
                   Fluidez Elemental
                 </h5>
-                <p style={{ 
-                  color: '#6c757d', 
-                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)' 
+                <p style={{
+                  color: '#6c757d',
+                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)'
                 }}>
                   Expresa ideas y opiniones con mayor confianza (A2)
                 </p>
@@ -1207,7 +1118,7 @@ const Clases = () => {
 
             <article>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ 
+                <div style={{
                   width: 'clamp(100px, 15vw, 120px)',
                   height: 'clamp(100px, 15vw, 120px)',
                   borderRadius: '50%',
@@ -1220,27 +1131,27 @@ const Clases = () => {
                   margin: '0 auto 20px',
                   boxShadow: '0 10px 30px rgba(255, 215, 0, 0.3)'
                 }}>
-                  <FontAwesomeIcon icon={faTrophy} style={{ 
-                    fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', 
-                    marginBottom: '5px' 
+                  <FontAwesomeIcon icon={faTrophy} style={{
+                    fontSize: 'clamp(1.8rem, 3vw, 2.5rem)',
+                    marginBottom: '5px'
                   }} />
-                  <span style={{ 
-                    fontSize: 'clamp(0.7rem, 1.3vw, 0.9rem)', 
-                    fontWeight: 'bold' 
+                  <span style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw, 0.9rem)',
+                    fontWeight: 'bold'
                   }}>
                     Meses 7-8
                   </span>
                 </div>
-                <h5 style={{ 
-                  color: '#002868', 
+                <h5 style={{
+                  color: '#002868',
                   marginBottom: '10px',
                   fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                 }}>
                   Nivel Intermedio
                 </h5>
-                <p style={{ 
-                  color: '#6c757d', 
-                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)' 
+                <p style={{
+                  color: '#6c757d',
+                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)'
                 }}>
                   Mantén conversaciones fluidas y obtén tu certificación B1
                 </p>
@@ -1248,36 +1159,36 @@ const Clases = () => {
             </article>
           </div>
 
-          <div style={{ 
+          <div style={{
             textAlign: 'center',
             marginTop: 'clamp(2rem, 5vw, 3rem)',
             padding: 'clamp(20px, 4vw, 30px)',
             background: '#f8f9fa',
             borderRadius: '15px'
           }}>
-            <FontAwesomeIcon 
-              icon={faCertificate} 
-              style={{ 
+            <FontAwesomeIcon
+              icon={faCertificate}
+              style={{
                 fontSize: 'clamp(2rem, 4vw, 3rem)',
                 color: '#FFD700',
                 marginBottom: '20px'
               }}
             />
-            <h4 style={{ 
-              color: '#002868', 
+            <h4 style={{
+              color: '#002868',
               marginBottom: '15px',
               fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)'
             }}>
               Certificación B1 incluida
             </h4>
-            <p style={{ 
-              color: '#6c757d', 
-              maxWidth: '600px', 
+            <p style={{
+              color: '#6c757d',
+              maxWidth: '600px',
               margin: '0 auto',
               fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
             }}>
-              Al completar los 8 niveles, alcanzarás un nivel B1 intermedio. Serás capaz de mantener 
-              conversaciones sobre temas familiares, expresar opiniones y desenvolverte en situaciones 
+              Al completar los 8 niveles, alcanzarás un nivel B1 intermedio. Serás capaz de mantener
+              conversaciones sobre temas familiares, expresar opiniones y desenvolverte en situaciones
               cotidianas en inglés. ¡Un logro que abrirá nuevas puertas en tu vida!
             </p>
           </div>
@@ -1287,9 +1198,9 @@ const Clases = () => {
       <section style={{ ...styles.sectionPadding, ...styles.bgLight }} aria-label="Por qué confiar en nosotros">
         <div style={styles.container}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
-            <h2 style={{ 
-              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
-              marginBottom: '1rem' 
+            <h2 style={{
+              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+              marginBottom: '1rem'
             }}>
               ¿Por qué confiar en nosotros?
             </h2>
@@ -1301,7 +1212,7 @@ const Clases = () => {
             gap: 'clamp(20px, 4vw, 30px)'
           }}>
             <article>
-              <div style={{ 
+              <div style={{
                 background: 'white',
                 borderRadius: '15px',
                 padding: 'clamp(30px, 5vw, 40px)',
@@ -1309,32 +1220,32 @@ const Clases = () => {
                 boxShadow: '0 10px 40px rgba(0, 40, 104, 0.08)',
                 textAlign: 'center'
               }}>
-                <FontAwesomeIcon 
-                  icon={faAward} 
-                  style={{ 
+                <FontAwesomeIcon
+                  icon={faAward}
+                  style={{
                     fontSize: 'clamp(2rem, 4vw, 3rem)',
                     color: '#002868',
                     marginBottom: '20px'
                   }}
                 />
-                <h4 style={{ 
+                <h4 style={{
                   marginBottom: '15px',
                   fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                 }}>
                   Profesores Certificados
                 </h4>
-                <p style={{ 
+                <p style={{
                   color: '#6c757d',
                   fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                 }}>
-                  Todos nuestros profesores cuentan con certificaciones 
+                  Todos nuestros profesores cuentan con certificaciones
                   internacionales en enseñanza del inglés.
                 </p>
               </div>
             </article>
 
             <article>
-              <div style={{ 
+              <div style={{
                 background: 'white',
                 borderRadius: '15px',
                 padding: 'clamp(30px, 5vw, 40px)',
@@ -1342,32 +1253,32 @@ const Clases = () => {
                 boxShadow: '0 10px 40px rgba(0, 40, 104, 0.08)',
                 textAlign: 'center'
               }}>
-                <FontAwesomeIcon 
-                  icon={faStar} 
-                  style={{ 
+                <FontAwesomeIcon
+                  icon={faStar}
+                  style={{
                     fontSize: 'clamp(2rem, 4vw, 3rem)',
                     color: '#BF0A30',
                     marginBottom: '20px'
                   }}
                 />
-                <h4 style={{ 
+                <h4 style={{
                   marginBottom: '15px',
                   fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                 }}>
                   Metodología Probada
                 </h4>
-                <p style={{ 
+                <p style={{
                   color: '#6c757d',
                   fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                 }}>
-                  Miles de estudiantes han alcanzado el nivel B1 con nuestro 
+                  Miles de estudiantes han alcanzado el nivel B1 con nuestro
                   programa estructurado y enfoque práctico.
                 </p>
               </div>
             </article>
 
             <article>
-              <div style={{ 
+              <div style={{
                 background: 'white',
                 borderRadius: '15px',
                 padding: 'clamp(30px, 5vw, 40px)',
@@ -1375,25 +1286,25 @@ const Clases = () => {
                 boxShadow: '0 10px 40px rgba(0, 40, 104, 0.08)',
                 textAlign: 'center'
               }}>
-                <FontAwesomeIcon 
-                  icon={faGlobe} 
-                  style={{ 
+                <FontAwesomeIcon
+                  icon={faGlobe}
+                  style={{
                     fontSize: 'clamp(2rem, 4vw, 3rem)',
                     color: '#002868',
                     marginBottom: '20px'
                   }}
                 />
-                <h4 style={{ 
+                <h4 style={{
                   marginBottom: '15px',
                   fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                 }}>
                   Alcance Global
                 </h4>
-                <p style={{ 
+                <p style={{
                   color: '#6c757d',
                   fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                 }}>
-                  Estudiantes de toda América Latina confían en nosotros 
+                  Estudiantes de toda América Latina confían en nosotros
                   para alcanzar sus metas con el inglés.
                 </p>
               </div>
@@ -1402,7 +1313,7 @@ const Clases = () => {
         </div>
       </section>
 
-      <section style={{ 
+      <section style={{
         background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
         color: 'white',
         padding: 'clamp(40px, 8vw, 80px) 0',
@@ -1419,43 +1330,42 @@ const Clases = () => {
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
           backgroundSize: '40px 40px'
         }} />
-        
+
         <div style={styles.container}>
-          <div style={{ 
-            maxWidth: '800px', 
-            margin: '0 auto', 
-            textAlign: 'center', 
-            position: 'relative', 
-            zIndex: 1 
+          <div style={{
+            maxWidth: '800px',
+            margin: '0 auto',
+            textAlign: 'center',
+            position: 'relative',
+            zIndex: 1
           }}>
-            <h2 style={{ 
-              fontSize: 'clamp(2rem, 5vw, 3rem)', 
-              fontWeight: 'bold', 
-              marginBottom: '1.5rem', 
-              color: 'white' 
+            <h2 style={{
+              fontSize: 'clamp(2rem, 5vw, 3rem)',
+              fontWeight: 'bold',
+              marginBottom: '1.5rem',
+              color: 'white'
             }}>
               Da el primer paso hacia tu meta
             </h2>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', 
-              marginBottom: '3rem', 
-              opacity: 0.9, 
+            <p style={{
+              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
+              marginBottom: '3rem',
+              opacity: 0.9,
               color: 'white',
               padding: '0 15px'
             }}>
-              Primera clase completamente GRATIS. Sin compromisos, sin tarjetas de crédito.
               Descubre cómo puedes alcanzar el nivel B1 en solo 8 meses.
             </p>
-            
-            <div style={{ 
-              display: 'flex', 
-              gap: '20px', 
-              justifyContent: 'center', 
-              flexWrap: 'wrap' 
+
+            <div style={{
+              display: 'flex',
+              gap: '20px',
+              justifyContent: 'center',
+              flexWrap: 'wrap'
             }}>
               <a
-                href="/registro"
-                style={{ 
+                href="/Usuarios"
+                style={{
                   background: '#BF0A30',
                   color: 'white',
                   border: 'none',
@@ -1480,10 +1390,10 @@ const Clases = () => {
                 <FontAwesomeIcon icon={faRocket} style={{ marginRight: '10px' }} />
                 Comenzar ahora
               </a>
-              
+
               <a
                 href="/horarios"
-                style={{ 
+                style={{
                   background: 'transparent',
                   color: 'white',
                   border: '2px solid white',

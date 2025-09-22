@@ -11,7 +11,7 @@ const About = () => {
   useEffect(() => {
     // SEO
     document.title = 'Nosotros - Simply English | Centro Educativo Autorizado SEP CONOCER';
-    
+
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.content = 'Conoce Simply English: Centro educativo autorizado con certificación CONOCER-SEP. +300 estudiantes graduados, 95% satisfacción. Método innovador de inglés en línea.';
@@ -284,61 +284,48 @@ const About = () => {
   return (
     <main style={{ overflowX: 'hidden', width: '100%' }}>
       {/* Hero Section */}
-      <section style={styles.header} aria-label="Información principal">
-        <div style={styles.headerPattern} />
-        <div style={styles.container}>
-          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={{ 
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '8px',
-              padding: '12px 24px',
-              display: 'inline-block',
-              marginBottom: '30px'
+      <section style={{
+        background: "linear-gradient(180deg, #1a2855 0%, #2c3e50 100%)",
+        color: "white",
+        padding: "80px 0",
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
+          <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
+            <div style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              borderRadius: "4px",
+              padding: "8px 20px",
+              display: "inline-block",
+              marginBottom: "24px",
+              fontSize: "0.9rem",
+              fontWeight: "500",
+              letterSpacing: "0.5px",
             }}>
-              {icons.shield} Centro Educativo Autorizado
+              <span style={{ marginRight: "8px" }}>🏫</span>
+              CENTRO EDUCATIVO AUTORIZADO
             </div>
-            <h1 style={{ 
-              fontSize: 'clamp(2rem, 6vw, 3.5rem)', 
-              fontWeight: '700', 
-              marginBottom: '24px',
-              color: 'white',
-              lineHeight: '1.2'
+            <h1 style={{
+              fontSize: "2.8rem",
+              fontWeight: "300",
+              marginBottom: "20px",
+              letterSpacing: "-0.02em",
+              lineHeight: "1.2",
+              color: "white",
             }}>
-              Transformamos vidas<br />
-              <span style={{ color: '#f8fafc' }}>a través del inglés</span>
+              Transformamos vidas a través del inglés
             </h1>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', 
-              opacity: 0.9, 
-              marginBottom: '40px',
-              maxWidth: '600px',
-              margin: '0 auto 40px',
-              color: 'white',
-              padding: '0 15px'
+            <p style={{
+              fontSize: "1.1rem",
+              opacity: 0.9,
+              fontWeight: "300",
+              maxWidth: "600px",
+              margin: "0 auto",
+              lineHeight: "1.6",
             }}>
-              En Simply English, creemos que dominar el inglés es más que aprender un idioma: 
-              es abrir puertas a oportunidades globales ilimitadas.
+              En Simply English, creemos que dominar el inglés es más que aprender un idioma
+              <br />
+              Es abrir puertas a oportunidades globales ilimitadas
             </p>
-            
-            {/* Beneficios principales */}
-            <div style={styles.benefitsGrid}>
-              <div style={styles.benefitItem}>
-                <span style={{ color: '#4CAF50', fontSize: '1.2rem', marginRight: '10px' }}>{icons.check}</span>
-                <span style={{ fontWeight: '600' }}>Certificación CONOCER</span>
-              </div>
-              <div style={styles.benefitItem}>
-                <span style={{ color: '#4CAF50', fontSize: '1.2rem', marginRight: '10px' }}>{icons.check}</span>
-                <span style={{ fontWeight: '600' }}>Clases 100% en vivo</span>
-              </div>
-              <div style={styles.benefitItem}>
-                <span style={{ color: '#4CAF50', fontSize: '1.2rem', marginRight: '10px' }}>{icons.check}</span>
-                <span style={{ fontWeight: '600' }}>Validez SEP</span>
-              </div>
-              <div style={styles.benefitItem}>
-                <span style={{ color: '#4CAF50', fontSize: '1.2rem', marginRight: '10px' }}>{icons.check}</span>
-                <span style={{ fontWeight: '600' }}>Desde 2021</span>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -347,7 +334,7 @@ const About = () => {
       <section className="stats-section" style={{ ...styles.sectionPadding, marginTop: '-50px' }} aria-label="Estadísticas">
         <div style={styles.container}>
           <h2 className="visually-hidden">Nuestros números</h2>
-          <div style={{ 
+          <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
             gap: '20px'
@@ -359,7 +346,7 @@ const About = () => {
               { number: counters.companies, suffix: '+', label: 'Empresas aliadas', icon: icons.handshake, color: '#BF0A30' }
             ].map((stat, index) => (
               <article key={index}>
-                <div 
+                <div
                   style={styles.statsCard}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-10px)';
@@ -385,45 +372,45 @@ const About = () => {
       {/* Mission & Vision */}
       <section style={{ ...styles.sectionPadding, ...styles.bgLight }} aria-label="Misión y Visión">
         <div style={styles.container}>
-          <div style={{ 
+          <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '30px'
           }}>
             <article>
               <div style={styles.missionCard}>
-                <div style={{ 
-                  position: 'absolute', 
-                  top: '-30px', 
-                  right: '-30px', 
-                  fontSize: 'clamp(100px, 15vw, 150px)', 
-                  opacity: 0.1 
+                <div style={{
+                  position: 'absolute',
+                  top: '-30px',
+                  right: '-30px',
+                  fontSize: 'clamp(100px, 15vw, 150px)',
+                  opacity: 0.1
                 }}>
                   {icons.rocket}
                 </div>
                 <h2 style={{ ...styles.mb4, color: 'white', fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}>Nuestra Misión</h2>
                 <p style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', margin: 0, color: 'white' }}>
-                  Democratizar el acceso al inglés de calidad mediante una educación 
-                  flexible, accesible y certificada, que empodere a nuestros estudiantes 
+                  Democratizar el acceso al inglés de calidad mediante una educación
+                  flexible, accesible y certificada, que empodere a nuestros estudiantes
                   para alcanzar sus metas académicas y profesionales en un mundo globalizado.
                 </p>
               </div>
             </article>
             <article>
               <div style={styles.visionCard}>
-                <div style={{ 
-                  position: 'absolute', 
-                  top: '-30px', 
-                  right: '-30px', 
-                  fontSize: 'clamp(100px, 15vw, 150px)', 
-                  opacity: 0.1 
+                <div style={{
+                  position: 'absolute',
+                  top: '-30px',
+                  right: '-30px',
+                  fontSize: 'clamp(100px, 15vw, 150px)',
+                  opacity: 0.1
                 }}>
                   {icons.globe}
                 </div>
                 <h2 style={{ ...styles.mb4, color: 'white', fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}>Nuestra Visión</h2>
                 <p style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', margin: 0, color: 'white' }}>
-                  Ser la plataforma líder en educación de inglés online en México, 
-                  reconocida por nuestra excelencia académica, innovación pedagógica 
+                  Ser la plataforma líder en educación de inglés online en México,
+                  reconocida por nuestra excelencia académica, innovación pedagógica
                   y el éxito transformador de nuestros estudiantes.
                 </p>
               </div>
@@ -463,8 +450,8 @@ const About = () => {
                 color: '#BF0A30'
               }
             ].map((method, index) => (
-              <article 
-                key={index} 
+              <article
+                key={index}
                 style={styles.methodologyCard}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateX(10px)';
@@ -475,14 +462,14 @@ const About = () => {
                   e.currentTarget.style.borderLeft = '1px solid #e9ecef';
                 }}
               >
-                <div style={{ 
-                  display: 'flex', 
+                <div style={{
+                  display: 'flex',
                   alignItems: 'center',
                   flexWrap: window.innerWidth < 480 ? 'wrap' : 'nowrap'
                 }}>
-                  <div style={{ 
-                    ...styles.iconCircle, 
-                    background: method.color + '15', 
+                  <div style={{
+                    ...styles.iconCircle,
+                    background: method.color + '15',
                     color: method.color,
                     marginRight: window.innerWidth < 480 ? '0' : '30px',
                     marginBottom: window.innerWidth < 480 ? '15px' : '0',
@@ -516,17 +503,17 @@ const About = () => {
                 <div style={styles.timelineDot} />
                 {index < 3 && <div style={styles.timelineLine} />}
                 <div style={styles.card}>
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center', 
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                     marginBottom: '10px',
                     flexWrap: 'wrap',
                     gap: '10px'
                   }}>
                     <h3 style={{ margin: 0, color: '#002868', fontSize: 'clamp(1rem, 2vw, 1.2rem)' }}>{item.title}</h3>
-                    <span style={{ 
-                      background: '#BF0A30', 
+                    <span style={{
+                      background: '#BF0A30',
                       color: 'white',
                       padding: '5px 15px',
                       borderRadius: '20px',
@@ -545,7 +532,7 @@ const About = () => {
       <section style={styles.sectionPadding} aria-label="Valores">
         <div style={styles.container}>
           <h2 style={{ ...styles.textCenter, ...styles.mb5, fontSize: 'clamp(1.8rem, 4vw, 2.5rem)' }}>Nuestros Valores</h2>
-          <div style={{ 
+          <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
             gap: '20px'
@@ -557,7 +544,7 @@ const About = () => {
               { icon: icons.users, title: 'Comunidad', desc: 'Aprendizaje colaborativo', color: '#BF0A30' }
             ].map((value, index) => (
               <article key={index}>
-                <div 
+                <div
                   style={styles.valueCard}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = value.color;
@@ -570,10 +557,10 @@ const About = () => {
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
-                  <div style={{ 
-                    ...styles.iconCircle, 
-                    background: value.color + '15', 
-                    color: value.color 
+                  <div style={{
+                    ...styles.iconCircle,
+                    background: value.color + '15',
+                    color: value.color
                   }}>
                     <span style={{ fontSize: 'clamp(2rem, 4vw, 2.5rem)' }}>{value.icon}</span>
                   </div>
@@ -582,73 +569,6 @@ const About = () => {
                 </div>
               </article>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Teacher Spotlight */}
-      <section style={{ ...styles.sectionPadding, ...styles.bgLight }} aria-label="Director Académico">
-        <div style={styles.container}>
-          <div style={{ 
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '30px',
-            alignItems: 'center'
-          }}>
-            <div>
-              <img
-                src="/imgs/about/teacher.webp"
-                alt="Profesor Joel Mendoza - Fundador y Director Académico de Simply English"
-                style={{ 
-                  width: '100%',
-                  maxWidth: '500px',
-                  borderRadius: '20px',
-                  boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-                  height: 'auto'
-                }}
-                loading="lazy"
-              />
-            </div>
-            <div style={{ padding: window.innerWidth > 768 ? '0 0 0 30px' : '0' }}>
-              <span style={{ 
-                background: '#002868', 
-                color: 'white', 
-                padding: '10px 20px', 
-                fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)',
-                borderRadius: '20px',
-                display: 'inline-block',
-                marginBottom: '20px'
-              }}>
-                Fundador & Director Académico
-              </span>
-              <h2 style={{ ...styles.mb4, fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}>Profesor Joel Mendoza</h2>
-              <p style={{ 
-                fontSize: 'clamp(1rem, 2vw, 1.25rem)',
-                color: '#BF0A30', 
-                fontStyle: 'italic',
-                marginBottom: '30px'
-              }}>
-                "Mi pasión es ver cómo el inglés transforma vidas y abre puertas a oportunidades infinitas."
-              </p>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                  <span style={{ color: '#002868', fontSize: 'clamp(1.2rem, 2vw, 1.5rem)', marginRight: '15px' }}>{icons.award}</span>
-                  <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>Certificado en metodologías de enseñanza internacional</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                  <span style={{ color: '#BF0A30', fontSize: 'clamp(1.2rem, 2vw, 1.5rem)', marginRight: '15px' }}>{icons.globe}</span>
-                  <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>Experiencia docente en múltiples países</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                  <span style={{ color: '#002868', fontSize: 'clamp(1.2rem, 2vw, 1.5rem)', marginRight: '15px' }}>{icons.handshake}</span>
-                  <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>+5 empresas multinacionales capacitadas</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ color: '#BF0A30', fontSize: 'clamp(1.2rem, 2vw, 1.5rem)', marginRight: '15px' }}>{icons.book}</span>
-                  <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>Creador del método Simply English</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -666,7 +586,7 @@ const About = () => {
             </p>
             <div>
               <a
-                href="/registro"
+                href="/Usuarios"
                 style={styles.primaryButton}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = '#f8f9fa';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faClock, faCalendarAlt, faArrowRight, faMoon, faSun, faCloudSun, 
+import {
+  faClock, faCalendarAlt, faArrowRight, faMoon, faSun, faCloudSun,
   faCloudMoon, faBolt, faStar, faGlobe, faCoffee, faBriefcase,
   faHome, faLaptopHouse, faRunning, faUtensils, faBed, faGamepad,
   faBook, faDumbbell, faShoppingCart, faChild, faTimes
@@ -13,7 +13,7 @@ const Horarios = () => {
 
   useEffect(() => {
     document.title = 'Horarios Flexibles - Simply English | 5 Horarios Para Tu Estilo de Vida';
-    
+
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.content = 'Elige el horario perfecto para estudiar inglés. 5 opciones de 4PM a 9PM. Clases 100% en vivo, lunes a jueves. Encuentra tu momento ideal.';
@@ -288,34 +288,47 @@ const Horarios = () => {
 
   return (
     <main style={{ overflowX: 'hidden', width: '100%' }}>
-      <section style={styles.hero} aria-label="Horarios disponibles">
-        <div style={styles.heroPattern} />
-        <div style={styles.container}>
-          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={styles.badge}>
-              <FontAwesomeIcon icon={faClock} style={{ marginRight: '10px' }} />
-              Lunes a Jueves • 100% En Vivo
+      <section style={{
+        background: "linear-gradient(180deg, #1a2855 0%, #2c3e50 100%)",
+        color: "white",
+        padding: "80px 0",
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
+          <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
+            <div style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              borderRadius: "4px",
+              padding: "8px 20px",
+              display: "inline-block",
+              marginBottom: "24px",
+              fontSize: "0.9rem",
+              fontWeight: "500",
+              letterSpacing: "0.5px",
+            }}>
+              <FontAwesomeIcon icon={faClock} style={{ marginRight: "8px" }} />
+              LUNES A JUEVES • 100% EN VIVO
             </div>
             <h1 style={{
-              fontSize: 'clamp(2rem, 6vw, 3.5rem)',
-              fontWeight: '700',
-              marginBottom: '24px',
-              color: 'white',
-              lineHeight: '1.2'
+              fontSize: "2.8rem",
+              fontWeight: "300",
+              marginBottom: "20px",
+              letterSpacing: "-0.02em",
+              lineHeight: "1.2",
+              color: "white",
             }}>
               5 horarios, 5 estilos de vida
             </h1>
             <p style={{
-              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
+              fontSize: "1.1rem",
               opacity: 0.9,
-              marginBottom: '0',
-              maxWidth: '600px',
-              margin: '0 auto',
-              color: 'white',
-              padding: '0 15px'
+              fontWeight: "300",
+              maxWidth: "600px",
+              margin: "0 auto",
+              lineHeight: "1.6",
             }}>
-              Encuentra el momento perfecto del día para tu aprendizaje.
-              Todos los horarios están en tiempo de México (CST).
+              Encuentra el momento perfecto del día para tu aprendizaje
+              <br />
+              Todos los horarios están en tiempo de México (CST)
             </p>
           </div>
         </div>
@@ -352,7 +365,7 @@ const Horarios = () => {
                     Más Popular
                   </div>
                 )}
-                
+
                 <div style={{
                   ...styles.timeIcon,
                   background: schedule.color + '15',
@@ -360,32 +373,32 @@ const Horarios = () => {
                 }}>
                   <FontAwesomeIcon icon={schedule.icon} />
                 </div>
-                
-                <h4 style={{ 
-                  color: schedule.color, 
+
+                <h4 style={{
+                  color: schedule.color,
                   marginBottom: '10px',
                   fontSize: 'clamp(1.1rem, 2vw, 1.3rem)'
                 }}>
                   {schedule.time}
                 </h4>
-                <h5 style={{ 
-                  color: '#002868', 
+                <h5 style={{
+                  color: '#002868',
                   marginBottom: '15px',
                   fontSize: 'clamp(1rem, 1.8vw, 1.2rem)'
                 }}>
                   {schedule.label}
                 </h5>
-                <p style={{ 
-                  color: '#6c757d', 
-                  marginBottom: '20px', 
-                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)' 
+                <p style={{
+                  color: '#6c757d',
+                  marginBottom: '20px',
+                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)'
                 }}>
                   {schedule.description}
                 </p>
-                
+
                 <div style={{ marginBottom: '20px' }}>
-                  <p style={{ 
-                    fontSize: 'clamp(0.8rem, 1.3vw, 0.85rem)', 
+                  <p style={{
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.85rem)',
                     color: '#495057',
                     fontWeight: '600',
                     marginBottom: '15px'
@@ -394,19 +407,19 @@ const Horarios = () => {
                   </p>
                   {schedule.lifestyle.map((item, idx) => (
                     <div key={idx} style={styles.lifestyleItem}>
-                      <FontAwesomeIcon 
-                        icon={item.icon} 
-                        style={{ 
-                          color: schedule.color, 
-                          fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' 
+                      <FontAwesomeIcon
+                        icon={item.icon}
+                        style={{
+                          color: schedule.color,
+                          fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                         }}
                       />
                       <span>{item.text}</span>
                     </div>
                   ))}
                 </div>
-                
-                <button 
+
+                <button
                   style={{
                     ...styles.outlineButton,
                     borderColor: schedule.color,
@@ -436,16 +449,16 @@ const Horarios = () => {
       <section style={{ ...styles.sectionPadding, ...styles.bgLight }} aria-label="Zonas horarias">
         <div style={styles.container}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
-            <h2 style={{ 
-              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
-              marginBottom: '1rem', 
-              color: '#002868' 
+            <h2 style={{
+              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+              marginBottom: '1rem',
+              color: '#002868'
             }}>
               ¿En qué zona horaria estás?
             </h2>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2vw, 1.1rem)', 
-              color: '#6c757d' 
+            <p style={{
+              fontSize: 'clamp(1rem, 2vw, 1.1rem)',
+              color: '#6c757d'
             }}>
               Todos nuestros horarios están en hora de México Central (CST)
             </p>
@@ -469,22 +482,22 @@ const Horarios = () => {
                   height: '100%'
                 }}
               >
-                <h5 style={{ 
-                  fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
+                <h5 style={{
+                  fontSize: 'clamp(1rem, 2vw, 1.2rem)',
                   marginBottom: '10px',
                   color: tz.base ? 'white' : '#002868'
                 }}>
                   {tz.zone}
                 </h5>
-                <p style={{ 
-                  fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)', 
+                <p style={{
+                  fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)',
                   marginBottom: '5px',
                   fontWeight: 'bold',
                   color: tz.base ? '#FFD700' : '#BF0A30'
                 }}>
                   {tz.diff}
                 </p>
-                <small style={{ 
+                <small style={{
                   fontSize: 'clamp(0.7rem, 1.2vw, 0.75rem)',
                   opacity: tz.base ? 0.9 : 0.7
                 }}>
@@ -495,9 +508,9 @@ const Horarios = () => {
           </div>
 
           <div style={{ textAlign: 'center', marginTop: 'clamp(1rem, 3vw, 2rem)' }}>
-            <p style={{ 
-              color: '#6c757d', 
-              fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)' 
+            <p style={{
+              color: '#6c757d',
+              fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)'
             }}>
               <FontAwesomeIcon icon={faGlobe} style={{ marginRight: '10px' }} />
               Ejemplo: Si estás en Nueva York y eliges 6:00 PM CST, tu clase será a las 7:00 PM EST
@@ -509,16 +522,16 @@ const Horarios = () => {
       <section style={styles.sectionPadding} aria-label="Beneficios del horario regular">
         <div style={styles.container}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
-            <h2 style={{ 
-              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
-              marginBottom: '1rem', 
-              color: '#002868' 
+            <h2 style={{
+              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+              marginBottom: '1rem',
+              color: '#002868'
             }}>
               ¿Por qué la consistencia es clave?
             </h2>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2vw, 1.1rem)', 
-              color: '#6c757d' 
+            <p style={{
+              fontSize: 'clamp(1rem, 2vw, 1.1rem)',
+              color: '#6c757d'
             }}>
               Datos que respaldan el aprendizaje de idiomas con horarios fijos
             </p>
@@ -547,7 +560,7 @@ const Horarios = () => {
               }}>
                 21
               </div>
-              <h4 style={{ 
+              <h4 style={{
                 marginBottom: '10px',
                 fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)',
                 fontWeight: 'bold',
@@ -560,7 +573,7 @@ const Horarios = () => {
                 opacity: 0.9,
                 margin: 0
               }}>
-                Los neurocientíficos confirman que 21 días de práctica constante 
+                Los neurocientíficos confirman que 21 días de práctica constante
                 forman conexiones neurales duraderas para el aprendizaje.
               </p>
             </article>
@@ -583,7 +596,7 @@ const Horarios = () => {
               }}>
                 4x
               </div>
-              <h4 style={{ 
+              <h4 style={{
                 marginBottom: '10px',
                 fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)',
                 fontWeight: 'bold',
@@ -596,7 +609,7 @@ const Horarios = () => {
                 opacity: 0.9,
                 margin: 0
               }}>
-                Estudios demuestran que sesiones regulares de 1 hora son 4 veces 
+                Estudios demuestran que sesiones regulares de 1 hora son 4 veces
                 más efectivas que clases maratónicas de fin de semana.
               </p>
             </article>
@@ -619,7 +632,7 @@ const Horarios = () => {
               }}>
                 85%
               </div>
-              <h4 style={{ 
+              <h4 style={{
                 marginBottom: '10px',
                 fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)',
                 fontWeight: 'bold',
@@ -632,7 +645,7 @@ const Horarios = () => {
                 opacity: 0.9,
                 margin: 0
               }}>
-                Los estudiantes con horarios fijos retienen 85% más vocabulario 
+                Los estudiantes con horarios fijos retienen 85% más vocabulario
                 comparado con aquellos que estudian de forma irregular.
               </p>
             </article>
@@ -655,7 +668,7 @@ const Horarios = () => {
               }}>
                 60min
               </div>
-              <h4 style={{ 
+              <h4 style={{
                 marginBottom: '10px',
                 fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)',
                 fontWeight: 'bold',
@@ -668,7 +681,7 @@ const Horarios = () => {
                 opacity: 0.9,
                 margin: 0
               }}>
-                La neurociencia confirma que 60 minutos es el tiempo perfecto 
+                La neurociencia confirma que 60 minutos es el tiempo perfecto
                 para mantener atención plena sin fatiga mental.
               </p>
             </article>
@@ -680,14 +693,14 @@ const Horarios = () => {
         <div style={styles.modal} onClick={closeModal}>
           <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <div style={styles.modalHeader}>
-              <h3 style={{ 
-                color: '#002868', 
+              <h3 style={{
+                color: '#002868',
                 fontSize: 'clamp(1.3rem, 3vw, 1.8rem)',
                 margin: 0
               }}>
                 Excelente elección
               </h3>
-              <button 
+              <button
                 style={styles.closeButton}
                 onClick={closeModal}
                 aria-label="Cerrar modal"
@@ -695,7 +708,7 @@ const Horarios = () => {
                 <FontAwesomeIcon icon={faTimes} />
               </button>
             </div>
-            
+
             <div style={styles.modalBody}>
               <div style={{
                 background: selectedSchedule.color + '15',
@@ -710,24 +723,24 @@ const Horarios = () => {
                   flexWrap: 'wrap'
                 }}>
                   <div style={{ textAlign: 'center' }}>
-                    <FontAwesomeIcon 
-                      icon={selectedSchedule.icon} 
-                      style={{ 
-                        fontSize: 'clamp(2rem, 4vw, 3rem)', 
-                        color: selectedSchedule.iconColor 
+                    <FontAwesomeIcon
+                      icon={selectedSchedule.icon}
+                      style={{
+                        fontSize: 'clamp(2rem, 4vw, 3rem)',
+                        color: selectedSchedule.iconColor
                       }}
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ 
-                      color: selectedSchedule.color, 
+                    <h4 style={{
+                      color: selectedSchedule.color,
                       marginBottom: '10px',
                       fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)'
                     }}>
                       {selectedSchedule.label}: {selectedSchedule.time}
                     </h4>
-                    <p style={{ 
-                      margin: 0, 
+                    <p style={{
+                      margin: 0,
                       color: '#495057',
                       fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                     }}>
@@ -743,15 +756,15 @@ const Horarios = () => {
                 gap: '20px'
               }}>
                 <div>
-                  <h6 style={{ 
-                    color: '#002868', 
+                  <h6 style={{
+                    color: '#002868',
                     marginBottom: '15px',
                     fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                   }}>
                     Tu semana de aprendizaje:
                   </h6>
-                  <ul style={{ 
-                    paddingLeft: '20px', 
+                  <ul style={{
+                    paddingLeft: '20px',
                     color: '#6c757d',
                     fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
                   }}>
@@ -762,15 +775,15 @@ const Horarios = () => {
                   </ul>
                 </div>
                 <div>
-                  <h6 style={{ 
-                    color: '#002868', 
+                  <h6 style={{
+                    color: '#002868',
                     marginBottom: '15px',
                     fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                   }}>
                     Próximos pasos:
                   </h6>
-                  <ol style={{ 
-                    paddingLeft: '20px', 
+                  <ol style={{
+                    paddingLeft: '20px',
                     color: '#6c757d',
                     fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
                   }}>
@@ -781,9 +794,9 @@ const Horarios = () => {
                 </div>
               </div>
             </div>
-            
+
             <div style={styles.modalFooter}>
-              <button 
+              <button
                 style={{
                   background: '#6c757d',
                   color: 'white',
@@ -798,7 +811,7 @@ const Horarios = () => {
                 Cambiar horario
               </button>
               <a
-                href="/registro"
+                href="/Usuarios"
                 style={{
                   ...styles.primaryButton,
                   padding: 'clamp(10px, 2vw, 12px) clamp(25px, 4vw, 40px)'
@@ -819,7 +832,7 @@ const Horarios = () => {
         </div>
       )}
 
-      <section style={{ 
+      <section style={{
         background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
         color: 'white',
         padding: 'clamp(40px, 8vw, 80px) 0',
@@ -836,26 +849,26 @@ const Horarios = () => {
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
           backgroundSize: '40px 40px'
         }} />
-        
+
         <div style={styles.container}>
-          <div style={{ 
-            maxWidth: '800px', 
-            margin: '0 auto', 
+          <div style={{
+            maxWidth: '800px',
+            margin: '0 auto',
             textAlign: 'center',
             position: 'relative',
             zIndex: 1
           }}>
-            <h2 style={{ 
-              fontSize: 'clamp(2rem, 5vw, 2.5rem)', 
-              fontWeight: 'bold', 
+            <h2 style={{
+              fontSize: 'clamp(2rem, 5vw, 2.5rem)',
+              fontWeight: 'bold',
               marginBottom: '1.5rem',
               color: 'white'
             }}>
               ¿Ya encontraste tu horario ideal?
             </h2>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', 
-              marginBottom: '3rem', 
+            <p style={{
+              fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
+              marginBottom: '3rem',
               opacity: 0.9,
               color: 'white',
               padding: '0 15px'
@@ -863,10 +876,10 @@ const Horarios = () => {
               El primer paso hacia tu meta de hablar inglés está a un clic.
               Todos los horarios incluyen material digital y acceso 24/7 a la plataforma.
             </p>
-            
+
             <a
-              href="/registro"
-              style={{ 
+              href="/Usuarios"
+              style={{
                 background: '#FFD700',
                 color: '#002868',
                 border: 'none',
@@ -888,8 +901,7 @@ const Horarios = () => {
               }}
               aria-label="Reservar lugar en Simply English"
             >
-              <FontAwesomeIcon icon={faCalendarAlt} style={{ marginRight: '10px' }} />
-              Reservar mi lugar ahora
+              Inscribete ahora
             </a>
           </div>
         </div>

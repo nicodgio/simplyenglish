@@ -16,7 +16,7 @@ import {
 const CertificacionCENNI = () => {
   useEffect(() => {
     document.title = 'Certificación CENNI - Simply English | Validez SEP Oficial';
-    
+
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.content = 'Obtén tu Certificación Nacional de Nivel de Idioma (CENNI) con validez SEP. 20 niveles A1-C2, vigencia 5 años. Evaluación Versant autorizada.';
@@ -177,35 +177,47 @@ const CertificacionCENNI = () => {
 
   return (
     <main style={{ overflowX: 'hidden', width: '100%' }}>
-      <section style={styles.hero} aria-label="Certificación CENNI">
-        <div style={styles.heroPattern} />
-        <div style={styles.container}>
-          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={styles.badge}>
-              <FontAwesomeIcon icon={faCertificate} style={{ marginRight: '10px' }} />
-              Certificación Oficial SEP
+      <section style={{
+        background: "linear-gradient(180deg, #1a2855 0%, #2c3e50 100%)",
+        color: "white",
+        padding: "80px 0",
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
+          <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
+            <div style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              borderRadius: "4px",
+              padding: "8px 20px",
+              display: "inline-block",
+              marginBottom: "24px",
+              fontSize: "0.9rem",
+              fontWeight: "500",
+              letterSpacing: "0.5px",
+            }}>
+              <FontAwesomeIcon icon={faCertificate} style={{ marginRight: "8px" }} />
+              CERTIFICACIÓN OFICIAL SEP
             </div>
-            <h1 style={{ 
-              fontSize: 'clamp(2rem, 6vw, 3.5rem)', 
-              fontWeight: '700', 
-              marginBottom: '24px',
-              color: 'white',
-              lineHeight: '1.2'
+            <h1 style={{
+              fontSize: "2.8rem",
+              fontWeight: "300",
+              marginBottom: "20px",
+              letterSpacing: "-0.02em",
+              lineHeight: "1.2",
+              color: "white",
             }}>
-              Certificación Nacional de Nivel de Idioma<br />
-              <span style={{ color: '#FFD700' }}>CENNI</span>
+              Certificación Nacional de Nivel de Idioma CENNI
             </h1>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', 
-              opacity: 0.9, 
-              marginBottom: '0',
-              maxWidth: '700px',
-              margin: '0 auto',
-              color: 'white',
-              padding: '0 15px'
+            <p style={{
+              fontSize: "1.1rem",
+              opacity: 0.9,
+              fontWeight: "300",
+              maxWidth: "600px",
+              margin: "0 auto",
+              lineHeight: "1.6",
             }}>
-              Valida tu dominio del inglés con el único documento oficial emitido por la 
-              Secretaría de Educación Pública que certifica tu nivel de idioma
+              Valida tu dominio del inglés con el único documento oficial emitido por la SEP
+              <br />
+              que certifica tu nivel de idioma
             </p>
           </div>
         </div>
@@ -214,7 +226,7 @@ const CertificacionCENNI = () => {
       <section style={{ marginBottom: 'clamp(40px, 8vw, 80px)' }} aria-label="Estadísticas CENNI">
         <div style={styles.container}>
           <div style={styles.statsCard}>
-            <div style={{ 
+            <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
               gap: '20px'
@@ -240,165 +252,146 @@ const CertificacionCENNI = () => {
         </div>
       </section>
 
-      <section style={styles.sectionPadding} aria-label="Información CENNI">
-        <div style={styles.container}>
-          <h2 style={{ 
-            textAlign: 'center',
-            marginBottom: 'clamp(2rem, 4vw, 3rem)',
-            fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
-            color: '#002868' 
-          }}>
-            ¿Qué es la CENNI?
-          </h2>
-          <p style={{ 
-            textAlign: 'center',
-            marginBottom: 'clamp(2rem, 4vw, 3rem)',
-            fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
-            color: '#6c757d', 
-            maxWidth: '700px', 
-            margin: '0 auto 3rem' 
-          }}>
-            Conoce el programa oficial de certificación de idiomas de México
-          </p>
-          
-          <div style={styles.infoCard}>
-            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.1rem)', lineHeight: 1.8, margin: 0 }}>
-              La Certificación Nacional de Nivel de Idioma (CENNI) es un documento oficial que permite 
-              referenciar de manera confiable y objetiva el nivel de conocimiento de un idioma determinado. 
-              Es el resultado de un programa de la Secretaría de Educación Pública que busca establecer 
-              en México un marco nacional de referencia para la evaluación y certificación de idiomas, 
-              orientado a elevar la calidad educativa en la materia, especialmente en el caso de la 
-              enseñanza del inglés como lengua extranjera.
-            </p>
-          </div>
-        </div>
-      </section>
-
       <section style={{ ...styles.sectionPadding, ...styles.bgLight }} aria-label="Características principales">
         <div style={styles.container}>
-          <h2 style={{ 
+          <h2 style={{
             textAlign: 'center',
             marginBottom: 'clamp(2rem, 4vw, 3rem)',
-            fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
-            color: '#002868' 
+            fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+            color: '#002868'
           }}>
             Características Principales de Seguridad
           </h2>
-          <p style={{ 
+          <p style={{
             textAlign: 'center',
             marginBottom: 'clamp(2rem, 4vw, 3rem)',
-            fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
-            color: '#6c757d', 
-            maxWidth: '700px', 
-            margin: '0 auto 3rem' 
+            fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+            color: '#6c757d',
+            maxWidth: '700px',
+            margin: '0 auto 3rem'
           }}>
             La CENNI cuenta con estrictos estándares de validación y seguridad
           </p>
-          
+
           <div style={styles.highlightBox}>
-            <h3 style={{ 
-              fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', 
-              marginBottom: '20px', 
-              color: 'white' 
+            <h3 style={{
+              fontSize: 'clamp(1.3rem, 3vw, 1.8rem)',
+              marginBottom: '20px',
+              color: 'white'
             }}>
               <FontAwesomeIcon icon={faBullseye} style={{ marginRight: '15px' }} />
               ¿Cómo funciona el proceso de certificación?
             </h3>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2vw, 1.15rem)', 
-              lineHeight: 1.8, 
-              opacity: 0.95, 
+            <p style={{
+              fontSize: 'clamp(1rem, 2vw, 1.15rem)',
+              lineHeight: 1.8,
+              opacity: 0.95,
               color: 'white',
               margin: 0
             }}>
-              La certificación CENNI tiene un proceso transparente y confiable: las evaluaciones 
-              son aplicadas por instituciones evaluadoras especializadas y autorizadas, mientras 
-              que la Secretaría de Educación Pública se encarga de validar y emitir el certificado 
+              La certificación CENNI tiene un proceso transparente y confiable: las evaluaciones
+              son aplicadas por instituciones evaluadoras especializadas y autorizadas, mientras
+              que la Secretaría de Educación Pública se encarga de validar y emitir el certificado
               oficial. Esta división garantiza la imparcialidad y calidad del proceso.
             </p>
           </div>
-          
-          <div style={{ 
+
+          <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: 'clamp(20px, 4vw, 30px)'
+            gap: 'clamp(20px, 4vw, 30px)',
+            alignItems: 'stretch'
           }}>
-            <article>
-              <div style={styles.infoCard}>
-                <h3 style={{ 
-                  color: '#002868', 
+            <article style={{ display: 'flex' }}>
+              <div style={{
+                ...styles.infoCard,
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1
+              }}>
+                <h3 style={{
+                  color: '#002868',
                   marginBottom: '20px',
                   fontSize: 'clamp(1.1rem, 2vw, 1.3rem)'
                 }}>
                   <FontAwesomeIcon icon={faLock} style={{ marginRight: '10px', color: '#BF0A30' }} />
                   Seguridad del Documento
                 </h3>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                  <li style={{ marginBottom: '15px' }}>
-                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
-                    <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                      Validación mediante CURP con bases de datos institucionales
-                    </span>
-                  </li>
-                  <li style={{ marginBottom: '15px' }}>
-                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
-                    <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                      Código de barras único e irrepetible
-                    </span>
-                  </li>
-                  <li style={{ marginBottom: '15px' }}>
-                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
-                    <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                      Verificación en línea en el portal oficial
-                    </span>
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
-                    <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                      Emisión a través del número único CURP + Folio CENNI
-                    </span>
-                  </li>
-                </ul>
+                <div style={{ flex: 1 }}>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, height: '100%' }}>
+                    <li style={{ marginBottom: '15px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
+                      <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
+                        Validación mediante CURP con bases de datos institucionales
+                      </span>
+                    </li>
+                    <li style={{ marginBottom: '15px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
+                      <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
+                        Código de barras único e irrepetible
+                      </span>
+                    </li>
+                    <li style={{ marginBottom: '15px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
+                      <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
+                        Verificación en línea en el portal oficial
+                      </span>
+                    </li>
+                    <li>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
+                      <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
+                        Emisión a través del número único CURP + Folio CENNI
+                      </span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </article>
-            
-            <article>
-              <div style={styles.infoCard}>
-                <h3 style={{ 
-                  color: '#002868', 
+
+            <article style={{ display: 'flex' }}>
+              <div style={{
+                ...styles.infoCard,
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1
+              }}>
+                <h3 style={{
+                  color: '#002868',
                   marginBottom: '20px',
                   fontSize: 'clamp(1.1rem, 2vw, 1.3rem)'
                 }}>
                   <FontAwesomeIcon icon={faClipboardList} style={{ marginRight: '10px', color: '#BF0A30' }} />
                   Proceso de Evaluación
                 </h3>
-                <p style={{ 
-                  marginBottom: '20px',
-                  fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
-                }}>
-                  Las evaluaciones son realizadas por instancias evaluadoras autorizadas, 
-                  NO por la SEP directamente. Esto garantiza:
-                </p>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                  <li style={{ marginBottom: '15px' }}>
-                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
-                    <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                      Imparcialidad en la evaluación
-                    </span>
-                  </li>
-                  <li style={{ marginBottom: '15px' }}>
-                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
-                    <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                      Estándares internacionales
-                    </span>
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
-                    <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                      Múltiples opciones de evaluación
-                    </span>
-                  </li>
-                </ul>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <p style={{
+                    marginBottom: '20px',
+                    fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+                  }}>
+                    Las evaluaciones son realizadas por instancias evaluadoras autorizadas,
+                    NO por la SEP directamente. Esto garantiza:
+                  </p>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, flex: 1 }}>
+                    <li style={{ marginBottom: '15px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
+                      <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
+                        Imparcialidad en la evaluación
+                      </span>
+                    </li>
+                    <li style={{ marginBottom: '15px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
+                      <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
+                        Estándares internacionales
+                      </span>
+                    </li>
+                    <li>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#28a745', marginRight: '15px' }} />
+                      <span style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
+                        Múltiples opciones de evaluación
+                      </span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </article>
           </div>
@@ -407,36 +400,36 @@ const CertificacionCENNI = () => {
 
       <section style={styles.sectionPadding} aria-label="Versant Test">
         <div style={styles.container}>
-          <h2 style={{ 
+          <h2 style={{
             textAlign: 'center',
             marginBottom: 'clamp(2rem, 4vw, 3rem)',
-            fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
-            color: '#002868' 
+            fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+            color: '#002868'
           }}>
             Versant English Placement Test
           </h2>
-          <p style={{ 
+          <p style={{
             textAlign: 'center',
             marginBottom: 'clamp(2rem, 4vw, 3rem)',
-            fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
-            color: '#6c757d', 
-            maxWidth: '700px', 
-            margin: '0 auto 3rem' 
+            fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+            color: '#6c757d',
+            maxWidth: '700px',
+            margin: '0 auto 3rem'
           }}>
             Instrumento evaluador aceptado por la SEP para emisión de CENNI
           </p>
-          
+
           <div style={styles.versantSection}>
             <div style={styles.versantHeader}>
-              <h3 style={{ 
-                fontSize: 'clamp(1.5rem, 3vw, 2rem)', 
-                marginBottom: '10px', 
-                color: 'white' 
+              <h3 style={{
+                fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                marginBottom: '10px',
+                color: 'white'
               }}>
                 Versant Test para CENNI
               </h3>
-              <p style={{ 
-                opacity: 0.9, 
+              <p style={{
+                opacity: 0.9,
                 color: 'white',
                 fontSize: 'clamp(0.9rem, 1.5vw, 1rem)',
                 margin: 0
@@ -444,18 +437,18 @@ const CertificacionCENNI = () => {
                 Evaluación integral de las 4 habilidades del idioma
               </p>
             </div>
-            
+
             <div style={styles.versantContent}>
-              <p style={{ 
-                fontSize: 'clamp(1rem, 2vw, 1.1rem)', 
-                marginBottom: '30px' 
+              <p style={{
+                fontSize: 'clamp(1rem, 2vw, 1.1rem)',
+                marginBottom: '30px'
               }}>
-                El Versant English Placement Test es un examen reconocido y aceptado por la SEP 
-                como instrumento evaluador para emitir el CENNI, siempre y cuando el candidato 
+                El Versant English Placement Test es un examen reconocido y aceptado por la SEP
+                como instrumento evaluador para emitir el CENNI, siempre y cuando el candidato
                 obtenga un nivel <strong>B2 o superior</strong>.
               </p>
-              
-              <div style={{ 
+
+              <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
                 gap: '20px',
@@ -483,20 +476,20 @@ const CertificacionCENNI = () => {
                   <p style={{ fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', margin: 0 }}>Flexible</p>
                 </div>
               </div>
-              
-              <div style={{ 
-                background: '#f8f9fa', 
-                padding: 'clamp(20px, 4vw, 30px)', 
-                borderRadius: '15px' 
+
+              <div style={{
+                background: '#f8f9fa',
+                padding: 'clamp(20px, 4vw, 30px)',
+                borderRadius: '15px'
               }}>
-                <h4 style={{ 
-                  color: '#002868', 
+                <h4 style={{
+                  color: '#002868',
                   marginBottom: '15px',
                   fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                 }}>
                   Habilidades Evaluadas:
                 </h4>
-                <div style={{ 
+                <div style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
                   gap: '15px'
@@ -526,27 +519,27 @@ const CertificacionCENNI = () => {
 
       <section style={{ ...styles.sectionPadding, ...styles.bgLight }} aria-label="Preguntas frecuentes">
         <div style={styles.container}>
-          <h2 style={{ 
+          <h2 style={{
             textAlign: 'center',
             marginBottom: 'clamp(2rem, 4vw, 3rem)',
-            fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
-            color: '#002868' 
+            fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+            color: '#002868'
           }}>
             Preguntas Frecuentes
           </h2>
-          <p style={{ 
+          <p style={{
             textAlign: 'center',
             marginBottom: 'clamp(2rem, 4vw, 3rem)',
-            fontSize: 'clamp(1rem, 2vw, 1.2rem)', 
-            color: '#6c757d', 
-            maxWidth: '700px', 
-            margin: '0 auto 3rem' 
+            fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+            color: '#6c757d',
+            maxWidth: '700px',
+            margin: '0 auto 3rem'
           }}>
             Resolvemos las dudas más comunes sobre la certificación CENNI
           </p>
-          
+
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <article 
+            <article
               style={styles.faqItem}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = '#002868'}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = 'transparent'}
@@ -563,46 +556,46 @@ const CertificacionCENNI = () => {
                 </ul>
               </div>
             </article>
-            
-            <article 
+
+            <article
               style={styles.faqItem}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = '#002868'}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = 'transparent'}
             >
               <div style={styles.faqQuestion}>¿Cuál es la vigencia de la CENNI?</div>
               <div style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                La certificación CENNI tiene una <strong>vigencia general de 5 años</strong>. 
-                No existe limitación para presentar evaluaciones adicionales durante este período, 
+                La certificación CENNI tiene una <strong>vigencia general de 5 años</strong>.
+                No existe limitación para presentar evaluaciones adicionales durante este período,
                 y los usuarios pueden solicitar nuevas certificaciones según sus necesidades.
               </div>
             </article>
-            
-            <article 
+
+            <article
               style={styles.faqItem}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = '#002868'}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = 'transparent'}
             >
               <div style={styles.faqQuestion}>¿Qué es una Instancia Evaluadora?</div>
               <div style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                Es una institución pública o privada autorizada por la Dirección General de 
-                Acreditación, Incorporación y Revalidación (DGAIR) para aplicar exámenes y 
-                evaluaciones con la finalidad de emitir una calificación sobre el dominio del 
-                nivel de idioma evaluado. El número de reactivos dependerá de la evaluación 
+                Es una institución pública o privada autorizada por la Dirección General de
+                Acreditación, Incorporación y Revalidación (DGAIR) para aplicar exámenes y
+                evaluaciones con la finalidad de emitir una calificación sobre el dominio del
+                nivel de idioma evaluado. El número de reactivos dependerá de la evaluación
                 seleccionada por el interesado.
               </div>
             </article>
-            
-            <article 
+
+            <article
               style={styles.faqItem}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = '#002868'}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = 'transparent'}
             >
               <div style={styles.faqQuestion}>¿Puedo obtener algún título académico con la CENNI?</div>
               <div style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)' }}>
-                No, la emisión de la CENNI no implica la acreditación de una licenciatura. 
-                Sin embargo, la DGAIR cuenta con procedimientos de profesionalización para 
-                maestros de inglés y francés, donde se determinan requisitos para obtener 
-                certificados y títulos profesionales en enseñanza de idiomas basados en 
+                No, la emisión de la CENNI no implica la acreditación de una licenciatura.
+                Sin embargo, la DGAIR cuenta con procedimientos de profesionalización para
+                maestros de inglés y francés, donde se determinan requisitos para obtener
+                certificados y títulos profesionales en enseñanza de idiomas basados en
                 conocimiento autodidacta y experiencia laboral.
               </div>
             </article>
@@ -610,9 +603,9 @@ const CertificacionCENNI = () => {
         </div>
       </section>
 
-      <section style={{ 
-        background: 'linear-gradient(135deg, #002868 0%, #001845 100%)', 
-        color: 'white', 
+      <section style={{
+        background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
+        color: 'white',
         padding: 'clamp(40px, 8vw, 80px) 0',
         position: 'relative',
         overflow: 'hidden'
@@ -627,39 +620,47 @@ const CertificacionCENNI = () => {
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
           backgroundSize: '40px 40px'
         }} />
-        
-        <div style={styles.container}>
+
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 15px', width: '100%', boxSizing: 'border-box' }}>
           <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
-            <h2 style={{ 
-              fontSize: 'clamp(2rem, 5vw, 3rem)', 
-              marginBottom: '20px', 
-              color: 'white' 
+            <h2 style={{
+              fontSize: 'clamp(2rem, 5vw, 3rem)',
+              marginBottom: '20px',
+              color: 'white'
             }}>
               ¿Listo para certificar tu nivel de inglés?
             </h2>
-            <p style={{ 
-              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', 
-              marginBottom: '30px', 
-              opacity: 0.9, 
+            <p style={{
+              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
+              marginBottom: '30px',
+              opacity: 0.9,
               color: 'white',
               padding: '0 15px'
             }}>
               Obtén el único documento oficial de la SEP que valida tu dominio del idioma
             </p>
-            <div style={{ 
-              display: 'flex', 
-              gap: '20px', 
-              justifyContent: 'center', 
-              flexWrap: 'wrap' 
+            <div style={{
+              display: 'flex',
+              gap: '20px',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+              alignItems: 'stretch'
             }}>
               <a
-                href="/contacto"
+                href="/Usuarios"
                 style={{
-                  ...styles.primaryButton,
                   background: 'white',
                   color: '#002868',
+                  border: 'none',
+                  padding: 'clamp(12px, 2vw, 15px) clamp(25px, 4vw, 40px)',
+                  fontSize: 'clamp(1rem, 2vw, 1.1rem)',
+                  fontWeight: 'bold',
+                  borderRadius: '30px',
+                  transition: 'all 0.3s ease',
                   textDecoration: 'none',
-                  display: 'inline-block'
+                  display: 'inline-block',
+                  whiteSpace: 'nowrap',
+                  minWidth: 'fit-content'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)';
@@ -675,7 +676,20 @@ const CertificacionCENNI = () => {
               </a>
               <a
                 href="/certificaciones"
-                style={styles.outlineButton}
+                style={{
+                  background: 'transparent',
+                  color: 'white',
+                  border: '2px solid white',
+                  padding: 'clamp(12px, 2vw, 15px) clamp(25px, 4vw, 40px)',
+                  fontSize: 'clamp(1rem, 2vw, 1.1rem)',
+                  fontWeight: 'bold',
+                  borderRadius: '30px',
+                  transition: 'all 0.3s ease',
+                  textDecoration: 'none',
+                  display: 'inline-block',
+                  whiteSpace: 'nowrap',
+                  minWidth: 'fit-content'
+                }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = 'white';
                   e.currentTarget.style.color = '#002868';

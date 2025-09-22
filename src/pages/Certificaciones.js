@@ -23,7 +23,7 @@ const Certificaciones = () => {
   useEffect(() => {
     // SEO
     document.title = 'Certificaciones CONOCER y CENNI - Simply English | Validez SEP';
-    
+
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.content = 'Obtén certificaciones oficiales de inglés con validez SEP. CONOCER incluido en el programa y CENNI con 20 niveles. 98% de éxito en certificación.';
@@ -102,55 +102,46 @@ const Certificaciones = () => {
     <main style={{ background: '#f8fafc', overflowX: 'hidden', width: '100%' }}>
       {/* Hero Section */}
       <section style={{
-        background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
-        color: 'white',
-        padding: 'clamp(60px, 10vw, 100px) 0 clamp(40px, 8vw, 80px)',
-        position: 'relative',
-        overflow: 'hidden'
-      }} aria-label="Certificaciones oficiales">
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          opacity: 0.03,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: '40px 40px'
-        }} />
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+        background: "linear-gradient(180deg, #1a2855 0%, #2c3e50 100%)",
+        color: "white",
+        padding: "80px 0",
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
+          <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
             <div style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '8px',
-              padding: '12px 24px',
-              display: 'inline-block',
-              marginBottom: '30px'
+              background: "rgba(255, 255, 255, 0.1)",
+              borderRadius: "4px",
+              padding: "8px 20px",
+              display: "inline-block",
+              marginBottom: "24px",
+              fontSize: "0.9rem",
+              fontWeight: "500",
+              letterSpacing: "0.5px",
             }}>
-              <FontAwesomeIcon icon={faCertificate} style={{ marginRight: '10px' }} />
-              Certificaciones Oficiales SEP
+              <FontAwesomeIcon icon={faCertificate} style={{ marginRight: "8px" }} />
+              CERTIFICACIONES OFICIALES SEP
             </div>
             <h1 style={{
-              fontSize: 'clamp(2rem, 6vw, 3.5rem)',
-              fontWeight: '700',
-              marginBottom: '24px',
-              color: 'white',
-              lineHeight: '1.2'
+              fontSize: "2.8rem",
+              fontWeight: "300",
+              marginBottom: "20px",
+              letterSpacing: "-0.02em",
+              lineHeight: "1.2",
+              color: "white",
             }}>
-              Valida tu dominio del inglés con<br />
-              <span style={{ color: '#f8fafc' }}>certificaciones reconocidas</span>
+              Valida tu dominio del inglés con certificaciones reconocidas
             </h1>
             <p style={{
-              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
+              fontSize: "1.1rem",
               opacity: 0.9,
-              marginBottom: '0',
-              maxWidth: '600px',
-              margin: '0 auto',
-              color: 'white',
-              padding: '0 15px'
+              fontWeight: "300",
+              maxWidth: "600px",
+              margin: "0 auto",
+              lineHeight: "1.6",
             }}>
-              Obtén credenciales oficiales que respaldan tu conocimiento y
-              abren puertas en el mundo académico y profesional.
+              Obtén credenciales oficiales que respaldan tu conocimiento
+              <br />
+              y abren puertas en el mundo académico y profesional
             </p>
           </div>
         </div>
@@ -168,7 +159,7 @@ const Certificaciones = () => {
             position: 'relative',
             zIndex: 10
           }}>
-            <div style={{ 
+            <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
               gap: 'clamp(30px, 5vw, 60px)'
@@ -191,8 +182,8 @@ const Certificaciones = () => {
                   que validen tu nivel de dominio del idioma.
                 </p>
                 <div style={{ marginBottom: '20px' }}>
-                  <h3 style={{ 
-                    color: '#BF0A30', 
+                  <h3 style={{
+                    color: '#BF0A30',
                     marginBottom: '15px',
                     fontSize: 'clamp(1.1rem, 2vw, 1.2rem)'
                   }}>
@@ -224,7 +215,7 @@ const Certificaciones = () => {
                   </ul>
                 </div>
               </div>
-              
+
               <div>
                 <h3 style={{
                   color: '#002868',
@@ -234,7 +225,7 @@ const Certificaciones = () => {
                 }}>
                   Comparación rápida de certificaciones
                 </h3>
-                <div style={{ 
+                <div style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
                   gap: '20px'
@@ -261,7 +252,7 @@ const Certificaciones = () => {
                       <p style={{ margin: 0 }}><strong>Ideal:</strong> Trabajo en México</p>
                     </div>
                   </div>
-                  
+
                   <div style={{
                     border: '2px solid #BF0A30',
                     borderRadius: '12px',
@@ -295,10 +286,10 @@ const Certificaciones = () => {
       <section style={{ padding: 'clamp(40px, 8vw, 80px) 0' }} aria-label="Tipos de certificación">
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(30px, 6vw, 60px)' }}>
-            <h2 style={{ 
-              fontSize: 'clamp(2rem, 4vw, 2.5rem)', 
-              color: '#002868', 
-              marginBottom: '20px' 
+            <h2 style={{
+              fontSize: 'clamp(2rem, 4vw, 2.5rem)',
+              color: '#002868',
+              marginBottom: '20px'
             }}>
               Nuestras Certificaciones
             </h2>
@@ -313,14 +304,14 @@ const Certificaciones = () => {
             </p>
           </div>
 
-          <div style={{ 
+          <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: 'clamp(20px, 4vw, 40px)'
           }}>
             {/* CONOCER Card */}
             <article>
-              <div 
+              <div
                 style={{
                   background: 'white',
                   border: '1px solid #e5e7eb',
@@ -347,9 +338,9 @@ const Certificaciones = () => {
                   color: 'white',
                   borderRadius: '12px 12px 0 0'
                 }}>
-                  <FontAwesomeIcon icon={faAward} style={{ 
-                    fontSize: 'clamp(2rem, 4vw, 3rem)', 
-                    marginBottom: '20px' 
+                  <FontAwesomeIcon icon={faAward} style={{
+                    fontSize: 'clamp(2rem, 4vw, 3rem)',
+                    marginBottom: '20px'
                   }} />
                   <h3 style={{
                     fontSize: 'clamp(1.5rem, 3vw, 2rem)',
@@ -359,7 +350,7 @@ const Certificaciones = () => {
                     Certificación CONOCER
                   </h3>
                 </div>
-                
+
                 <div style={{
                   padding: 'clamp(30px, 5vw, 40px)',
                   flex: 1,
@@ -380,9 +371,9 @@ const Certificaciones = () => {
                     Incluida en tu programa
                   </div>
 
-                  <p style={{ 
-                    fontSize: 'clamp(1rem, 2vw, 1.1rem)', 
-                    marginBottom: '30px' 
+                  <p style={{
+                    fontSize: 'clamp(1rem, 2vw, 1.1rem)',
+                    marginBottom: '30px'
                   }}>
                     Certificación oficial del Consejo Nacional de Normalización
                     y Certificación de Competencias Laborales.
@@ -415,7 +406,7 @@ const Certificaciones = () => {
                     ))}
                   </div>
 
-                  <div style={{ 
+                  <div style={{
                     textAlign: 'center',
                     marginBottom: '30px',
                     padding: '20px 0'
@@ -423,16 +414,17 @@ const Certificaciones = () => {
                     <img
                       src="/imgs/logos/conocer.jpg"
                       alt="Logo CONOCER - Certificación SEP"
-                      style={{ 
-                        height: 'clamp(60px, 10vw, 80px)', 
-                        width: 'auto' 
+                      style={{
+                        height: 'clamp(60px, 10vw, 80px)',
+                        width: 'auto'
                       }}
                       loading="lazy"
                     />
                   </div>
 
                   <div style={{ textAlign: 'center', marginTop: 'auto' }}>
-                    <button
+                    <a
+                      href="/Usuarios"
                       style={{
                         background: '#002868',
                         color: 'white',
@@ -442,7 +434,9 @@ const Certificaciones = () => {
                         fontWeight: '600',
                         borderRadius: '15px',
                         transition: 'all 0.3s ease',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        display: 'inline-block'
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = '#001845';
@@ -452,10 +446,10 @@ const Certificaciones = () => {
                         e.currentTarget.style.background = '#002868';
                         e.currentTarget.style.transform = 'scale(1)';
                       }}
-                      aria-label="Más información sobre certificación CONOCER"
+                      aria-label="Inscríbete en Simply English"
                     >
-                      Más información
-                    </button>
+                      Inscríbete
+                    </a>
                   </div>
                 </div>
               </div>
@@ -463,7 +457,7 @@ const Certificaciones = () => {
 
             {/* CENNI Card */}
             <article>
-              <div 
+              <div
                 style={{
                   background: 'white',
                   border: '1px solid #e5e7eb',
@@ -490,9 +484,9 @@ const Certificaciones = () => {
                   color: 'white',
                   borderRadius: '12px 12px 0 0'
                 }}>
-                  <FontAwesomeIcon icon={faGlobe} style={{ 
-                    fontSize: 'clamp(2rem, 4vw, 3rem)', 
-                    marginBottom: '20px' 
+                  <FontAwesomeIcon icon={faGlobe} style={{
+                    fontSize: 'clamp(2rem, 4vw, 3rem)',
+                    marginBottom: '20px'
                   }} />
                   <h3 style={{
                     fontSize: 'clamp(1.5rem, 3vw, 2rem)',
@@ -502,7 +496,7 @@ const Certificaciones = () => {
                     Certificación CENNI
                   </h3>
                 </div>
-                
+
                 <div style={{
                   padding: 'clamp(30px, 5vw, 40px)',
                   flex: 1,
@@ -523,9 +517,9 @@ const Certificaciones = () => {
                     Evaluación adicional
                   </div>
 
-                  <p style={{ 
-                    fontSize: 'clamp(1rem, 2vw, 1.1rem)', 
-                    marginBottom: '30px' 
+                  <p style={{
+                    fontSize: 'clamp(1rem, 2vw, 1.1rem)',
+                    marginBottom: '30px'
                   }}>
                     Certificación Nacional de Nivel de Idioma con reconocimiento
                     internacional basado en el Marco Común Europeo.
@@ -558,7 +552,7 @@ const Certificaciones = () => {
                     ))}
                   </div>
 
-                  <div style={{ 
+                  <div style={{
                     textAlign: 'center',
                     marginBottom: '30px',
                     padding: '20px 0'
@@ -566,16 +560,17 @@ const Certificaciones = () => {
                     <img
                       src="/imgs/logos/cenni2.png"
                       alt="Logo CENNI - Certificación Internacional"
-                      style={{ 
-                        height: 'clamp(60px, 10vw, 80px)', 
-                        width: 'auto' 
+                      style={{
+                        height: 'clamp(60px, 10vw, 80px)',
+                        width: 'auto'
                       }}
                       loading="lazy"
                     />
                   </div>
 
                   <div style={{ textAlign: 'center', marginTop: 'auto' }}>
-                    <button
+                    <a
+                      href="/certificacion-cenni"
                       style={{
                         background: 'transparent',
                         color: '#002868',
@@ -585,7 +580,9 @@ const Certificaciones = () => {
                         fontWeight: '600',
                         borderRadius: '15px',
                         transition: 'all 0.3s ease',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        display: 'inline-block'
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = '#002868';
@@ -597,10 +594,10 @@ const Certificaciones = () => {
                         e.currentTarget.style.color = '#002868';
                         e.currentTarget.style.transform = 'scale(1)';
                       }}
-                      aria-label="Solicitar evaluación CENNI"
+                      aria-label="Más información sobre certificación CENNI"
                     >
-                      Solicitar evaluación
-                    </button>
+                      Más información
+                    </a>
                   </div>
                 </div>
               </div>
@@ -610,16 +607,16 @@ const Certificaciones = () => {
       </section>
 
       {/* CENNI Levels Section */}
-      <section style={{ 
+      <section style={{
         padding: 'clamp(40px, 8vw, 80px) 0',
         background: '#f8fafc'
       }} aria-label="Niveles CENNI">
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
           <div style={{ textAlign: 'center', marginBottom: 'clamp(30px, 6vw, 60px)' }}>
-            <h2 style={{ 
-              fontSize: 'clamp(2rem, 4vw, 2.5rem)', 
-              color: '#002868', 
-              marginBottom: '20px' 
+            <h2 style={{
+              fontSize: 'clamp(2rem, 4vw, 2.5rem)',
+              color: '#002868',
+              marginBottom: '20px'
             }}>
               Niveles de Certificación CENNI
             </h2>
@@ -634,9 +631,9 @@ const Certificaciones = () => {
             </p>
           </div>
 
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
             gap: 'clamp(20px, 3vw, 30px)',
             marginBottom: '50px'
           }}>
@@ -692,8 +689,8 @@ const Certificaciones = () => {
                   {level.level}
                 </div>
 
-                <h3 style={{ 
-                  color: '#002868', 
+                <h3 style={{
+                  color: '#002868',
                   marginBottom: '10px',
                   fontSize: 'clamp(1rem, 2vw, 1.2rem)'
                 }}>
@@ -712,10 +709,10 @@ const Certificaciones = () => {
                   Niveles {level.range}
                 </div>
 
-                <p style={{ 
-                  color: '#6b7280', 
-                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)', 
-                  margin: 0 
+                <p style={{
+                  color: '#6b7280',
+                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)',
+                  margin: 0
                 }}>
                   {level.desc}
                 </p>
@@ -729,23 +726,23 @@ const Certificaciones = () => {
             borderRadius: '15px',
             padding: 'clamp(30px, 5vw, 40px)'
           }}>
-            <div style={{ 
+            <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
               gap: 'clamp(20px, 4vw, 40px)',
               alignItems: 'center'
             }}>
               <div>
-                <h3 style={{ 
-                  marginBottom: '15px', 
+                <h3 style={{
+                  marginBottom: '15px',
                   color: 'white',
                   fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)'
                 }}>
                   ¿Ya dominas el inglés?
                 </h3>
-                <p style={{ 
-                  margin: 0, 
-                  opacity: 0.9, 
+                <p style={{
+                  margin: 0,
+                  opacity: 0.9,
                   color: 'white',
                   fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                 }}>
@@ -755,7 +752,9 @@ const Certificaciones = () => {
                 </p>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <button style={{
+                <a
+                href="/Usuarios"
+                style={{
                   background: '#FFD700',
                   color: '#002868',
                   border: 'none',
@@ -764,383 +763,385 @@ const Certificaciones = () => {
                   fontWeight: '600',
                   borderRadius: '15px',
                   cursor: 'pointer',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  textDecoration: 'none',
+                  display: 'inline-block'
                 }}
                 aria-label="Solicitar evaluación express CENNI"
-                >
-                  <FontAwesomeIcon icon={faRocket} style={{ marginRight: '10px' }} />
-                  Evaluación Express
-                </button>
-              </div>
+  >
+                <FontAwesomeIcon icon={faRocket} style={{ marginRight: '10px' }} />
+                Evaluación Express
+              </a>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      {/* Process Section */}
-      <section style={{ padding: 'clamp(40px, 8vw, 80px) 0' }} aria-label="Proceso de certificación">
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-          <div style={{ textAlign: 'center', marginBottom: 'clamp(30px, 6vw, 60px)' }}>
-            <h2 style={{ 
-              fontSize: 'clamp(2rem, 4vw, 2.5rem)', 
-              color: '#002868', 
-              marginBottom: '20px' 
+      {/* Process Section */ }
+  <section style={{ padding: 'clamp(40px, 8vw, 80px) 0' }} aria-label="Proceso de certificación">
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+      <div style={{ textAlign: 'center', marginBottom: 'clamp(30px, 6vw, 60px)' }}>
+        <h2 style={{
+          fontSize: 'clamp(2rem, 4vw, 2.5rem)',
+          color: '#002868',
+          marginBottom: '20px'
+        }}>
+          Tu Camino a la Certificación
+        </h2>
+        <p style={{
+          fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+          color: '#6b7280',
+          maxWidth: '700px',
+          margin: '0 auto'
+        }}>
+          Un proceso claro y estructurado que te guía desde el inicio hasta
+          obtener tu certificación oficial
+        </p>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: 'clamp(20px, 4vw, 40px)'
+      }}>
+        {[
+          {
+            icon: faUserGraduate,
+            title: "Inscripción",
+            desc: "Regístrate en nuestro programa",
+            color: "#002868",
+          },
+          {
+            icon: faBookOpen,
+            title: "Formación",
+            desc: "Completa los niveles requeridos",
+            color: "#BF0A30",
+          },
+          {
+            icon: faChartLine,
+            title: "Evaluación",
+            desc: "Presenta tu examen de certificación",
+            color: "#002868",
+          },
+          {
+            icon: faCertificate,
+            title: "Certificación",
+            desc: "Recibe tu certificado oficial",
+            color: "#BF0A30",
+          },
+        ].map((step, index) => (
+          <div key={index} style={{
+            textAlign: 'center',
+            position: 'relative',
+            padding: '20px'
+          }}>
+            <div style={{
+              width: 'clamp(60px, 8vw, 70px)',
+              height: 'clamp(60px, 8vw, 70px)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              fontSize: 'clamp(1.5rem, 3vw, 1.8rem)',
+              transition: 'all 0.3s ease',
+              background: step.color + '15',
+              color: step.color
             }}>
-              Tu Camino a la Certificación
-            </h2>
+              <FontAwesomeIcon icon={step.icon} />
+            </div>
+            <h3 style={{
+              color: '#002868',
+              marginBottom: '10px',
+              fontSize: 'clamp(1rem, 2vw, 1.2rem)'
+            }}>{step.title}</h3>
             <p style={{
-              fontSize: 'clamp(1rem, 2vw, 1.2rem)',
               color: '#6b7280',
-              maxWidth: '700px',
-              margin: '0 auto'
+              fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)',
+              margin: 0
             }}>
-              Un proceso claro y estructurado que te guía desde el inicio hasta
-              obtener tu certificación oficial
+              {step.desc}
             </p>
           </div>
+        ))}
+      </div>
+    </div>
+  </section>
 
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-            gap: 'clamp(20px, 4vw, 40px)'
+  {/* Benefits Section */ }
+  <section style={{
+    padding: 'clamp(40px, 8vw, 80px) 0',
+    background: '#f8fafc'
+  }} aria-label="Beneficios de certificación">
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: 'clamp(30px, 5vw, 60px)',
+        alignItems: 'center'
+      }}>
+        <div>
+          <h2 style={{
+            fontSize: 'clamp(2rem, 4vw, 2.5rem)',
+            color: '#002868',
+            marginBottom: '40px'
           }}>
-            {[
-              {
-                icon: faUserGraduate,
-                title: "Inscripción",
-                desc: "Regístrate en nuestro programa",
-                color: "#002868",
-              },
-              {
-                icon: faBookOpen,
-                title: "Formación",
-                desc: "Completa los niveles requeridos",
-                color: "#BF0A30",
-              },
-              {
-                icon: faChartLine,
-                title: "Evaluación",
-                desc: "Presenta tu examen de certificación",
-                color: "#002868",
-              },
-              {
-                icon: faCertificate,
-                title: "Certificación",
-                desc: "Recibe tu certificado oficial",
-                color: "#BF0A30",
-              },
-            ].map((step, index) => (
-              <div key={index} style={{
-                textAlign: 'center',
-                position: 'relative',
-                padding: '20px'
-              }}>
+            ¿Por qué certificarte con nosotros?
+          </h2>
+
+          {[
+            {
+              icon: faShieldAlt,
+              title: 'Validez Oficial SEP',
+              desc: 'Certificaciones reconocidas por la Secretaría de Educación Pública y aceptadas en todo el territorio nacional.',
+              color: '#002868'
+            },
+            {
+              icon: faGraduationCap,
+              title: 'Preparación Integral',
+              desc: 'Programa completo que te prepara paso a paso para obtener tu certificación con éxito garantizado.',
+              color: '#BF0A30'
+            },
+            {
+              icon: faClock,
+              title: 'Proceso Ágil',
+              desc: 'Gestión simplificada y acompañamiento continuo durante todo el proceso de certificación.',
+              color: '#002868'
+            },
+            {
+              icon: faTrophy,
+              title: 'Alto Índice de Éxito',
+              desc: '98% de nuestros estudiantes obtienen su certificación en el primer intento.',
+              color: '#BF0A30'
+            }
+          ].map((benefit, index) => (
+            <div key={index} style={{ marginBottom: '30px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                 <div style={{
-                  width: 'clamp(60px, 8vw, 70px)',
-                  height: 'clamp(60px, 8vw, 70px)',
+                  background: benefit.color,
+                  color: 'white',
+                  width: 'clamp(40px, 6vw, 50px)',
+                  height: 'clamp(40px, 6vw, 50px)',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  margin: '0 auto 20px',
-                  fontSize: 'clamp(1.5rem, 3vw, 1.8rem)',
-                  transition: 'all 0.3s ease',
-                  background: step.color + '15',
-                  color: step.color
+                  marginRight: '20px',
+                  flexShrink: 0
                 }}>
-                  <FontAwesomeIcon icon={step.icon} />
+                  <FontAwesomeIcon icon={benefit.icon} />
                 </div>
-                <h3 style={{ 
-                  color: '#002868', 
-                  marginBottom: '10px',
-                  fontSize: 'clamp(1rem, 2vw, 1.2rem)'
-                }}>{step.title}</h3>
-                <p style={{ 
-                  color: '#6b7280', 
-                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)', 
-                  margin: 0 
-                }}>
-                  {step.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section style={{ 
-        padding: 'clamp(40px, 8vw, 80px) 0',
-        background: '#f8fafc'
-      }} aria-label="Beneficios de certificación">
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-          <div style={{ 
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: 'clamp(30px, 5vw, 60px)',
-            alignItems: 'center'
-          }}>
-            <div>
-              <h2 style={{ 
-                fontSize: 'clamp(2rem, 4vw, 2.5rem)', 
-                color: '#002868', 
-                marginBottom: '40px' 
-              }}>
-                ¿Por qué certificarte con nosotros?
-              </h2>
-
-              {[
-                {
-                  icon: faShieldAlt,
-                  title: 'Validez Oficial SEP',
-                  desc: 'Certificaciones reconocidas por la Secretaría de Educación Pública y aceptadas en todo el territorio nacional.',
-                  color: '#002868'
-                },
-                {
-                  icon: faGraduationCap,
-                  title: 'Preparación Integral',
-                  desc: 'Programa completo que te prepara paso a paso para obtener tu certificación con éxito garantizado.',
-                  color: '#BF0A30'
-                },
-                {
-                  icon: faClock,
-                  title: 'Proceso Ágil',
-                  desc: 'Gestión simplificada y acompañamiento continuo durante todo el proceso de certificación.',
-                  color: '#002868'
-                },
-                {
-                  icon: faTrophy,
-                  title: 'Alto Índice de Éxito',
-                  desc: '98% de nuestros estudiantes obtienen su certificación en el primer intento.',
-                  color: '#BF0A30'
-                }
-              ].map((benefit, index) => (
-                <div key={index} style={{ marginBottom: '30px' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-                    <div style={{
-                      background: benefit.color,
-                      color: 'white',
-                      width: 'clamp(40px, 6vw, 50px)',
-                      height: 'clamp(40px, 6vw, 50px)',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginRight: '20px',
-                      flexShrink: 0
-                    }}>
-                      <FontAwesomeIcon icon={benefit.icon} />
-                    </div>
-                    <div>
-                      <h3 style={{ 
-                        color: '#002868', 
-                        marginBottom: '10px',
-                        fontSize: 'clamp(1.1rem, 2vw, 1.3rem)'
-                      }}>
-                        {benefit.title}
-                      </h3>
-                      <p style={{ 
-                        color: '#6b7280', 
-                        margin: 0,
-                        fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
-                      }}>
-                        {benefit.desc}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div>
-              <div style={{
-                background: 'white',
-                borderRadius: '15px',
-                padding: 'clamp(30px, 5vw, 40px)',
-                boxShadow: '0 10px 40px rgba(0, 40, 104, 0.1)',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  background: '#f8fafc',
-                  borderRadius: '12px',
-                  padding: 'clamp(20px, 4vw, 30px)'
-                }}>
-                  <h3 style={{ 
-                    color: '#002868', 
-                    marginBottom: '20px',
-                    fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)'
+                <div>
+                  <h3 style={{
+                    color: '#002868',
+                    marginBottom: '10px',
+                    fontSize: 'clamp(1.1rem, 2vw, 1.3rem)'
                   }}>
-                    ¿Listo para certificarte?
+                    {benefit.title}
                   </h3>
-                  <p style={{ 
-                    color: '#6b7280', 
-                    marginBottom: '30px',
+                  <p style={{
+                    color: '#6b7280',
+                    margin: 0,
                     fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
                   }}>
-                    Nuestro programa te prepara de manera integral para obtener
-                    las certificaciones oficiales que impulsarán tu carrera.
+                    {benefit.desc}
                   </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div>
+          <div style={{
+            background: 'white',
+            borderRadius: '15px',
+            padding: 'clamp(30px, 5vw, 40px)',
+            boxShadow: '0 10px 40px rgba(0, 40, 104, 0.1)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              background: '#f8fafc',
+              borderRadius: '12px',
+              padding: 'clamp(20px, 4vw, 30px)'
+            }}>
+              <h3 style={{
+                color: '#002868',
+                marginBottom: '20px',
+                fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)'
+              }}>
+                ¿Listo para certificarte?
+              </h3>
+              <p style={{
+                color: '#6b7280',
+                marginBottom: '30px',
+                fontSize: 'clamp(0.9rem, 1.5vw, 1rem)'
+              }}>
+                Nuestro programa te prepara de manera integral para obtener
+                las certificaciones oficiales que impulsarán tu carrera.
+              </p>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-around',
+                flexWrap: 'wrap',
+                gap: '20px'
+              }}>
+                <div>
                   <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-around',
-                    flexWrap: 'wrap',
-                    gap: '20px'
+                    fontSize: 'clamp(2rem, 4vw, 2.5rem)',
+                    fontWeight: '700',
+                    color: '#002868'
                   }}>
-                    <div>
-                      <div style={{
-                        fontSize: 'clamp(2rem, 4vw, 2.5rem)',
-                        fontWeight: '700',
-                        color: '#002868'
-                      }}>
-                        8
-                      </div>
-                      <div style={{ 
-                        color: '#6b7280', 
-                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)' 
-                      }}>
-                        Niveles
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{
-                        fontSize: 'clamp(2rem, 4vw, 2.5rem)',
-                        fontWeight: '700',
-                        color: '#BF0A30'
-                      }}>
-                        98%
-                      </div>
-                      <div style={{ 
-                        color: '#6b7280', 
-                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)' 
-                      }}>
-                        Éxito
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{
-                        fontSize: 'clamp(2rem, 4vw, 2.5rem)',
-                        fontWeight: '700',
-                        color: '#002868'
-                      }}>
-                        SEP
-                      </div>
-                      <div style={{ 
-                        color: '#6b7280', 
-                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)' 
-                      }}>
-                        Validez
-                      </div>
-                    </div>
+                    8
+                  </div>
+                  <div style={{
+                    color: '#6b7280',
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
+                  }}>
+                    Niveles
+                  </div>
+                </div>
+                <div>
+                  <div style={{
+                    fontSize: 'clamp(2rem, 4vw, 2.5rem)',
+                    fontWeight: '700',
+                    color: '#BF0A30'
+                  }}>
+                    98%
+                  </div>
+                  <div style={{
+                    color: '#6b7280',
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
+                  }}>
+                    Éxito
+                  </div>
+                </div>
+                <div>
+                  <div style={{
+                    fontSize: 'clamp(2rem, 4vw, 2.5rem)',
+                    fontWeight: '700',
+                    color: '#002868'
+                  }}>
+                    SEP
+                  </div>
+                  <div style={{
+                    color: '#6b7280',
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)'
+                  }}>
+                    Validez
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
-      {/* CTA Section */}
-      <section style={{
-        background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
-        color: 'white',
-        padding: 'clamp(40px, 8vw, 80px) 0',
-        position: 'relative',
-        overflow: 'hidden'
-      }} aria-label="Llamada a la acción">
+  {/* CTA Section */ }
+  <section style={{
+    background: 'linear-gradient(135deg, #002868 0%, #001845 100%)',
+    color: 'white',
+    padding: 'clamp(40px, 8vw, 80px) 0',
+    position: 'relative',
+    overflow: 'hidden'
+  }} aria-label="Llamada a la acción">
+    <div style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      opacity: 0.03,
+      backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
+      backgroundSize: '40px 40px'
+    }} />
+
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+        <h2 style={{
+          fontSize: 'clamp(2rem, 5vw, 2.5rem)',
+          fontWeight: '700',
+          marginBottom: '20px',
+          color: 'white'
+        }}>
+          Da el siguiente paso en tu carrera profesional
+        </h2>
+        <p style={{
+          fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
+          marginBottom: '40px',
+          opacity: 0.9,
+          color: 'white'
+        }}>
+          Únete a más de 250 estudiantes certificados que han transformado
+          su futuro con nuestras certificaciones oficiales.
+        </p>
+
         <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          opacity: 0.03,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 0h40v40H0z'/%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: '40px 40px'
-        }} />
+          display: 'flex',
+          gap: '20px',
+          justifyContent: 'center',
+          flexWrap: 'wrap'
+        }}>
+          <a
+            href="/Usuarios"
+            style={{
+              background: 'white',
+              color: '#002868',
+              border: 'none',
+              padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)',
+              fontSize: 'clamp(1rem, 2vw, 1.1rem)',
+              fontWeight: '600',
+              borderRadius: '15px',
+              textDecoration: 'none',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.05)';
+              e.currentTarget.style.boxShadow = '0 10px 30px rgba(255,255,255,0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+            aria-label="Comenzar ahora con Simply English"
+          >
+            <FontAwesomeIcon icon={faRocket} style={{ marginRight: '10px' }} />
+            Comenzar ahora
+          </a>
 
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
-            <h2 style={{
-              fontSize: 'clamp(2rem, 5vw, 2.5rem)',
-              fontWeight: '700',
-              marginBottom: '20px',
-              color: 'white'
-            }}>
-              Da el siguiente paso en tu carrera profesional
-            </h2>
-            <p style={{
-              fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
-              marginBottom: '40px',
-              opacity: 0.9,
-              color: 'white'
-            }}>
-              Únete a más de 250 estudiantes certificados que han transformado
-              su futuro con nuestras certificaciones oficiales.
-            </p>
-
-            <div style={{
-              display: 'flex',
-              gap: '20px',
-              justifyContent: 'center',
-              flexWrap: 'wrap'
-            }}>
-              <a
-                href="/registro"
-                style={{
-                  background: 'white',
-                  color: '#002868',
-                  border: 'none',
-                  padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)',
-                  fontSize: 'clamp(1rem, 2vw, 1.1rem)',
-                  fontWeight: '600',
-                  borderRadius: '15px',
-                  textDecoration: 'none',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                  e.currentTarget.style.boxShadow = '0 10px 30px rgba(255,255,255,0.3)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-                aria-label="Comenzar ahora con Simply English"
-              >
-                <FontAwesomeIcon icon={faRocket} style={{ marginRight: '10px' }} />
-                Comenzar ahora
-              </a>
-
-              <a
-                href="/contacto"
-                style={{
-                  background: 'transparent',
-                  color: 'white',
-                  border: '2px solid white',
-                  padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)',
-                  fontSize: 'clamp(1rem, 2vw, 1.1rem)',
-                  fontWeight: '600',
-                  borderRadius: '15px',
-                  textDecoration: 'none',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'white';
-                  e.currentTarget.style.color = '#002868';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = 'white';
-                }}
-                aria-label="Solicitar información sobre certificaciones"
-              >
-                Solicitar información
-              </a>
-            </div>
-          </div>
+          <a
+            href="/contacto"
+            style={{
+              background: 'transparent',
+              color: 'white',
+              border: '2px solid white',
+              padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)',
+              fontSize: 'clamp(1rem, 2vw, 1.1rem)',
+              fontWeight: '600',
+              borderRadius: '15px',
+              textDecoration: 'none',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'white';
+              e.currentTarget.style.color = '#002868';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'white';
+            }}
+            aria-label="Solicitar información sobre certificaciones"
+          >
+            Solicitar información
+          </a>
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
+  </section>
+    </main >
   );
 };
 

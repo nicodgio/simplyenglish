@@ -352,15 +352,28 @@ try {
         }
         
         logDebug('Verificando si el email ya existe: ' . $data['email']);
-        $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT id, nombre, apellido_paterno, programa_interes FROM usuarios WHERE email = ?");
         $stmt->execute([$data['email']]);
         
-        if ($stmt->fetch()) {
+        $existingUser = $stmt->fetch();
+        if ($existingUser) {
             logDebug('Email ya registrado: ' . $data['email']);
-            http_response_code(409);
+            
+            // En lugar de enviar error, enviamos una respuesta exitosa con información del usuario existente
+            http_response_code(200);
             echo json_encode([
-                'success' => false,
-                'message' => 'Ya existe un usuario registrado con este email'
+                'success' => true,
+                'userExists' => true,
+                'message' => 'Ya cuentas con una cuenta activa. Por favor procede a realizar el pago de tu programa.',
+                'data' => [
+                    'userId' => (int)$existingUser['id'],
+                    'usuario' => [
+                        'nombre' => $existingUser['nombre'],
+                        'apellidoPaterno' => $existingUser['apellido_paterno'],
+                        'email' => $data['email'],
+                        'programaInteres' => $existingUser['programa_interes']
+                    ]
+                ]
             ]);
             exit();
         }
@@ -421,6 +434,7 @@ try {
             http_response_code(201);
             echo json_encode([
                 'success' => true,
+                'userExists' => false,
                 'message' => 'Registro completado exitosamente',
                 'data' => [
                     'userId' => (int)$userId,
@@ -495,6 +509,5 @@ try {
         ]
     ]);
 }
-
 logDebug('Script finalizado');
 ?>

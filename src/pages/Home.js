@@ -140,7 +140,7 @@ const Home = () => {
                 </div>
                 <div style={{ textAlign: 'center', marginTop: '2rem' }}>
                   <a 
-                    href="/registro"
+                    href="/Usuarios"
                     style={{
                       display: 'inline-block',
                       backgroundColor: '#b22234',
@@ -218,7 +218,7 @@ const Home = () => {
                   Comienza tu inscripción en segundos y únete a nuestra comunidad de más de 300 estudiantes.
                 </p>
                 <a 
-                  href="/registro" 
+                  href="/Usuarios" 
                   style={{
                     background: '#002868',
                     color: 'white',
@@ -657,7 +657,7 @@ const Home = () => {
                 marginTop: '40px'
               }}>
                 <a 
-                  href="/registro"
+                  href="/Usuarios"
                   style={{
                     background: 'white',
                     color: '#BF0A30',
@@ -682,7 +682,7 @@ const Home = () => {
                   aria-label="Comenzar curso gratis de inglés"
                 >
                   <FontAwesomeIcon icon={faGraduationCap} style={{ marginRight: '10px' }} aria-hidden="true" />
-                  Comenzar Gratis
+                  Comenzar Ahora
                 </a>
                 <a 
                   href="/contacto"

@@ -1452,25 +1452,6 @@ const Pago = () => {
                     Procesamiento Seguro por Openpay
                   </small>
                 </div>
-
-                <div style={{
-                  background: '#f8f9fa',
-                  border: '1px solid #e9ecef',
-                  borderRadius: '6px',
-                  padding: '15px'
-                }}>
-                  <small style={{
-                    color: '#6c757d',
-                    fontSize: '0.8rem',
-                    lineHeight: '1.4'
-                  }}>
-                    <strong>Modo Sandbox Activo:</strong><br />
-                    Todos los pagos son de prueba.<br />
-                    Use datos de tarjeta de prueba<br />
-                    para realizar transacciones.<br />
-                    <em>No se realizarán cargos reales</em>
-                  </small>
-                </div>
               </div>
             </div>
           </div>
