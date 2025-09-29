@@ -89,11 +89,11 @@ const Registro = () => {
   const usarProgramasPorDefecto = () => {
     console.log('Usando programas por defecto');
     setProgramasDisponibles([
-      { value: 'CONOCER_INDIVIDUAL', label: 'CONOCER Nivel Individual ($1,245 MXN/nivel)', categoria: 'CONOCER_INDIVIDUAL' },
-      { value: 'CONOCER_PAQUETE', label: 'Paquete CONOCER (3 Niveles) ($3,110 MXN)', categoria: 'CONOCER_PAQUETE' },
-      { value: 'CENNI_BASICO', label: 'Certificación CENNI Básico ($1,866 MXN)', categoria: 'CENNI' },
-      { value: 'CENNI_PLUS', label: 'Certificación CENNI Plus ($2,488 MXN)', categoria: 'CENNI' },
-      { value: 'CENNI_PRO', label: 'Certificación CENNI Pro ($3,420 MXN)', categoria: 'CENNI' }
+      { value: 'CONOCER_INDIVIDUAL', label: 'CONOCER Nivel Individual', categoria: 'CONOCER_INDIVIDUAL' },
+      { value: 'CONOCER_PAQUETE', label: 'Paquete CONOCER (3 Niveles)', categoria: 'CONOCER_PAQUETE' },
+      { value: 'CENNI_BASICO', label: 'Certificación CENNI Básico', categoria: 'CENNI' },
+      { value: 'CENNI_PLUS', label: 'Certificación CENNI Plus', categoria: 'CENNI' },
+      { value: 'CENNI_PRO', label: 'Certificación CENNI Pro', categoria: 'CENNI' }
     ]);
 
     setNivelesIngles([

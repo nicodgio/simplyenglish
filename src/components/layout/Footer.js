@@ -40,8 +40,26 @@ const Footer = () => {
               <div style={{ fontSize: '1rem', fontWeight: '600', color: '#002868', marginBottom: '5px' }}>
                 Centro Evaluador Oficial
               </div>
-              <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>
+              <div style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '10px' }}>
                 Autorizado para CENNI
+              </div>
+              <div style={{ 
+                fontSize: '0.85rem', 
+                color: '#002868', 
+                fontWeight: '600',
+                borderTop: '1px solid #e5e7eb',
+                paddingTop: '10px'
+              }}>
+                Clave de Centro Evaluador
+              </div>
+              <div style={{ 
+                fontSize: '0.8rem', 
+                color: '#BF0A30',
+                fontWeight: '700',
+                fontFamily: 'monospace',
+                letterSpacing: '0.5px'
+              }}>
+                Simply English-VEPT-CENNI-MEX031
               </div>
             </div>
           </Col>

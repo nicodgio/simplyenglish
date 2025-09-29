@@ -106,7 +106,7 @@ const Precios = () => {
     return {
       basico: {
         name: 'CENNI Básico',
-        price: cenniBasico?.precio || 1866,
+        price: cenniBasico?.precio || 1650,
         description: 'Examen de certificación únicamente',
         includes: [
           'Aplicación del examen CENNI',
@@ -125,7 +125,7 @@ const Precios = () => {
         description: 'Examen + Gestión del CENNI incluida',
         includes: [
           'Aplicación del examen CENNI',
-          'Gestión completo del certificado',
+          'Gestión incluida del certificado',
           'Certificado oficial entregado',
           'Seguimiento del proceso'
         ],
@@ -144,7 +144,7 @@ const Precios = () => {
           'Ejercicios tipo examen',
           'Examen de práctica completo',
           'Aplicación del examen CENNI',
-          'Gestión completa del certificado',
+          'Gestión incluida del certificado',
           'Material de estudio especializado',
           'Asesoría personalizada'
         ]

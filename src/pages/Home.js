@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faUserPlus, faClock, faChalkboardTeacher, faGlobe, 
+import {
+  faUserPlus, faClock, faChalkboardTeacher, faGlobe,
   faBook, faCreditCard, faShieldAlt, faGraduationCap,
   faCheckCircle, faPlay, faRocket, faUsers, faCertificate
 } from '@fortawesome/free-solid-svg-icons';
@@ -24,7 +24,7 @@ const Home = () => {
   useEffect(() => {
     const typeWriter = () => {
       const currentPhrase = phrases[currentPhraseIndex];
-      
+
       if (isDeleting) {
         if (currentCharIndex > 0) {
           setDynamicText(currentPhrase.substring(0, currentCharIndex - 1));
@@ -39,7 +39,7 @@ const Home = () => {
     };
 
     let timeout;
-    
+
     if (!isDeleting && currentCharIndex === phrases[currentPhraseIndex].length) {
       timeout = setTimeout(() => setIsDeleting(true), 2000);
     } else if (isDeleting && currentCharIndex === 0) {
@@ -121,10 +121,36 @@ const Home = () => {
                   color: '#7a7a7a',
                   fontSize: 'clamp(1rem, 3vw, 1.25rem)',
                   fontWeight: '300',
-                  marginBottom: '3rem'
+                  marginBottom: '1rem'
                 }}>
                   Aprender inglés nunca fue tan fácil - Certificación SEP CONOCER
                 </p>
+                <div style={{
+                  background: 'rgba(0, 40, 104, 0.05)',
+                  border: '1px solid #002868',
+                  borderRadius: '8px',
+                  padding: '12px 20px',
+                  marginBottom: '3rem',
+                  textAlign: 'center'
+                }}>
+                  <span style={{
+                    fontSize: 'clamp(0.85rem, 2vw, 1rem)',
+                    color: '#002868',
+                    fontWeight: '600'
+                  }}>
+                    Clave de Centro Evaluador:
+                  </span>
+                  <span style={{
+                    fontSize: 'clamp(0.8rem, 2vw, 0.95rem)',
+                    color: '#BF0A30',
+                    fontWeight: '700',
+                    fontFamily: 'monospace',
+                    letterSpacing: '0.5px',
+                    marginLeft: '8px'
+                  }}>
+                    Simply English-VEPT-CENNI-MEX031
+                  </span>
+                </div>
                 <h2 style={{
                   color: '#003366',
                   marginBottom: '1.5rem',
@@ -139,7 +165,7 @@ const Home = () => {
                   </div>
                 </div>
                 <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-                  <a 
+                  <a
                     href="/Usuarios"
                     style={{
                       display: 'inline-block',
@@ -160,9 +186,9 @@ const Home = () => {
                 </div>
               </div>
               <div style={{ flex: '1 1 300px', minWidth: '0', textAlign: 'center' }}>
-                <img 
-                  src="/imgs/inicio/welcome.webp" 
-                  alt="Estudiantes aprendiendo inglés en línea con Simply English" 
+                <img
+                  src="/imgs/inicio/welcome.webp"
+                  alt="Estudiantes aprendiendo inglés en línea con Simply English"
                   style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
                   loading="eager"
                 />
@@ -180,7 +206,7 @@ const Home = () => {
               gap: '30px',
               justifyContent: 'center'
             }}>
-              <article 
+              <article
                 style={{
                   background: 'white',
                   borderRadius: '15px',
@@ -217,8 +243,8 @@ const Home = () => {
                 <p style={{ color: '#6b7280', marginBottom: '25px' }}>
                   Comienza tu inscripción en segundos y únete a nuestra comunidad de más de 300 estudiantes.
                 </p>
-                <a 
-                  href="/Usuarios" 
+                <a
+                  href="/Usuarios"
                   style={{
                     background: '#002868',
                     color: 'white',
@@ -238,7 +264,7 @@ const Home = () => {
                 </a>
               </article>
 
-              <article 
+              <article
                 style={{
                   background: 'white',
                   borderRadius: '15px',
@@ -275,8 +301,8 @@ const Home = () => {
                 <p style={{ color: '#6b7280', marginBottom: '25px' }}>
                   Selecciona tu horario ideal que se adapte a tu ritmo de vida. Clases matutinas, vespertinas y nocturnas.
                 </p>
-                <a 
-                  href="/horarios" 
+                <a
+                  href="/horarios"
                   style={{
                     background: '#002868',
                     color: 'white',
@@ -296,7 +322,7 @@ const Home = () => {
                 </a>
               </article>
 
-              <article 
+              <article
                 style={{
                   background: 'white',
                   borderRadius: '15px',
@@ -333,8 +359,8 @@ const Home = () => {
                 <p style={{ color: '#6b7280', marginBottom: '25px' }}>
                   4 horas semanales con total flexibilidad y material interactivo. Maestros certificados y experimentados.
                 </p>
-                <a 
-                  href="/clases" 
+                <a
+                  href="/clases"
                   style={{
                     background: '#002868',
                     color: 'white',
@@ -365,7 +391,7 @@ const Home = () => {
                 ¿Por qué elegir Simply English?
               </h2>
               <p style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)', color: '#6b7280', lineHeight: '1.8' }}>
-                Aprende de manera 
+                Aprende de manera
                 <span style={{
                   background: '#FFD700',
                   color: '#002868',
@@ -375,7 +401,7 @@ const Home = () => {
                   margin: '0 4px',
                   display: 'inline-block'
                 }}>flexible</span>
-                y 
+                y
                 <span style={{
                   background: '#FFD700',
                   color: '#002868',
@@ -385,8 +411,8 @@ const Home = () => {
                   margin: '0 4px',
                   display: 'inline-block'
                 }}>personalizada</span>
-                con nuestra plataforma en línea. Ofrecemos cursos para estudiantes de preparatoria, 
-                universitarios y profesionales de cualquier sector, con sesiones 
+                con nuestra plataforma en línea. Ofrecemos cursos para estudiantes de preparatoria,
+                universitarios y profesionales de cualquier sector, con sesiones
                 <span style={{
                   background: '#FFD700',
                   color: '#002868',
@@ -411,13 +437,13 @@ const Home = () => {
                   Certificación con validez oficial SEP
                 </h2>
                 <p style={{ fontSize: 'clamp(1rem, 2.5vw, 1.2rem)', color: '#f8fafc', opacity: 0.9, marginBottom: '25px', lineHeight: '1.7' }}>
-                  Al completar los ocho niveles de nuestro programa, recibirás un certificado 
-                  de inglés expedido por el Programa CONOCER, con reconocimiento oficial de la 
-                  Secretaría de Educación Pública, que avala tus competencias y te abre puertas 
+                  Al completar los ocho niveles de nuestro programa, recibirás un certificado
+                  de inglés expedido por el Programa CONOCER, con reconocimiento oficial de la
+                  Secretaría de Educación Pública, que avala tus competencias y te abre puertas
                   en el ámbito académico y profesional.
                 </p>
                 <p style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)', color: '#f8fafc', opacity: 0.8, fontStyle: 'italic' }}>
-                  *Este reconocimiento te permitirá validar tu aprendizaje y mejorar tus 
+                  *Este reconocimiento te permitirá validar tu aprendizaje y mejorar tus
                   oportunidades académicas y laborales en México y el extranjero.
                 </p>
                 <div style={{
@@ -427,18 +453,18 @@ const Home = () => {
                   marginTop: '30px',
                   textAlign: 'center'
                 }}>
-                  <img 
-                    src="/imgs/logos/conocer.webp" 
-                    alt="Logo CONOCER - Certificación oficial SEP" 
+                  <img
+                    src="/imgs/logos/conocer.webp"
+                    alt="Logo CONOCER - Certificación oficial SEP"
                     style={{ height: '80px', filter: 'brightness(0) invert(1)' }}
                     loading="lazy"
                   />
                 </div>
               </div>
               <div style={{ flex: '1 1 300px', minWidth: '0', textAlign: 'center' }}>
-                <img 
-                  src="/imgs/inicio/certificate.webp" 
-                  alt="Certificado oficial SEP CONOCER de inglés" 
+                <img
+                  src="/imgs/inicio/certificate.webp"
+                  alt="Certificado oficial SEP CONOCER de inglés"
                   style={{ width: '100%', maxWidth: '400px', height: 'auto' }}
                   loading="lazy"
                 />
@@ -450,11 +476,11 @@ const Home = () => {
         {/* Partners Section */}
         <section style={{ padding: '80px 0', background: '#f8fafc', overflow: 'hidden' }} aria-label="Empresas asociadas">
           <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-            <h2 style={{ 
-              fontSize: 'clamp(1.5rem, 4vw, 2rem)', 
-              color: '#002868', 
-              textAlign: 'center', 
-              marginBottom: '50px' 
+            <h2 style={{
+              fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+              color: '#002868',
+              textAlign: 'center',
+              marginBottom: '50px'
             }}>
               Empresas que confían en nosotros
             </h2>
@@ -466,10 +492,10 @@ const Home = () => {
               flexWrap: 'wrap'
             }}>
               {[1, 2, 3, 4, 5, 6].map((num) => (
-                <img 
+                <img
                   key={num}
-                  src={`/imgs/logos/Empresas/${num}.png`} 
-                  alt={`Logo Empresa asociada ${num}`} 
+                  src={`/imgs/logos/Empresas/${num}.png`}
+                  alt={`Logo Empresa asociada ${num}`}
                   style={{
                     height: '60px',
                     opacity: 0.7,
@@ -496,9 +522,9 @@ const Home = () => {
           <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
             <div style={{ display: 'flex', gap: '40px', alignItems: 'center', flexWrap: 'wrap' }}>
               <div style={{ flex: '1 1 300px', minWidth: '0' }}>
-                <img 
-                  src="/imgs/inicio/class.webp" 
-                  alt="Estudiante tomando clase de inglés en línea" 
+                <img
+                  src="/imgs/inicio/class.webp"
+                  alt="Estudiante tomando clase de inglés en línea"
                   style={{ width: '100%', height: 'auto' }}
                   loading="lazy"
                 />
@@ -507,8 +533,8 @@ const Home = () => {
                 <h2 style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', color: '#002868', marginBottom: '40px' }}>
                   ¿Qué necesitas para estudiar?
                 </h2>
-                
-                <div 
+
+                <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -548,7 +574,7 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div 
+                <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -588,7 +614,7 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div 
+                <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -646,7 +672,7 @@ const Home = () => {
                 ¿Listo para transformar tu futuro?
               </h2>
               <p style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)', marginBottom: '0', opacity: 0.9, color: 'white' }}>
-                Únete a más de <strong>300 estudiantes</strong> que ya han cambiado su vida 
+                Únete a más de <strong>300 estudiantes</strong> que ya han cambiado su vida
                 con Simply English. Comienza tu clase gratis hoy mismo.
               </p>
               <div style={{
@@ -656,7 +682,7 @@ const Home = () => {
                 flexWrap: 'wrap',
                 marginTop: '40px'
               }}>
-                <a 
+                <a
                   href="/Usuarios"
                   style={{
                     background: 'white',
@@ -684,7 +710,7 @@ const Home = () => {
                   <FontAwesomeIcon icon={faGraduationCap} style={{ marginRight: '10px' }} aria-hidden="true" />
                   Comenzar Ahora
                 </a>
-                <a 
+                <a
                   href="/contacto"
                   style={{
                     background: 'transparent',
